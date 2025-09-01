@@ -1,0 +1,80 @@
+{% load static tailwind_tags %}
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% tailwind_css %}
+    <title>{{ title }} - Commune {{ common_name }}</title>
+</head>
+<body>
+    <div class="bg-gray-200">
+        <!-- Menu principal Horizontal -->
+        <div class="fixed flex justify-between items-center text-white bg-blue-900 px-6 py-4 w-full z-50 top-0 h-16">
+            <div class="flex">
+                <h3 class="text-2xl font-semibold">Commune {{ common_name }}</h3>
+            </div>
+            <div>
+                <!-- Bouton de thème -->
+                <!-- Bouton de notification -->
+                <!-- Option du profil -->
+                <div class="relative mx-4 text-black">
+                    <!-- Bouton déroulable Profil -->
+                    <button class="flex items-center focus:outline-none group-[1]:focus-visible:bg-white">
+                        <img 
+                        {% if user.photo %}
+                            src="" 
+                        {% else %}
+                            src="" 
+                        {% endif %}
+                        alt="{{ user.username }}" 
+                        class="w-10 h-10 rounded-full object-cover">
+                        <svg class="w-4 h-4 ml-2" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="2"
+                                d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <!-- Le contenu du bouton Profil -->
+                    <div class="sm:absolute right-2 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
+                        <!-- Profil -->
+                        <a class="block px-4 py-2 text-sm text-gray-700" href="#">Profil</a>
+                        <!-- Déconnexion -->
+                        <a class="block px-4 py-2 text-sm text-gray-700" href="{% url 'account:logout' %}">Déconnexion</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex pt-16 h-screen">
+            <!-- Menu principal Vertical -->
+            <aside class="relative z-40 w-64 text-white bg-sky-900 inset-y-0 left-0">
+                <button></button>
+                
+                <a href="{% url 'account:index' %}"></a>
+                {% for service in services %}
+                <!-- Listes des services -->
+                <nav class="mt-4">
+                    <a 
+                    href="{% url service.url %}" 
+                    class="link flex items-center px-4 py-2 mt-2 rounded-sm {% if service.title == title %}font-semibold bg-sky-700 {% endif %}">
+                        <span class="ml-3">
+                        {{ service.title }}
+                        </span>
+                    </a>
+                </nav>
+                {% endfor %}
+            </aside>
+
+            <div class="relative flex-1 flex flex-col overflow-y-auto">            
+                {% block article %}
+
+                {% endblock article %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
