@@ -1,19 +1,36 @@
+{% load i18n %}
 <header 
-class="fixed w-full flex justify-between items-center shadow-lg bg-white px-6 py-4 h-12"
->
-    <div class="flex">
-        <div class="block">
-            <!-- Titre d'entête -->
-        <h3 class="text-xl font-bold">{{ title }}</h3>
-        {% if title == "Accueil" %}
-        <!-- Souhait et Nom de l'utilisateur connecté -->
-        <h2 class="font-extralight px-2"> Ravi de vous revoir, <span class="font-semibold font-serif">{{ user.last_name.upper }} {{ user.first_name.capitalize }}</span></h2>
-        {% endif %}
-        </div>
-        <div class="inline-flex">
-             <!-- Sous-menu -->
-            <h3></h3>
+class="flex flex-row justify-between items-center shadow-lg bg-white px-6 py-4 h-12 gap-10 z-10">
+    <!-- Titre de page -->
+    <div class="flex items-center gap-2">
+        <div>
+            <!-- Icône -->
+            <h3>Icon</h3>
             <img src="" alt="">
         </div>
+        <!-- Titre d'entête -->
+        {% if app_name != "dashboard" %}
+        <h3 class="text-xl font-bold whitespace-nowrap">{{ title|capfirst }}</h3>            
+        {% else %}
+        <!-- Souhait et Nom de l'utilisateur connecté -->
+        <h3 class="text-xl font-extralight whitespace-nowrap"> {% trans "welcome"|capfirst %}, <span class="font-semibold font-serif">{{ user.last_name.upper }} {{ user.first_name.capitalize }}</span></h3>
+        {% endif %}
+    </div>
+
+    <!-- Sousmenus -->
+     {% if app_name != "dashboard" %}
+    <div class="flex items-center justify-start overflow-x-auto min-w-52 h-10 text-white gap-4">
+        {% for submenu in submenus %}
+            <a href="{% url submenu.url %}" title="{% trans submenu.title|capfirst %}"
+            class="peer text-black p-1 border-b-4 hover:border-gray-200 {% if menu_name == submenu.name %}font-semibold border-blue-600{% else %} font-medium border-white{% endif %}"><span class="text-nowrap">{% trans submenu.title|capfirst %}</span></a>
+        {% endfor %}
+    </div>
+    {% endif %}
+        
+    <!-- Filtre -->
+    <div class="flex items-center">
+         <!-- Sous-menu -->
+        <h3>{{ user.username|capfirst }}</h3>
+        <img src="" alt="">
     </div>
 </header>

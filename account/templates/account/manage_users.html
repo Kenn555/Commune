@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Gestion des Utilisateurs et Permissions</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Liste des utilisateurs -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Utilisateurs</h2>
+            {% for user in users %}
+            <div class="border-b py-4">
+                <h3 class="font-medium">{{ user.username }}</h3>
+                <p class="text-sm text-gray-600">Groupes : 
+                    {% for group in user.groups.all %}
+                    <span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs mr-2">
+                        {{ group.name }}
+                    </span>
+                    {% endfor %}
+                </p>
+                
+                <!-- Formulaire pour ajouter/retirer des groupes -->
+                <form method="POST" class="mt-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                    
+                    <div class="flex items-center space-x-2">
+                        <select name="group_id" class="form-select text-sm">
+                            {% for group in groups %}
+                            <option value="{{ group.id }}">{{ group.name }}</option>
+                            {% endfor %}
+                        </select>
+                        
+                        <button type="submit" name="action" value="add_to_group" 
+                            class="bg-green-500 text-white px-3 py-1 rounded text-sm">
+                            Ajouter au groupe
+                        </button>
+                        
+                        <button type="submit" name="action" value="remove_from_group"
+                            class="bg-red-500 text-white px-3 py-1 rounded text-sm">
+                            Retirer du groupe
+                        </button>
+                    </div>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Liste des groupes et leurs permissions -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Groupes et Permissions</h2>
+            {% for group in groups %}
+            <div class="border-b py-4">
+                <h3 class="font-medium">{{ group.name }}</h3>
+                <div class="mt-2">
+                    <h4 class="text-sm font-medium text-gray-700">Permissions :</h4>
+                    <ul class="list-disc list-inside text-sm text-gray-600">
+                        {% for perm in group.permissions.all %}
+                        <li>{{ perm.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% if messages %}
+<div class="fixed bottom-4 right-4">
+    {% for message in messages %}
+    <div class="bg-{% if message.tags == 'success' %}green{% else %}blue{% endif %}-500 text-white px-6 py-4 rounded-lg shadow-lg mb-4">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

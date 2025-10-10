@@ -1,0 +1,60 @@
+{% extends "action_base.html" %}
+{% block action %}
+{% load humanize %}
+{% load i18n %}
+<form method="get" class="flex flex-col">
+    <div class="flex justify-between items-center w-full mb-10">
+        <div class="flex items-center">
+            <select name="line" onchange="this.form.submit()" id="id_line_select" class="border-none focus:ring-0 text-right bg-gray-100 rounded-xl mr-2" required>
+                <option value="10" {% if table_length == '10' %}selected{%endif%}>10</option>
+                <option value="50" {% if table_length == '50' %}selected{%endif%}>50</option>
+                <option value="100" {% if table_length == '100' %}selected{%endif%}>100</option>
+            </select>
+            <label for="id_line_select" class="text-md font-semibold">{% translate "Lines" %}</label>
+        </div>
+        <input type="text" name="q" onended="this.form.submit()" id="id_query" placeholder="Rechercher..." class="rounded-lg">
+    </div>
+    <div class="overflow-auto">
+        <div class="table w-full">
+            <div class="table-header-group text-md font-semibold border-b">
+                {% for header in table.headers %}
+                    <div class="table-cell px-4 py-2 text-center text-nowrap border-b-2 border-gray-200">
+                        {{ header|title }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="table-row-group overflow-y-auto max-h-[500px]">
+                {% for data in table.datas %}
+                <div class="table-row {% cycle 'bg-white' 'bg-gray-100' %} cursor-pointer border-b border-white hover:bg-gray-200 items-center">
+                    {% for cell in data.row %}
+                    {% if cell.header == "action" %}
+                    <div class="peer table-cell min-w-64"></div>
+                    <div class="absolute py-1 px-4 right-0 -translate-x-16 invisible peer-hover:visible hover:visible">
+                        <div class="flex flex-row flex-nowrap gap-2">  
+                            {% for button in cell.buttons %}                 
+                            <a href="{% url button.url data.pk %}" class="px-3 py-1 text-white rounded-md ring-2 ring-white 
+                            {% if button.style == 'green' %}
+                            bg-green-600
+                            {% elif button.style == 'blue' %}
+                            bg-blue-600
+                            {% elif button.style == 'red' %}
+                            bg-rose-600
+                            {% endif %}
+                            ">{{ button.name|capfirst }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="peer table-cell px-4 py-2 {{ cell.style }}" title="{{ cell.title }}">
+                        {{ cell.value }}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</form>
+{% endblock action %}

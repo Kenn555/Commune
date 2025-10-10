@@ -1,78 +1,121 @@
 {% load static tailwind_tags %}
 {% load static %}
 {% load humanize %}
+{% load i18n %}
+{% blocktranslate asvar the_title %}{{ title }} - Rural Commune of {{ common_name }}.{% endblocktranslate %}
+{% blocktranslate asvar the_common %}{{ common_name }} Town{% endblocktranslate %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% tailwind_css %}
-    <title>{{ title }} - Commune {{ common_name }}</title>
+    <title>{{ the_title|capfirst }}</title>
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    {{ form.media }}
 </head>
 <body>
-    <div class="bg-gray-200">
+    <div class="bg-gray-200 h-screen">
+        <div class="absolute flex z-50 text-white text-3xl font-bold justify-self-center">
+            <span class="sm:hidden">SM</span>
+            <span class="hidden sm:max-md:inline">MD</span>
+            <span class="hidden md:max-lg:inline">LG</span>
+            <span class="hidden lg:max-xl:inline">XL</span>
+            <span class="hidden xl:max-2xl:inline">2XL</span>
+            <span class="hidden 2xl:inline"> > 2XL</span>
+        </div>
         <!-- Menu principal Horizontal -->
-        <div class="fixed flex justify-between items-center text-white bg-blue-900 px-6 py-4 w-full z-50 top-0 h-16">
+        <div class="fixed flex justify-between items-center bg-gradient-to-r from-blue-900 to-sky-800 px-8 py-4 z-40 top-0 w-full h-16 shadow-lg">
             <div class="flex">
-                <h3 class="text-2xl font-semibold">Commune {{ common_name }}</h3>
+                <h3 class="text-2xl font-bold text-white tracking-wide">{{ the_common }}</h3>
             </div>
-            <div>
-                <!-- Bouton de thème -->
-                <!-- Bouton de notification -->
-                <!-- Option du profil -->
-                <div class="relative mx-4 text-black">
-                    <!-- Bouton déroulable Profil -->
-                    <button class="flex items-center focus:outline-none group-[1]:focus-visible:bg-white">
-                        <img 
-                        {% if user.photo %}
-                            src="" 
-                        {% else %}
-                            src="" 
+            <div class="flex items-center space-x-12">
+            <!-- Sélecteur de langue -->
+            <div class="relative">
+                <input type="checkbox" id="language-toggle" class="hidden peer">
+                <label for="language-toggle" class="flex items-center w-28 justify-center space-x-2 hover:opacity-80 transition-all duration-300 cursor-pointer bg-sky-700 px-4 py-2 rounded-md border-2 border-white/30">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% for lang_code, lang_name in LANGUAGES %}
+                        {% if lang_code == LANGUAGE_CODE %}
+                            <span class="text-white">{{ lang_name }}</span>
                         {% endif %}
-                        alt="{{ user.username }}" 
-                        class="w-10 h-10 rounded-full object-cover">
-                        <svg class="w-4 h-4 ml-2" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round"
-                                stroke-linejoin="round" stroke-width="2"
-                                d="M19 9l-7 7-7-7" />
-                        </svg>
+                    {% endfor %}
+                </label>
+                <form action="{% url 'set_language' %}" method="post" class="invisible peer-checked:visible absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-1 transform opacity-0 scale-95 transition-all duration-200 peer-checked:opacity-100 peer-checked:scale-100">
+                    {% csrf_token %}
+                    <input class="w-1 w-12 w-4 w-36 text-gray-500" name="next" type="hidden" value="{{ request.path }}">
+                    {% for lang_code, lang_name in LANGUAGES %}
+                    <button type="submit" name="language" value="{{ lang_code }}" 
+                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+                        {{ lang_name }}
                     </button>
-                    <!-- Le contenu du bouton Profil -->
-                    <div class="sm:absolute right-2 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
-                        <!-- Profil -->
-                        <a class="block px-4 py-2 text-sm text-gray-700" href="#">Profil</a>
-                        <!-- Déconnexion -->
-                        <a class="block px-4 py-2 text-sm text-gray-700" href="{% url 'account:logout' %}">Déconnexion</a>
-                    </div>
+                    {% endfor %}
+                </form>
+            </div>
+            <!-- Option du profil -->
+            <div class="relative">
+                <input type="checkbox" id="profile-toggle" class="hidden peer">
+                <label for="profile-toggle" class="flex items-center space-x-2 hover:opacity-80 transition-all duration-300 cursor-pointer">
+                <img 
+                {% if user.photo %}
+                    src="" 
+                {% else %}
+                    src="" 
+                {% endif %}
+                alt="{{ user.username }}" 
+                class="w-10 h-10 rounded-full object-cover ring-2 ring-white/30">
+                </label>
+                <div class="invisible peer-checked:visible absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-1 transform opacity-0 scale-95 transition-all duration-200 peer-checked:opacity-100 peer-checked:scale-100">
+                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200" href="#">
+                    <span class="ml-2">{% trans "profil"|capfirst %}</span>
+                </a>
+                <a class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition-colors duration-200" href="{% url 'account:logout' %}">
+                    <span class="ml-2">{% trans "logout"|capfirst %}</span>
+                </a>
                 </div>
+            </div>
             </div>
         </div>
 
-        <div class="flex pt-16 h-screen">
+        <div class="flex pt-16 h-full w-full">
             <!-- Menu principal Vertical -->
-            <aside class="relative z-40 w-64 text-white bg-sky-900 inset-y-0 left-0">
+            <aside class="
+            w-60 text-white bg-sky-900 
+            transform transition-all duration-300 ease-in-out 
+            max-lg:w-16
+            max-sm:-translate-x-64 max-sm:w-0
+            ">
                 <button></button>
                 
                 <a href="{% url 'account:index' %}"></a>
                 {% for service in services %}
                 <!-- Listes des services -->
-                <nav class="mt-4">
+                <nav class="mt-4" title="{% translate service.title|title %}">
                     <a 
                     href="{% url service.url %}" 
-                    class="link flex items-center px-4 py-2 mt-2 rounded-sm {% if service.title == title %}font-semibold bg-sky-700 {% endif %}">
-                        <span class="ml-3">
-                        {{ service.title }}
+                    class="link flex items-center justify-start px-4 py-2 mt-2 rounded-sm gap-2 hover:bg-sky-800 {% if service.name == app_name %}font-semibold bg-sky-700 pointer-events-none{% endif %}">
+                        <div class="min-h-6 min-w-6 bg-white"></div>
+                        <span class="ml-3 max-lg:hidden text-nowrap">
+                            {% translate service.title|title %}
                         </span>
                     </a>
                 </nav>
                 {% endfor %}
             </aside>
 
-            <div class="relative flex-1 flex flex-col overflow-y-auto">            
-                {% block article %}
+            <div class="flex-1 flex flex-col overflow-x-auto">
+                <!-- Menu principal Horizontal -->
+                {% include 'components/header.html' %} 
+                
+                <!-- Contenus -->
+                <main class="overflow-y-auto"> 
+                    <div class="flex flex-col m-10 max-sm:m-5 gap-10">           
+                        {% block article %}
 
-                {% endblock article %}
+                        {% endblock article %}
+                    </div>
+                </main>
             </div>
         </div>
     </div>

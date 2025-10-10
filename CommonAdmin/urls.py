@@ -17,12 +17,18 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
-
+from django.conf.urls.i18n import i18n_patterns
+from django.views.i18n import set_language
 from CommonAdmin.settings import SERVICES_APP
 
 
 urlpatterns = [
-    path("", include("account.urls", namespace="account")),
-    *[path(f"{service['name']}/", include(f"{service['name']}.urls", namespace=service['name'])) for service in SERVICES_APP],
+    path('i18n/setlang/', set_language, name='set_language'),  # URL pour le changement de langue
     path("__reload__/", include("django_browser_reload.urls")),
 ]
+
+urlpatterns += i18n_patterns(
+    path("", include("account.urls", namespace="account")),
+    *[path(f"{service['name']}/", include(f"{service['name']}.urls", namespace=service['name'])) for service in SERVICES_APP],
+    prefix_default_language=True,
+)

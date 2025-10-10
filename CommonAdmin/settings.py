@@ -21,6 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 import os
 import environ
+from django.utils.translation import gettext_noop as _
 
 ENV = environ.Env()
 ENV.read_env(os.path.join(BASE_DIR, '.env'))
@@ -30,13 +31,34 @@ COMMON_NAME = "Betsiaka"
 
 # CREATED SERVICES
 SERVICES_APP = [
-    {"name": "dashboard", "title": "accueil".title(), "url": "dashboard:index"},
-    {"name": "civil", "title": "état civil".title(), "url": "civil:index"},
-    {"name": "events", "title": "événements".title(), "url": "events:index"},
-    {"name": "finances", "title": "trésorerie".title(), "url": "finances:index"},
-    {"name": "mines", "title": "mines".title(), "url": "mines:index"},
-    {"name": "social", "title": "affaires sociales".title(), "url": "social:index"},
-    {"name": "administration", "title": "administration".title(), "url": "administration:index"},
+    {"name": "dashboard", "title": _("home"), "url": "dashboard:index", "submenus": [
+        {"name": "dashboard", "title": _("dashboard"), "url": "dashboard:index"},
+        ]},
+    {"name": "civil", "title": _("civil status"), "url": "civil:index", "submenus": [
+        {"name": "dashboard", "title": _("dashboard"), "url": "civil:index"}, 
+        {"name": "birth", "title": _("birth certificate"), "url": "civil:birth_list"},
+        {"name": "death", "title": _("death certificate"), "url": "civil:death_list"},
+        {"name": "marriage", "title": _("marriage certificate"), "url": "civil:marriage_list"},
+        ]},
+    {"name": "events", "title": _("events"), "url": "events:index", "submenus": [
+        {"name": "dashboard", "title": _("dashboard"), "url": "events:index"}, 
+        ]},
+    {"name": "finances", "title": _("finances"), "url": "finances:index", "submenus": [
+        {"name": "dashboard", "title": _("dashboard"), "url": "finances:index"}, 
+        {"name": "", "title": "", "url": ""}
+        ]},
+    {"name": "mines", "title": _("mines"), "url": "mines:index", "submenus": [
+        {"name": "dashboard", "title": _("dashboard"), "url": "mines:index"}, 
+        {"name": "", "title": "", "url": ""}
+        ]},
+    {"name": "social", "title": _("social business"), "url": "social:index", "submenus": [
+        {"name": "dashboard", "title": _("dashboard"), "url": "social:index"}, 
+        {"name": "", "title": "", "url": ""}
+        ]},
+    {"name": "administration", "title": _("administration"), "url": "administration:index", "submenus": [
+        {"name": "dashboard", "title": _("dashboard"), "url": "administration:index"}, 
+        {"name": "", "title": "", "url": ""}
+        ]},
 ]
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -72,6 +94,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware", # Ajout du middleware de traduction
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -149,38 +172,70 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = "fr-fr"
+LANGUAGE_CODE = "fr"
 
 TIME_ZONE = "UTC"
 
 USE_I18N = True
-
+USE_L10N = True
 USE_TZ = True
+
+# Configuration des langues disponibles
+LANGUAGES = [
+    ('fr', 'Français'),
+    ('mg', 'Malagasy'),
+    ('en', 'English'),
+]
+
+# Dossier contenant les fichiers de traduction
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+
+# Configuration de la session pour stocker la langue
+LANGUAGE_COOKIE_NAME = 'django_language'
+
+# Configuration des sessions
+SESSION_COOKIE_AGE = 86400  # Session valide pendant 24 heures (1 jour)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Session expire à la fermeture du navigateur
+SESSION_COOKIE_SECURE = False  # En développement, on accepte HTTP
+SESSION_COOKIE_HTTPONLY = True  # Empêche l'accès aux cookies via JavaScript
+SESSION_SAVE_EVERY_REQUEST = True  # Met à jour l'expiration de la session à chaque requête
+
+# En production, activez ces paramètres :
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / 'assets'  # Chemin absolu pour STATIC_ROOT
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'  # Utilisation de Path pour cohérence
+
+# Ajout de whitenoise pour servir les fichiers statiques en production
+if not DEBUG:
+    MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Customed Settings
 TAILWIND_APP_NAME = "theme"
 
 INTERNAL_IPS = [
-    "127.0.0.1",
+    "127.0.0.1", 
     ]
-
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = 'assets'
-MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
 
 AUTH_USER_MODEL = "account.user"
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://96956fdc2d35.ngrok-free.app",
+]
