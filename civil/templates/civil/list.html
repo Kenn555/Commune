@@ -25,11 +25,10 @@
             </div>
             <div class="table-row-group overflow-y-auto max-h-[500px]">
                 {% for data in table.datas %}
-                <div class="table-row {% cycle 'bg-white' 'bg-gray-100' %} cursor-pointer border-b border-white hover:bg-gray-200 items-center">
+                <div class="table-row {% cycle 'bg-white' 'bg-gray-200' %} cursor-pointer border-b border-white hover:bg-blue-400 hover:text-white items-center">
                     {% for cell in data.row %}
                     {% if cell.header == "action" %}
-                    <div class="peer table-cell min-w-64"></div>
-                    <div class="absolute py-1 px-4 right-0 -translate-x-16 invisible peer-hover:visible hover:visible">
+                    <div class="peer table-cell sticky py-1 px-4 right-0 invisible peer-hover:visible hover:visible">
                         <div class="flex flex-row flex-nowrap gap-2">  
                             {% for button in cell.buttons %}                 
                             <a href="{% url button.url data.pk %}" class="px-3 py-1 text-white rounded-md ring-2 ring-white 

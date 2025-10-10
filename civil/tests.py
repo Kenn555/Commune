@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.db.utils import IntegrityError
+from django.shortcuts import get_object_or_404
 from django.test import TestCase
 
 from administration.models import Fokotany
@@ -67,6 +68,11 @@ table = {
 
 
 activate('mg')
+
+
+document = get_object_or_404(CertificateDocument, pk=6)
+
+print(document.birth_certificate)
 
 # print(_(views.actions[0]['title']))
 

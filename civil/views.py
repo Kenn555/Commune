@@ -359,17 +359,35 @@ def birth_delete(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpR
     print("SUPPRIME !!!!!!!!!!!!!!!!!!!")
     return redirect('civil:birth')
 
-class CertificatePreviewView(DetailView):
-    """Vue pour l'aperçu du certificat"""
-    model = CertificateDocument
-    template_name = 'civil/preview.html'
-    context_object_name = 'document'
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['certificate'] = self.object.birth_certificate
-        return context
+def certificate_preview(request: WSGIRequest, pk) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
+    menu_name = "birth"
+    document = get_object_or_404(CertificateDocument, pk=pk)
 
+    context = {
+        "user": request.user,
+        "app_name": __package__,
+        "menu_name": menu_name,
+        "form": CERTIFICATE[menu_name](),
+        "register_manager": __package__ + ":register_manager",
+        "services": request.session['urls'],
+        "common_name": getattr(settings, "COMMON_NAME"),
+        "submenus": [],
+        "action_name": "register",
+        "actions": actions,
+        "document": document,
+        "certificate": document.birth_certificate
+    }
+
+    for service in request.session['urls']:
+        if service['name'] == __package__:
+            context['title'] = _(service['title'])
+            if 'submenus' in list(service.keys()):
+                context['submenus'] += service['submenus']
+                for submenu in service['submenus']:
+                    if submenu['name'] == menu_name:
+                        context['menu_title'] = _(submenu['title'])
+
+    return render(request, "civil/preview.html", context)
 
 def certificate_print_view(request, pk):
     """Vue pour l'impression (version simplifiée sans boutons)"""
