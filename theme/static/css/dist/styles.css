@@ -1162,20 +1162,24 @@ select {
   right: 1rem;
 }
 
-.top-0 {
-  top: 0px;
+.right-\[20mm\] {
+  right: 20mm;
 }
 
-.top-4 {
-  top: 1rem;
+.top-0 {
+  top: 0px;
 }
 
 .top-8 {
   top: 2rem;
 }
 
-.right-\[20mm\] {
-  right: 20mm;
+.right-\[15mm\] {
+  right: 15mm;
+}
+
+.right-\[12mm\] {
+  right: 12mm;
 }
 
 .z-10 {
@@ -1268,10 +1272,6 @@ select {
 
 .mt-12 {
   margin-top: 3rem;
-}
-
-.mt-16 {
-  margin-top: 4rem;
 }
 
 .mt-2 {
@@ -1485,11 +1485,6 @@ select {
 
 .border-collapse {
   border-collapse: collapse;
-}
-
-.-rotate-12 {
-  --tw-rotate: -12deg;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .scale-95 {
@@ -1766,11 +1761,6 @@ select {
   border-color: rgb(229 231 235 / var(--tw-border-opacity));
 }
 
-.border-gray-300 {
-  --tw-border-opacity: 1;
-  border-color: rgb(209 213 219 / var(--tw-border-opacity));
-}
-
 .border-gray-400 {
   --tw-border-opacity: 1;
   border-color: rgb(156 163 175 / var(--tw-border-opacity));
@@ -1785,19 +1775,9 @@ select {
   border-color: rgb(255 255 255 / 0.3);
 }
 
-.border-black {
-  --tw-border-opacity: 1;
-  border-color: rgb(0 0 0 / var(--tw-border-opacity));
-}
-
 .border-b-gray-300 {
   --tw-border-opacity: 1;
   border-bottom-color: rgb(209 213 219 / var(--tw-border-opacity));
-}
-
-.border-b-slate-600 {
-  --tw-border-opacity: 1;
-  border-bottom-color: rgb(71 85 105 / var(--tw-border-opacity));
 }
 
 .bg-blue-100 {
@@ -2005,20 +1985,40 @@ select {
   padding-bottom: 50px;
 }
 
-.pt-16 {
-  padding-top: 4rem;
-}
-
-.pr-8 {
-  padding-right: 2rem;
+.pl-8 {
+  padding-left: 2rem;
 }
 
 .pr-10 {
   padding-right: 2.5rem;
 }
 
-.pl-8 {
-  padding-left: 2rem;
+.pt-16 {
+  padding-top: 4rem;
+}
+
+.pt-3 {
+  padding-top: 0.75rem;
+}
+
+.pb-4 {
+  padding-bottom: 1rem;
+}
+
+.pl-2 {
+  padding-left: 0.5rem;
+}
+
+.pt-1 {
+  padding-top: 0.25rem;
+}
+
+.pr-1 {
+  padding-right: 0.25rem;
+}
+
+.pr-14 {
+  padding-right: 3.5rem;
 }
 
 .text-left {
@@ -2041,24 +2041,16 @@ select {
   text-indent: 2rem;
 }
 
+.font-\[\'Times_New_Roman\'\] {
+  font-family: 'Times New Roman';
+}
+
 .font-serif {
   font-family: Montserrat, serif;
 }
 
-.font-\[\] {
-  font-family: ;
-}
-
-.font-\[Times\] {
-  font-family: Times;
-}
-
-.font-\[Times_\] {
-  font-family: Times;
-}
-
-.font-\[\'Times_New_Roman\'\] {
-  font-family: 'Times New Roman';
+.font-sans {
+  font-family: Inter, sans-serif;
 }
 
 .text-2xl {
@@ -2074,6 +2066,10 @@ select {
 .text-5xl {
   font-size: 3rem;
   line-height: 1;
+}
+
+.text-\[12pt\] {
+  font-size: 12pt;
 }
 
 .text-base {
@@ -2101,24 +2097,12 @@ select {
   line-height: 1rem;
 }
 
-.text-\[12pt\] {
-  font-size: 12pt;
+.text-\[9pt\] {
+  font-size: 9pt;
 }
 
-.text-\[10pt\] {
-  font-size: 10pt;
-}
-
-.text-\[24pt\] {
-  font-size: 24pt;
-}
-
-.text-\[14pt\] {
-  font-size: 14pt;
-}
-
-.text-\[13pt\] {
-  font-size: 13pt;
+.text-\[8pt\] {
+  font-size: 8pt;
 }
 
 .font-bold {
@@ -2135,10 +2119,6 @@ select {
 
 .font-semibold {
   font-weight: 600;
-}
-
-.font-\[Times_New_Roman\] {
-  font-weight: Times New Roman;
 }
 
 .uppercase {
@@ -2227,8 +2207,12 @@ select {
   color: ;
 }
 
-.text-\[12\] {
-  color: 12;
+.text-\[xs\] {
+  color: xs;
+}
+
+.text-\[pt\] {
+  color: pt;
 }
 
 .opacity-0 {
@@ -2278,22 +2262,21 @@ select {
   outline-style: solid;
 }
 
+.ring-1 {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
 .ring-2 {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 
-.ring {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-}
-
-.ring-1 {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+.ring-black {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(0 0 0 / var(--tw-ring-opacity));
 }
 
 .ring-white {
@@ -2303,11 +2286,6 @@ select {
 
 .ring-white\/30 {
   --tw-ring-color: rgb(255 255 255 / 0.3);
-}
-
-.ring-black {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(0 0 0 / var(--tw-ring-opacity));
 }
 
 .filter {
@@ -2399,6 +2377,11 @@ select {
   border-color: rgb(229 231 235 / var(--tw-border-opacity));
 }
 
+.hover\:bg-blue-400:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(96 165 250 / var(--tw-bg-opacity));
+}
+
 .hover\:bg-blue-500:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(59 130 246 / var(--tw-bg-opacity));
@@ -2412,11 +2395,6 @@ select {
 .hover\:bg-gray-100:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-gray-200:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-gray-500:hover {
@@ -2437,20 +2415,6 @@ select {
 .hover\:bg-yellow-600:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(202 138 4 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-blue-200:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(191 219 254 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-blue-400:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(96 165 250 / var(--tw-bg-opacity));
-}
-
-.hover\:font-semibold:hover {
-  font-weight: 600;
 }
 
 .hover\:text-blue-500:hover {
