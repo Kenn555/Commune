@@ -1,11 +1,14 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, timezone
+from pyexpat.errors import messages
+from django.urls import reverse_lazy
+from django.views.generic import DetailView, DeleteView
 
 import django.db.utils
 from administration.models import Fokotany
 from django.db.models import Q
 from civil import forms
 from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect, JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.paginator import Paginator
@@ -15,7 +18,7 @@ from django.utils.translation import ngettext as _n
 from dal import autocomplete
 
 from civil.forms import BirthCertificateForm, DeathCertificateForm, MarriageCertificateForm
-from civil.models import BirthCertificate, Person
+from civil.models import BirthCertificate, CertificateDocument, Person
 
 
 CERTIFICATE = {
@@ -196,7 +199,7 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                         {"header": "mother", "value": birth.mother.full_name, "style": "text-start w-4 text-nowrap", "title": birth.mother.full_name},
                         {"header": "fokotany", "value": birth.fokotany.name, "style": "text-start w-4 text-nowrap", "title": birth.fokotany},
                         {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
-                            {"name": _("open"), "url": "civil:birth-detail", "style": "green"},
+                            {"name": _("open"), "url": "civil:certificate-preview", "style": "green"},
                             {"name": _("modify"), "url": "civil:birth-modify", "style": "blue"},
                             {"name": _("delete"), "url": "civil:birth-delete", "style": "red"},
                         ]},
@@ -322,6 +325,12 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             print(certificate)
             # Mettre à jour le statut de parent
             certificate.save()
+            CertificateDocument.objects.create(
+                        birth_certificate=certificate,
+                        document_type='BIRTH',
+                        document_number=f"BC-{fokotany.pk}-{certificate.date_created.year}-{str(certificate.pk).zfill(9)}",
+                        status='DRAFT'
+                    )
             father.save(update_fields=["is_parent"])
             mother.save(update_fields=["is_parent"])
         else:
@@ -348,6 +357,58 @@ def birth_delete(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpR
     print(BirthCertificate.objects.get(pk=birth_id).delete())
     print("SUPPRIME !!!!!!!!!!!!!!!!!!!")
     return redirect('civil:birth')
+
+class CertificatePreviewView(DetailView):
+    """Vue pour l'aperçu du certificat"""
+    model = CertificateDocument
+    template_name = 'civil/certificate_preview.html'
+    context_object_name = 'document'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['certificate'] = self.object.birth_certificate
+        return context
+
+
+def certificate_print_view(request, pk):
+    """Vue pour l'impression (version simplifiée sans boutons)"""
+    document = get_object_or_404(CertificateDocument, pk=pk)
+    return render(request, 'civil/preview.html', {
+        'document': document,
+        'certificate': document.birth_certificate,
+    })
+
+
+def certificate_validate(request, pk):
+    """Valider un certificat"""
+    document = get_object_or_404(CertificateDocument, pk=pk)
+    
+    if document.can_edit:
+        document.status = 'VALIDATED'
+        document.validated_by = request.user.get_full_name() or request.user.username
+        document.validated_at = timezone.now()
+        document.save()
+        messages.success(request, _('Certificate validated successfully.'))
+    else:
+        messages.error(request, _('This certificate cannot be validated.'))
+    
+    return redirect('certificate-preview', pk=pk)
+
+
+class CertificateDeleteView(DeleteView):
+    """Vue pour supprimer un certificat"""
+    model = CertificateDocument
+    success_url = reverse_lazy('certificate-list')
+    
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        
+        if not self.object.can_delete:
+            messages.error(request, _('This certificate cannot be deleted.'))
+            return redirect('certificate-preview', pk=self.object.pk)
+        
+        messages.success(request, _('Certificate deleted successfully.'))
+        return super().delete(request, *args, **kwargs)
 
 @login_required
 def death(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentRedirect:

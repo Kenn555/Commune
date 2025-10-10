@@ -12,7 +12,12 @@ urlpatterns = [
     path("birth/save/", views.birth_save, name='birth-save'),
     path("birth/detail/<int:birth_id>/", views.birth_detail, name='birth-detail'),
     path("birth/modify/<int:birth_id>/", views.birth_modify, name='birth-modify'),
-    path("birth/delete/<int:birth_id>/", views.birth_delete, name='birth-delete'),
+    path("birth/delete/<int:birth_id>/", views.birth_delete, name='birth-delete'),    
+    # URLs pour les certificats
+    path('certificate/<int:pk>/preview/', views.CertificatePreviewView.as_view(), name='certificate-preview'),
+    path('certificate/<int:pk>/print/', views.certificate_print_view, name='certificate-print'),
+    path('certificate/<int:pk>/validate/', views.certificate_validate, name='certificate-validate'),
+    path('certificate/<int:pk>/delete/', views.CertificateDeleteView.as_view(), name='certificate-delete'),
     # Décès
     path("death/", views.death, name='death'),
     path("death/register/", views.death_register, name='death-register'),

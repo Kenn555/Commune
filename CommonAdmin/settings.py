@@ -36,9 +36,9 @@ SERVICES_APP = [
         ]},
     {"name": "civil", "title": _("civil status"), "url": "civil:index", "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "civil:index"}, 
-        {"name": "birth", "title": _("birth certificate"), "url": "civil:birth_list"},
-        {"name": "death", "title": _("death certificate"), "url": "civil:death_list"},
-        {"name": "marriage", "title": _("marriage certificate"), "url": "civil:marriage_list"},
+        {"name": "birth", "title": _("birth certificate"), "url": "civil:birth"},
+        {"name": "death", "title": _("death certificate"), "url": "civil:death"},
+        {"name": "marriage", "title": _("marriage certificate"), "url": "civil:marriage"},
         ]},
     {"name": "events", "title": _("events"), "url": "events:index", "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "events:index"}, 
@@ -178,7 +178,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "fr"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Indian/Antananarivo" # ou Etc/GMT-3
 
 USE_I18N = True
 USE_L10N = True

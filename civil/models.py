@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as  _
 
 from administration.models import Fokotany
@@ -61,3 +62,62 @@ class BirthCertificate(models.Model):
         else:
             text = _("%(born)s born at %(birthday)s daughter of %(father)s%(mother)s done at %(date_created)s")
         return text % {"born": self.born, "birthday": self.born.birthday, "father": self.father.__str__() + _(" and ") if self.father else '', "mother": self.mother, "date_created": self.date_created}
+
+class CertificateDocument(models.Model):
+    """Modèle pour stocker les documents générés"""
+    
+    STATUS_CHOICES = {
+        'DRAFT': _('Draft'),
+        'VALIDATED': _('Validated'),
+        'CANCELLED': _('Cancelled'),
+    }
+    
+    # Relation avec le certificat
+    birth_certificate = models.ForeignKey(
+        BirthCertificate, 
+        on_delete=models.CASCADE, 
+        related_name="documents",
+        null=True,
+        blank=True
+    )
+    
+    # Métadonnées du document
+    document_number = models.CharField(max_length=50, unique=True)
+    
+    # Statut
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='DRAFT')
+    
+    # Dates
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    validated_at = models.DateTimeField(null=True, blank=True)
+    
+    # Signature et validation
+    validated_by = models.CharField(max_length=200, blank=True)
+    signature = models.TextField(blank=True, help_text=_("Digital signature or stamp info"))
+    
+    # Notes
+    notes = models.TextField(blank=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = _("Certificate Document")
+        verbose_name_plural = _("Certificate Documents")
+    
+    def __str__(self):
+        return _("Birth Certificate - %(number)s") % {"number": self.document_number}   
+    
+    def get_absolute_url(self):
+        return reverse('certificate-preview', kwargs={'pk': self.pk})
+    
+    @property
+    def is_validated(self):
+        return self.status == 'VALIDATED'
+    
+    @property
+    def can_edit(self):
+        return self.status == 'DRAFT'
+    
+    @property
+    def can_delete(self):
+        return self.status in ['DRAFT', 'CANCELLED']
