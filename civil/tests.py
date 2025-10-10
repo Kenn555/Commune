@@ -4,7 +4,7 @@ from django.test import TestCase
 
 from administration.models import Fokotany
 from civil import views
-from civil.models import Person, BirthCertificate
+from civil.models import CertificateDocument, Person, BirthCertificate
 from django.utils.translation import activate
 from django.utils.translation import gettext as _
 
@@ -49,30 +49,33 @@ table = {
             "rows": [
                 {
                     "index" : index,
+                    "id": certificate.pk,
                     "row": [
-                        {"last_name": birth.born.last_name, "style": ""},
-                        {"first_name": birth.born.first_name, "style": ""},
-                        {"gender": Person.GENDER_CHOICES[birth.born.gender], "style": ""},
-                        {"age": datetime.today().year - birth.born.birthday.year, "style": ""},
+                        {"last_name": certificate.birth_certificate.born.last_name, "style": ""},
+                        {"first_name": certificate.birth_certificate.born.first_name, "style": ""},
+                        {"gender": Person.GENDER_CHOICES[certificate.birth_certificate.born.gender], "style": ""},
+                        {"age": datetime.today().year - certificate.birth_certificate.born.birthday.year, "style": ""},
                     ],
-                } for index, birth in enumerate(BirthCertificate.objects.all())
+                } for index, certificate in enumerate(CertificateDocument.objects.all())
             ],
         }
 
+
+
 # for row in table['rows']:
-#     print(row['index'], row['row'])
+#     print(row['index'], row['id'], row['row'])
 
 
 activate('mg')
 
-print(_(views.actions[0]['title']))
+# print(_(views.actions[0]['title']))
 
-from django.utils.translation import ngettext as _n
+# from django.utils.translation import ngettext as _n
 
-count = 2
+# count = 1
 
-print(_n("%(count)d projet", "%(count)d projets", count) % {"count": count})
+# print(_n("%(count)d projet", "%(count)d projets", count) % {"count": count})
 
-for certificate in BirthCertificate.objects.all():
-    print(_n("%(age)d year old", "%(age)d years old", datetime.today().year - certificate.born.birthday.year) % {"age": datetime.today().year - certificate.born.birthday.year})
-    print(certificate)
+# for certificate in BirthCertificate.objects.all():
+#     print(_n("%(age)d year old", "%(age)d years old", datetime.today().year - certificate.born.birthday.year) % {"age": datetime.today().year - certificate.born.birthday.year})
+#     print(certificate)

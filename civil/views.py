@@ -14,7 +14,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.utils.translation import gettext as _
-from django.utils.translation import ngettext as _n
+from django.utils.translation import ngettext
 from dal import autocomplete
 
 from civil.forms import BirthCertificateForm, DeathCertificateForm, MarriageCertificateForm
@@ -189,13 +189,13 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             "datas": [
                 {                                
                     "index" : index,
-                    "pk": int(birth.pk),
+                    "pk": (CertificateDocument.objects.filter(birth_certificate=birth).first()).pk if CertificateDocument.objects.filter(birth_certificate=birth).exists() else int(birth.pk),
                     "row": [
                         {"header": "number", "value": str(birth.pk).zfill(9), "style": "text-center w-12 text-nowrap", "title": str(birth.pk).zfill(9)},
                         {"header": "date", "value": birth.date_created, "style": "text-start w-4 text-nowrap", "title": birth.date_created},
                         {"header": "full name", "value": birth.born.full_name, "style": "text-start w-4 text-nowrap", "title": birth.born.full_name},
                         {"header": "gender", "value": Person.GENDER_CHOICES[birth.born.gender], "style": "text-center text-nowrap", "title": Person.GENDER_CHOICES[birth.born.gender]},
-                        {"header": "age", "value": date.today().year - birth.born.birthday.year, "style": "text-center text-nowrap", "title": _n("%(age)d year old", "%(age)d years old", date.today().year - birth.born.birthday.year) % {"age": date.today().year - birth.born.birthday.year}},
+                        {"header": "age", "value": date.today().year - birth.born.birthday.year, "style": "text-center text-nowrap", "title": ngettext("%(age)d year old", "%(age)d years old", date.today().year - birth.born.birthday.year) % {"age": date.today().year - birth.born.birthday.year}},
                         {"header": "date", "value": birth.born.birthday, "style": "text-start w-4 text-nowrap", "title": birth.born.birthday},
                         {"header": "father", "value": birth.father.full_name, "style": "text-start w-4 text-nowrap", "title": birth.father.full_name},
                         {"header": "mother", "value": birth.mother.full_name, "style": "text-start w-4 text-nowrap", "title": birth.mother.full_name},
@@ -329,7 +329,6 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             certificate.save()
             CertificateDocument.objects.create(
                         birth_certificate=certificate,
-                        document_type='BIRTH',
                         document_number=f"BC-{fokotany.pk}-{certificate.date_created.year}-{str(certificate.pk).zfill(9)}",
                         status='DRAFT'
                     )
@@ -363,7 +362,7 @@ def birth_delete(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpR
 class CertificatePreviewView(DetailView):
     """Vue pour l'aperçu du certificat"""
     model = CertificateDocument
-    template_name = 'civil/certificate_preview.html'
+    template_name = 'civil/preview.html'
     context_object_name = 'document'
     
     def get_context_data(self, **kwargs):
@@ -375,7 +374,7 @@ class CertificatePreviewView(DetailView):
 def certificate_print_view(request, pk):
     """Vue pour l'impression (version simplifiée sans boutons)"""
     document = get_object_or_404(CertificateDocument, pk=pk)
-    return render(request, 'civil/preview.html', {
+    return render(request, 'civil/print_view.html', {
         'document': document,
         'certificate': document.birth_certificate,
     })
