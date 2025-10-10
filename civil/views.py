@@ -117,7 +117,8 @@ def get_person_details(request, person_id):
 @login_required
 def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
     """  """
-
+    
+    print(request.session['urls'])
 
     menu_name = "dashboard"
     context = {
@@ -142,6 +143,7 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
                 for submenu in service['submenus']:
                     if submenu['name'] == menu_name:
                         context['menu_title'] = _(submenu['title'])
+    print(context['services'])
 
     return render(request, "civil/dashboard.html", context)
 
