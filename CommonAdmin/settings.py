@@ -72,6 +72,10 @@ ALLOWED_HOSTS = ['*'] if CHECKED_ENV else []
 # Application definition
 
 INSTALLED_APPS = [
+    # Autocomplete
+    "dal",
+    "dal_select2",
+    # Applications par défaut
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

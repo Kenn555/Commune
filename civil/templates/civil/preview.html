@@ -1,0 +1,198 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Certificate Preview" %} - {{ document.document_number }}</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .a4-page {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: always;
+            }
+        }
+        
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin: 20px auto;
+        }
+        
+        @page {
+            size: A4;
+            margin: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Barre d'actions (non imprimable) -->
+    <div class="no-print bg-white border-b shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">
+                        {% trans "Certificate Preview" %}
+                    </h1>
+                    <p class="text-sm text-gray-600">
+                        {{ document.get_document_type_display }} - {{ document.document_number }}
+                        <span class="ml-2 px-2 py-1 text-xs rounded-full
+                            {% if document.status == 'VALIDATED' %}bg-green-100 text-green-800
+                            {% elif document.status == 'DRAFT' %}bg-yellow-100 text-yellow-800
+                            {% else %}bg-red-100 text-red-800{% endif %}">
+                            {{ document.get_status_display }}
+                        </span>
+                    </p>
+                </div>
+                
+                <div class="flex gap-3">
+                    <!-- Bouton Imprimer -->
+                    <button onclick="window.print()" 
+                        class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                        </svg>
+                        {% trans "Print" %}
+                    </button>
+                    
+                    <!-- Bouton Modifier -->
+                    {% if document.can_edit %}
+                    <a href="{% url 'birth-certificate-edit' document.birth_certificate.id %}" 
+                        class="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                        {% trans "Edit" %}
+                    </a>
+                    {% endif %}
+                    
+                    <!-- Bouton Supprimer -->
+                    {% if document.can_delete %}
+                    <button onclick="confirmDelete()" 
+                        class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        {% trans "Delete" %}
+                    </button>
+                    {% endif %}
+                    
+                    <!-- Bouton Retour -->
+                    <a href="{% url 'certificate-list' %}" 
+                        class="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        {% trans "Back" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Document A4 -->
+    <div class="py-8">
+        <div class="a4-page">
+            <!-- En-tête officiel -->
+            <div class="text-center border-b-2 border-gray-800 pb-4 mb-6">
+                <h2 class="text-2xl font-bold uppercase">{% trans "Republic of Madagascar" %}</h2>
+                <p class="text-lg">{% trans "Ministry of Interior" %}</p>
+                <p class="text-md">{{ certificate.fokotany.name }}</p>
+            </div>
+            
+            <!-- Titre du document -->
+            <div class="text-center my-8">
+                <h1 class="text-3xl font-bold uppercase tracking-wide">
+                    {% trans "Birth Certificate" %}
+                </h1>
+                <p class="text-lg mt-2 text-gray-600">N° {{ document.document_number }}</p>
+            </div>
+            
+            <!-- Corps du document -->
+            <div class="space-y-6 text-base leading-relaxed">
+                <p class="indent-8">
+                    {% trans "The year" %} <strong>{{ certificate.born.birthday|date:"Y" }}</strong>,
+                    {% trans "on" %} <strong>{{ certificate.born.birthday|date:"d F Y" }}</strong>
+                    {% trans "at" %} <strong>{{ certificate.born.birthday|date:"H:i" }}</strong>,
+                </p>
+                
+                <p class="indent-8">
+                    {% if certificate.born.gender == 'M' %}
+                        {% trans "Was born a child of male sex named" %}
+                    {% else %}
+                        {% trans "Was born a child of female sex named" %}
+                    {% endif %}
+                    <strong class="text-lg">{{ certificate.born.first_name }} {{ certificate.born.last_name|upper }}</strong>,
+                    {% trans "at" %} <strong>{{ certificate.born.birth_place }}</strong>.
+                </p>
+                
+                <!-- Père -->
+                {% if certificate.father %}
+                <p class="indent-8">
+                    {% trans "Child of" %} <strong>{{ certificate.father.full_name }}</strong>,
+                    {% trans "born on" %} <strong>{{ certificate.father.birthday|date:"d/m/Y" }}</strong>
+                    {% trans "at" %} <strong>{{ certificate.father.birth_place }}</strong>,
+                    {% trans "profession" %}: <strong>{{ certificate.father_carreer }}</strong>,
+                    {% trans "residing at" %} <strong>{{ certificate.father_address }}</strong>.
+                </p>
+                {% endif %}
+                
+                <!-- Mère -->
+                <p class="indent-8">
+                    {% trans "And of" %} <strong>{{ certificate.mother.full_name }}</strong>,
+                    {% trans "born on" %} <strong>{{ certificate.mother.birthday|date:"d/m/Y" }}</strong>
+                    {% trans "at" %} <strong>{{ certificate.mother.birth_place }}</strong>,
+                    {% trans "profession" %}: <strong>{{ certificate.mother_carreer }}</strong>,
+                    {% trans "residing at" %} <strong>{{ certificate.mother_address }}</strong>.
+                </p>
+                
+                <p class="indent-8">
+                    {% trans "Drawn up on" %} <strong>{{ certificate.date_created|date:"d F Y" }}</strong>.
+                </p>
+            </div>
+            
+            <!-- Signature -->
+            <div class="mt-16 flex justify-end">
+                <div class="text-center">
+                    <p class="mb-16">{% trans "The Civil Status Officer" %}</p>
+                    {% if document.validated_by %}
+                        <p class="font-bold border-t-2 border-gray-800 pt-2">
+                            {{ document.validated_by }}
+                        </p>
+                    {% else %}
+                        <div class="border-t-2 border-gray-800 pt-2 w-48">
+                            <p class="text-sm text-gray-500">{% trans "Signature" %}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Pied de page -->
+            <div class="absolute bottom-8 left-0 right-0 text-center text-xs text-gray-500">
+                <p>{% trans "Issued on" %} {{ document.created_at|date:"d/m/Y" }} - 
+                   {% trans "Document" %} #{{ document.document_number }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function confirmDelete() {
+            if (confirm('{% trans "Are you sure you want to delete this certificate?" %}')) {
+                window.location.href = "{% url 'certificate-delete' document.pk %}";
+            }
+        }
+    </script>
+</body>
+</html>
