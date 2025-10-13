@@ -359,9 +359,12 @@ def birth_delete(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpR
     print("SUPPRIME !!!!!!!!!!!!!!!!!!!")
     return redirect('civil:birth')
 
+@login_required
 def certificate_preview(request: WSGIRequest, pk) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
     menu_name = "birth"
     document = get_object_or_404(CertificateDocument, pk=pk)
+
+    print(document.birth_certificate.born.birthday)
 
     context = {
         "user": request.user,

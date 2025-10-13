@@ -52,12 +52,10 @@
         }
         
         .handwriting-title {
-            font-family: 'Edu VIC WA NT Beginner', cursive;
-            font-size: 2.5rem;
+            font-family: 'Edwardian Script ITC', cursive;
+            font-size: 36pt;
+            font-weight: 600;
             text-align: center;
-            border-bottom: 2px dashed #333;
-            padding-bottom: 0.5rem;
-            letter-spacing: 0.05em;
         }
         
         .stamp {
@@ -156,101 +154,98 @@
     </div>
     
     <!-- Document A4 -->
-    <div class="zoom-container">
+   <div class="zoom-container">
         <div class="a4-page text-[12pt] font-['Times_New_Roman']" id="print-area">
-            <!-- Watermark -->
+            {% comment %} <!-- Watermark -->
             {% if document.status == 'DRAFT' %}
             <div class="watermark">BROUILLON</div>
-            {% endif %}
+            {% endif %} {% endcomment %}
             
-            <!-- Informations administratives -->
-            <div class="flex justify-between items-start mb-6">
-                <div>
-                    <p class="font-semibold">N° {{ document.document_number }}</p>
-                    <p class="mt-2">{{ certificate.date_created|date:"d" }} {% trans "Desambra" %} {{ certificate.date_created|date:"Y" }}</p>
-                    <p class="mt-4 font-bold uppercase">FAHATERAHANA SY<br>FANJANAHANA</p>
-                    <p class="mt-2">{{ certificate.born.full_name }}</p>
-                    <p>{{ certificate.born.birthday|date:"d-m-y" }}</p>
+            <div class="grid  grid-cols-10 mt-[90px] gap-y-8 gap-x-4">
+                <!-- Informations administratives -->
+                <div class="flex text-[11pt] col-span-3 flex-col items-start mt-36 gap-y-2 leading-tight">
+                    <p class="indent-8 underline">N° {{ document.pk }}/</p>
+                    <p class="indent-3">{{ certificate.date_created|date:"d" }} {% trans "Desambra" %} {{ certificate.date_created|date:"Y" }}</p>
+                    <p class="indent-1 uppercase">FAHATERAHANA SY<br>FANJANAHANA</p>
+                    <p class="">{{ certificate.born.full_name }}</p>
+                    <p class="indent-8">{{ certificate.born.birthday|date:"d-m-y" }}</p>
+                    <p class="font-semibold indent-7 tracking-widest">---------------</p>
                 </div>
-            </div>
-            
-            <!-- Corps du texte en malgache -->
-            <div class="space-y-4 leading-relaxed text-justify" style="position: relative; z-index: 1;">
                 
-                <!-- Titre en écriture manuscrite -->
-                <div class="mt-12 mb-8">
-                    <h1 class="handwriting-title">Kopian'ny Sora-piankohonana</h1>
-                </div>
+                <!-- Corps du texte en malgache -->
+                <div class="flex flex-col col-span-7 gap-y-12 leading-tight text-justify" style="position: relative; z-index: 1;">
+                    
+                    <!-- Titre en écriture manuscrite -->
+                    <div class="">
+                        <h1 class="handwriting-title
+                        relative inline-block
+                        after:content-[''] after:absolute
+                        after:border-b-2 after:border-dashed after:border-black
+                        after:left-0 after:w-full after:h-[2px]
+                        after:bottom-[0.2em]">Kopian'ny Sora-piankohonana</h1>
+                    </div>
 
-                <p class="indent-8">
-                    Nalaina tamin'ny bokim-piankohonana ao {{ certificate.fokotany.name }}, taona {{ certificate.date_created|date:"Y" }},
-                    izao soratra manaraka izao.
-                </p>
+                    <p class="inline text-justify bg-clip-text">
+                        _______Nalaina tamin'ny bokim-piankohonana ao {{ certificate.fokotany.name }}, taona {{ certificate.date_created|date:"Y" }},
+                        izao soratra manaraka izao.
+                    </p>
+
+                    <p class="text-justify">
+                        _________Tamin'ny roapolo {% trans "Desambra" %}, taona dimy sy roa arivo, tamin'ny iraiky
+                        ambin'ny folo ora maraina, no teraka tao amin'ny trano
+                        fampivelonanana ao {{ certificate.born.birth_place }}, Commune io ihany: 
+                        {{ certificate.born.full_name }},
+                        {% if certificate.born.gender == 'M' %}zanakalahy{% else %}zanakavavy{% endif %}, zanak'i
+                        {% if certificate.father %}{{ certificate.father.full_name|default:"" }} teraka tamin'ny roa {% trans "January" %}, taona sivy amby enim-polo sy sivin-jato sy arivo, 
+                        tao Sakaramy, izay nanjana'azy teo amin'ny fahaterahany sy {% endif %}
+                        {{ certificate.mother.full_name }}, teraka tamin'ny roa ambin'ny folo Jolay, taona fito amby fitopolo sy sivin-jato sy arivo,
+                        tao Ambilobe, samy mpamboly sy monina ao Ampiampianona, Commune ao {{ certificate.fokotany.name }}.
+                    </p>
+                    
+                    <p class="text-justify">
+                        _________Nosoratana androany roa amby roapolo {% trans "Desambra" %}, taona dimy sy roa arivo,
+                        tamin'ny valo ora maraina, araky ny fanambarana nataon'i
+                        {{ certificate.mother.full_name|upper }},
+                        teraka tamin'ny telo Septambra, taona efatra amby fitopolo sy sivin-jato sy arivo,
+                        tao itaosy-Antananarivo, Mpitsabo, monina ao {{ certificate.fokotany.name }},
+                        izay nanatrika ny fahaterahany ka miara manao Sonia aminay:
+                        {{ certificate.father.full_name|upper }}, Ben'ny Tanàna,
+                        mpiandraikitra sora-piankohonana ao {{ certificate.fokotany.name }},
+                        rehefa novakina taminy ity soratra ity.
+                    </p>
+                </div>
                 
-                <p class="text-justify">
-                    ________Tamin'ny roapolo {% trans "Desambra" %}, taona dimy sy roa arivo, tamin'ny iraiky
-                    ambin'ny folo ora maraina, no teraka tao amin'ny trano
-                    fampivelonanana ao {{ certificate.born.birth_place }}, Commune io ihany: 
-                    <strong>{{ certificate.born.first_name|upper }} {{ certificate.born.last_name|upper }}</strong>,
-                    {% if certificate.born.gender == 'M' %}zanak'i{% else %}zanaka vavy{% endif %}
-                    <strong>{{ certificate.father.full_name|default:"" }}</strong>{% if certificate.father %} sy {% endif %}
-                    <strong>{{ certificate.mother.full_name }}</strong>,
-                    {% if certificate.father %}
-                    teraka tamin'ny roa {% trans "January" %}, taona sivy amby enim-polo sy sivin-jato sy arivo, 
-                    tao Sakaramy, izay nanjana'azy teo amin'ny fahaterahany sy KARICIA, 
-                    teraka tamin'ny roa ambin'ny folo Jolay, taona fito amby fitopolo sy sivin-jato sy arivo,
-                    {% endif %}
-                    tao Ambilobe, samy mpamboly sy monina ao Ampiampianona, Commune ao {{ certificate.fokotany.name }}.
-                </p>
-                
-                <p class="indent-8">
-                    Nosoratana androany roa amby roapolo {% trans "Desambra" %}, taona dimy sy roa arivo,
-                    tamin'ny valo ora maraina, araky ny fanambarana nataon'i
-                    <strong>{{ certificate.mother.full_name|upper }}</strong>,
-                    teraka tamin'ny telo Septambra, taona efatra amby fitopolo sy sivin-jato sy arivo,
-                    tao itaosy-Antananarivo, Mpitsabo, monina ao {{ certificate.fokotany.name }},
-                    izay nanatrika ny fahaterahany ka miara manao Sonia aminay:
-                    <strong>{{ certificate.father.full_name|upper }}</strong>, Ben'ny Tanàna,
-                    mpiandraikitra sora-piankohonana ao {{ certificate.fokotany.name }},
-                    rehefa novakina taminy ity soratra ity.
-                </p>
-                
-                <p class="text-center font-bold my-6">= MANARAKA NY SONIA =</p>
-                
-                <div class="flex justify-between items-end mt-12">
-                    <div class="text-left">
-                        <p class="font-semibold">SARANY : 1000 Ariary</p>
-                        <!-- Tampon circulaire -->
-                        <div class="stamp mt-4" style="border-color: rgba(220, 38, 38, 0.4);">
-                            <div class="text-center text-red-600 text-xs font-bold">
-                                MAIRIE<br>{{ certificate.fokotany.name|upper }}
-                            </div>
-                        </div>
+                <p class="col-span-3 text-[11pt] underline mt-4 indent-4">SARANY : 1000 Ariary</p>
+
+                <div class="col-span-7 space-y-1 leading-relaxed text-justify" style="position: relative; z-index: 1;">
+                    <p class="indent-20">= MANARAKA NY SONIA =</p>
+                    <div class="pl-32">
+                        <p class="indent-10"> = </p>
+                        <p class="indent-16"> = </p>
+                        <p class="indent-24"> = </p>
                     </div>
                     
-                    <div class="text-right">
-                        <p class="mb-16">Kopia manontolo nadika tamin'ny boky androany 
-                            {{ document.created_at|date:"d" }} {% trans "Oktobra" %} {{ document.created_at|date:"Y" }}.</p>
-                        
-                        <p class="font-bold uppercase mb-2">NY MPIANDRAIKITRA SORA-PIANKOHONANA</p>
-                        
-                        {% if document.validated_by %}
-                        <div class="relative inline-block">
-                            <p class="font-bold text-blue-800" style="transform: rotate(-5deg);">
-                                {{ document.validated_by }}
-                            </p>
-                            <!-- Tampon signature -->
-                            <div class="absolute -bottom-4 -right-4 text-red-600 text-xs font-bold opacity-70">
-                                REVQAVY Parfait Alexandre
+                    <div class="flex justify-between items-end mt-12">                        
+                        <div class="flex flex-col gap-8">
+                            <p class="indent-8 leading-tight">Kopia manontolo nadika tamin'ny boky androany 
+                                {{ document.created_at|date:"d" }} {% trans "Oktobra" %} {{ document.created_at|date:"Y" }}.</p>
+                            
+                            <p class="font-bold uppercase mb-2 text-center">NY MPIANDRAIKITRA SORA-PIANKOHONANA</p>
+                            
+                            {% comment %} {% if document.validated_by %}
+                            <div class="relative inline-block">
+                                <p class="font-bold text-blue-800" style="transform: rotate(-5deg);">
+                                    {{ document.validated_by }}
+                                </p>
                             </div>
+                            {% else %}
+                            <div class="h-16 border-b-2 border-gray-400 w-48 ml-auto"></div>
+                            {% endif %} {% endcomment %}
                         </div>
-                        {% else %}
-                        <div class="h-16 border-b-2 border-gray-400 w-48 ml-auto"></div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
-            
+                
             <!-- Note en haut à droite (filigrane) -->
             <div class="absolute top-8 right-[12mm] font-sans text-[8pt] text-gray-500 ring-1 ring-black pt-1 pr-14 pb-4 pl-2 max-w-xs bg-white">
                 Teny midina laharana faha: 788-MJ/CAB<br>
