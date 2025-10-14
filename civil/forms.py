@@ -182,7 +182,7 @@ class BirthCertificateForm(forms.Form):
     existing_mother = forms.ModelChoiceField(
         label=_("Existing Mother"),
         queryset=Person.objects.filter(gender='F', birthday__lte=date.today() - timedelta(days=18*365)),
-        required=False,
+        required=True,
         widget=autocomplete.ModelSelect2(
             url='civil:mother-autocomplete',
             attrs={
@@ -238,6 +238,66 @@ class BirthCertificateForm(forms.Form):
         )
     )
 
+    # Déclarant    
+    existing_declarer = forms.ModelChoiceField(
+        label=_("Existing Declarer"),
+        queryset=Person.objects.filter(birthday__lte=date.today() - timedelta(days=18*365)),
+        required=True,
+        widget=autocomplete.ModelSelect2(
+            url='civil:mother-autocomplete',
+            attrs={
+                "class": CLASS_FIELD,
+                "data-placeholder": _("Search for Declarer..."),
+                "data-minimum-input-length": 2,
+            }
+        )
+    )
+    
+    declarer_name = forms.CharField(
+        label=_("Declarer's Full Name"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Wait for the declarer's full name"),
+                "title": _("Wait for the declarer's full name"),
+            }
+        )
+    )
+    
+    declarer_place_of_birth = forms.CharField(
+        label=_("Place of Birth"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Wait for the declarer's place of birth"),
+                "title": _("Wait for the declarer's place of birth"),
+            }
+        )
+    )
+    
+    declarer_birthday = forms.DateTimeField(
+        label=_("Birthday"), 
+        # initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "title": _("Wait for the declarer's date of birth")
+            }
+        )
+    )
+    
+    declarer_job = forms.CharField(
+        label=_("Declarer's Job"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert the declarer's job"),
+                "title": _("Insert the declarer's job"),
+            }
+        )
+    )
+
     fieldsets = {
         _("Matricule"): ["fokotany", "number"],
         _("Informations"): ["last_name", "first_name", "gender", "birth_place", "birthday"],
@@ -250,6 +310,7 @@ class BirthCertificateForm(forms.Form):
                 "mother_name", "mother_place_of_birth", "mother_birthday", "mother_job"
             ],
         },
+        _("Informations about Declarer"): ["existing_declarer", "declarer_name", "declarer_place_of_birth", "declarer_birthday", "declarer_job",]
     }
 
     @property
