@@ -1257,8 +1257,8 @@ select {
   margin-top: 0.5rem;
 }
 
-.mt-28 {
-  margin-top: 7rem;
+.mt-36 {
+  margin-top: 9rem;
 }
 
 .mt-4 {
@@ -1275,14 +1275,6 @@ select {
 
 .mt-\[90px\] {
   margin-top: 90px;
-}
-
-.mt-3 {
-  margin-top: 0.75rem;
-}
-
-.mt-36 {
-  margin-top: 9rem;
 }
 
 .block {

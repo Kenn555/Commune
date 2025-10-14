@@ -33,7 +33,7 @@ class BirthCertificateForm(forms.Form):
     number = forms.CharField(
         label=_("Number"), 
         disabled=True,
-        # initial="1".zfill(9) if not BirthCertificate.objects.count() else str(BirthCertificate.objects.last().id + 1).zfill(9),
+        initial="1".zfill(9) if not BirthCertificate.objects.count() else str(BirthCertificate.objects.last().id + 1).zfill(9),
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD.replace("w-full min-w-52", "w-36 text-gray-500") + " text-center text-lg tracking-widest cursor-pointer", 
@@ -182,7 +182,7 @@ class BirthCertificateForm(forms.Form):
     existing_mother = forms.ModelChoiceField(
         label=_("Existing Mother"),
         queryset=Person.objects.filter(gender='F', birthday__lte=date.today() - timedelta(days=18*365)),
-        required=True,
+        required=False,
         widget=autocomplete.ModelSelect2(
             url='civil:mother-autocomplete',
             attrs={
@@ -242,9 +242,9 @@ class BirthCertificateForm(forms.Form):
     existing_declarer = forms.ModelChoiceField(
         label=_("Existing Declarer"),
         queryset=Person.objects.filter(birthday__lte=date.today() - timedelta(days=18*365)),
-        required=True,
+        required=False,
         widget=autocomplete.ModelSelect2(
-            url='civil:mother-autocomplete',
+            url='civil:person-autocomplete',
             attrs={
                 "class": CLASS_FIELD,
                 "data-placeholder": _("Search for Declarer..."),
@@ -301,7 +301,7 @@ class BirthCertificateForm(forms.Form):
     fieldsets = {
         _("Matricule"): ["fokotany", "number"],
         _("Informations"): ["last_name", "first_name", "gender", "birth_place", "birthday"],
-        _("Informations about Parents"): {
+        _("Other Informations"): {
             _("Father"): [
                 "use_existing_father", "existing_father",
                 "father_name", "father_place_of_birth", "father_birthday", "father_job",
@@ -309,8 +309,8 @@ class BirthCertificateForm(forms.Form):
             _("Mother"): ["use_existing_mother", "existing_mother",
                 "mother_name", "mother_place_of_birth", "mother_birthday", "mother_job"
             ],
+            _("Declarer"): ["existing_declarer", "declarer_name", "declarer_place_of_birth", "declarer_birthday", "declarer_job",]
         },
-        _("Informations about Declarer"): ["existing_declarer", "declarer_name", "declarer_place_of_birth", "declarer_birthday", "declarer_job",]
     }
 
     @property

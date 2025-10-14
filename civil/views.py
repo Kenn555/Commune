@@ -301,8 +301,15 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 mother_carreer = request.POST['mother_job']
                 if not mother.is_parent:
                     mother.is_parent = True
+            # déclarant
+            print(request.POST['existing_declarer'])
+            declarer = Person.objects.get(pk=request.POST['existing_declarer'])
+            print(declarer)
+            declarer_carreer = request.POST['declarer_job']
         else:
             print(born.pk, born.full_name)
+
+        print(form.errors)
 
         # Table BirthCertificate
         if form.is_valid():
@@ -319,6 +326,8 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 father_carreer = father_carreer,
                 mother = mother,
                 mother_carreer = mother_carreer,
+                declarer = declarer,
+                declarer_carreer = declarer_carreer,
                 certificate_type = certificate_type,
             )
 
@@ -334,10 +343,12 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                     )
             father.save(update_fields=["is_parent"])
             mother.save(update_fields=["is_parent"])
+
+            return redirect('civil:birth')
         else:
             born.save()
 
-    return redirect('civil:birth')
+            return redirect('civil:birth-register')
     ...
 
 @login_required

@@ -44,6 +44,7 @@ class BirthCertificate(models.Model):
     mother = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name="birth_mother")
     mother_carreer = models.CharField(max_length=80)
     declarer = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name='birth_declarer')
+    declarer_carreer = models.CharField(max_length=80)
     fokotany = models.ForeignKey(Fokotany, on_delete=models.DO_NOTHING, related_name="birth_fokotany", default=0)
     certificate_type = models.CharField(max_length=1, choices=CERTIFICATE_TYPES)
     date_created = models.DateTimeField(auto_now_add=True)

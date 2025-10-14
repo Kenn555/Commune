@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.test import TestCase
@@ -70,9 +70,8 @@ table = {
 activate('mg')
 
 
-document = get_object_or_404(CertificateDocument, pk=6)
+document = get_object_or_404(CertificateDocument, pk=1)
 
-print(document.birth_certificate)
 
 # print(_(views.actions[0]['title']))
 
