@@ -38,11 +38,12 @@ class BirthCertificate(models.Model):
         'N': 'Normal',
         'R': 'Recognition'
     }
-    born = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="bith_born")
-    father = models.ForeignKey(Person, on_delete=models.SET_NULL, related_name="bith_father", null=True,)
+    born = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="birth_born")
+    father = models.ForeignKey(Person, on_delete=models.SET_NULL, related_name="birth_father", null=True,)
     father_carreer = models.CharField(max_length=80, null=True)
-    mother = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name="bith_mother")
+    mother = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name="birth_mother")
     mother_carreer = models.CharField(max_length=80)
+    declarer = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name='birth_declarer')
     fokotany = models.ForeignKey(Fokotany, on_delete=models.DO_NOTHING, related_name="birth_fokotany", default=0)
     certificate_type = models.CharField(max_length=1, choices=CERTIFICATE_TYPES)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -51,17 +52,17 @@ class BirthCertificate(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['born', 'father', 'mother'],
+                fields=['born', 'father', 'mother', 'declarer'],
                 name='unique_birth_certificate'
             )
         ]
 
     def __str__(self):
         if self.born.gender == "M":
-            text = _("%(born)s born at %(birthday)s son of %(father)s%(mother)s done at %(date_created)s") 
+            text = _("%(born)s born at %(birthday)s son of %(father)s%(mother)s declared by %(declarer)s at %(date_created)s") 
         else:
-            text = _("%(born)s born at %(birthday)s daughter of %(father)s%(mother)s done at %(date_created)s")
-        return text % {"born": self.born, "birthday": self.born.birthday, "father": self.father.__str__() + _(" and ") if self.father else '', "mother": self.mother, "date_created": self.date_created}
+            text = _("%(born)s born at %(birthday)s daughter of %(father)s%(mother)s declared by %(declarer)s at %(date_created)s")
+        return text % {"born": self.born, "birthday": self.born.birthday, "father": self.father.__str__() + _(" and ") if self.father else '', "mother": self.mother, "declarer": self.declarer, "date_created": self.date_created}
 
 class CertificateDocument(models.Model):
     """Modèle pour stocker les documents générés"""

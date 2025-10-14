@@ -33,7 +33,7 @@ class BirthCertificateForm(forms.Form):
     number = forms.CharField(
         label=_("Number"), 
         disabled=True,
-        initial="1".zfill(9) if not BirthCertificate.objects.count() else str(BirthCertificate.objects.last().id + 1).zfill(9),
+        # initial="1".zfill(9) if not BirthCertificate.objects.count() else str(BirthCertificate.objects.last().id + 1).zfill(9),
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD.replace("w-full min-w-52", "w-36 text-gray-500") + " text-center text-lg tracking-widest cursor-pointer", 
