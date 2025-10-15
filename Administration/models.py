@@ -48,7 +48,6 @@ class Service(models.Model):
     name = models.CharField(max_length=50)
     title = models.CharField(max_length=100)
     description = models.TextField()
-    boss = models.ForeignKey(Staff, on_delete=models.SET_NULL, null=True)
 
 class Role(models.Model):
     name = models.CharField(max_length=50)
@@ -58,10 +57,10 @@ class Role(models.Model):
     app = models.ForeignKey(Application, on_delete=models.SET_NULL, null=True)
     service = models.ForeignKey(Service, on_delete=models.SET_NULL, null=True)
     access = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    is_boss = models.BooleanField()
 
 class Common(models.Model):
     name = models.CharField(max_length=50)
     title = models.CharField(max_length=100)
     description = models.TextField()
     district = models.CharField(max_length=80)
-    boss = models.ForeignKey(Staff, on_delete=models.SET_NULL, null=True)

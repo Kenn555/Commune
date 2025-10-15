@@ -3,7 +3,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from dal import autocomplete
 
-from administration.models import Fokotany
+from administration.models import Fokotany, Role, Service
 from civil.models import BirthCertificate, Person
 
 
@@ -112,6 +112,7 @@ class BirthCertificateForm(forms.Form):
         label=_("Existing Father"),
         queryset=Person.objects.filter(gender='M', birthday__lte=date.today() - timedelta(days=18*365)),
         required=False,
+        initial=1,
         widget=autocomplete.ModelSelect2(
             url='civil:father-autocomplete',
             attrs={
@@ -294,6 +295,21 @@ class BirthCertificateForm(forms.Form):
                 "class": CLASS_FIELD, 
                 "placeholder": _("Insert the declarer's job"),
                 "title": _("Insert the declarer's job"),
+            }
+        )
+    )
+
+    # Responsable    
+    existing_declarer = forms.ModelChoiceField(
+        label=_("Existing Declarer"),
+        queryset=Role.objects.filter(is_boss=True, staff__birthday__lte=date.today() - timedelta(days=18*365)),
+        required=False,
+        widget=autocomplete.ModelSelect2(
+            url='civil:person-autocomplete',
+            attrs={
+                "class": CLASS_FIELD,
+                "data-placeholder": _("Search for Declarer..."),
+                "data-minimum-input-length": 2,
             }
         )
     )

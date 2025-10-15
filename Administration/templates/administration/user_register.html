@@ -1,0 +1,152 @@
+{% extends "action_base.html" %}
+{% block action %}
+{% load i18n %}
+{% translate "Other Informations" as parents_information %}
+{% translate 'Matricule' as matricule %}
+{% translate 'Applications' as app %}
+
+  <style>
+    div > label {
+      font-weight: 600;
+      font-family: sans-serif;
+    }
+  </style>
+   <style>
+        /* Styles personnalisés pour Select2 */
+        .select2-container {
+            min-width: 100% !important;
+        }
+        
+        .select2-container--default .select2-selection--single {
+            background-color: transparent;
+            border: none;
+            border-bottom: 2px solid #d1d5db;
+            border-radius: 0;
+            height: auto;
+            min-height: 38px;
+            padding: 0.5rem 0;
+        }
+        
+        .select2-container--default .select2-selection--single:focus,
+        .select2-container--default.select2-container--focus .select2-selection--single,
+        .select2-container--default.select2-container--open .select2-selection--single {
+            border-bottom-color: #60a5fa;
+            outline: none;
+            box-shadow: none;
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #6b7280;
+            padding-left: 0;
+            padding-right: 20px;
+            font-size: 1rem;
+            letter-spacing: 0.05em;
+            line-height: 1.5;
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__placeholder {
+            color: #9ca3af;
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 100%;
+            right: 0;
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__clear {
+            margin-right: 20px;
+            font-size: 1.2em;
+        }
+        
+        .select2-dropdown {
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #60a5fa;
+        }
+        
+        .select2-search--dropdown .select2-search__field {
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+        }
+        
+        .select2-search--dropdown .select2-search__field:focus {
+            border-color: #60a5fa;
+            outline: none;
+        }
+        
+        /* Styles pour les checkboxes */
+        #id_use_existing_father,
+        #id_use_existing_mother,
+        #id_have_parents {
+            width: 1.25rem;
+            height: 1.25rem;
+            cursor: pointer;
+        }
+    </style>
+
+  <form action="{% url 'administration:user-save' %}" method="post" class="flex flex-col gap-y-8">
+  {% csrf_token %}
+  
+  {% for title, fields in form.fieldsets_fields.items %}
+    {% if title == matricule %}
+      <fieldset class="flex justify-end gap-x-8 items-end 
+                      max-sm:flex-wrap max-sm:flex-col-reverse max-sm:gap-y-4">
+        {% for field in fields %}
+          <div>{{ field }}</div>
+        {% endfor %}
+      </fieldset>
+    {% else %}
+      {# -- Si le champ est un dictionnaire (comme Informations about Parents) -- #}
+      {% if fields.items %}
+      <fieldset class="">
+        <label for="id_have_parents" class="text-xl font-semibold text-gray-600">{{ title }}</label>
+        {% if title == parents_information %}
+          <input type="checkbox" name="do_certificate" id="id_have_parents"
+                class="peer ml-2" checked title="{% translate 'Do a Certificate' %}">
+        {% endif %}
+        {% for sub_title, sub_fields in fields.items %}
+          <fieldset class="grid  {% if title == parents_information %}hidden peer-checked:grid {% endif %}grid-cols-4 max-xl:grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1 gap-8 mb-5">
+            <legend class="text-lg font-semibold text-gray-500 mb-2">{{ sub_title }}</legend>
+                
+              {% for field in sub_fields %}
+                <div class="min-w-20 w-full {% if title == parents_information and sub_title != 'Declarer' %} parents_information{% if forloop.first %} col-span-full{% endif %}{% endif %}">
+                  {{ field.label_tag }} {{ field }}
+                </div>
+              {% endfor %}
+          </fieldset>
+        {% endfor %}
+      </fieldset>
+        
+      {# -- Sinon c’est une liste de champs simple -- #}
+      {% else %}
+        <fieldset class="grid grid-cols-5 max-2xl:grid-cols-4 
+                          max-xl:grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1 
+                          justify-evenly gap-x-8 gap-y-10 items-start">
+          <legend class="text-xl font-semibold text-gray-600 mb-4">{{ title }}</legend>
+          
+          {% for field in fields %}
+            <div class="min-w-20 w-full items-center">
+              {% if title == app %}
+                {{ field }} {{ field.label_tag }}
+              {% else %}
+                {{ field.label_tag }} {{ field }}
+              {% endif %}
+            </div>
+          {% endfor %}
+        </fieldset>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+  
+  <div class="flex justify-end gap-8 text-white">
+    <input type="submit" value="{% trans 'Submit' %}" class="bg-primary px-4 py-3 rounded-lg w-32 cursor-pointer hover:bg-blue-500">
+    <input type="reset" value="{% trans 'Reset' %}" class="bg-secondary px-4 py-3 rounded-lg w-32 cursor-pointer hover:bg-gray-500">
+  </div>
+</form>
+
+{% endblock action %}

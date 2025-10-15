@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-10 12:08+0300\n"
+"POT-Creation-Date: 2025-10-14 14:58+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,6 +64,39 @@ msgstr "sosialy mahoka"
 msgid "administration"
 msgstr "fandaminana"
 
+#: .\CommonAdmin\settings.py:60
+msgid "staff"
+msgstr "mpiasa"
+
+#: .\CommonAdmin\settings.py:61
+msgid "user"
+msgstr "mpampiasa"
+
+#: .\CommonAdmin\settings.py:62
+#: .\administration\templates\administration\dashboard.html:29
+msgid "application"
+msgstr "fitaovana"
+
+#: .\CommonAdmin\settings.py:63
+msgid "settings"
+msgstr "rafitra"
+
+#: .\administration\models.py:30 .\civil\models.py:10
+msgid "Male"
+msgstr "Lahy"
+
+#: .\administration\models.py:31 .\civil\models.py:11
+msgid "Female"
+msgstr "Vavy"
+
+#: .\administration\templates\administration\dashboard.html:13
+msgid "staffs"
+msgstr "mpiasa"
+
+#: .\administration\templates\administration\dashboard.html:21
+msgid "users"
+msgstr "mpampiasa"
+
 #: .\civil\forms.py:21
 msgid "Fokotany"
 msgstr ""
@@ -72,21 +105,21 @@ msgstr ""
 msgid "Number"
 msgstr "Nomerao"
 
-#: .\civil\forms.py:48 .\civil\forms.py:280 .\civil\forms.py:338
+#: .\civil\forms.py:48 .\civil\forms.py:341 .\civil\forms.py:399
 msgid "Last Name"
 msgstr "Anarana"
 
-#: .\civil\forms.py:52 .\civil\forms.py:53 .\civil\forms.py:284
-#: .\civil\forms.py:285 .\civil\forms.py:339
+#: .\civil\forms.py:52 .\civil\forms.py:53 .\civil\forms.py:345
+#: .\civil\forms.py:346 .\civil\forms.py:400
 msgid "Insert her/his last name"
 msgstr "Ampidiro ny anarana"
 
-#: .\civil\forms.py:59 .\civil\forms.py:291 .\civil\forms.py:343
+#: .\civil\forms.py:59 .\civil\forms.py:352 .\civil\forms.py:404
 msgid "First Name"
 msgstr "Fanampin'anarana"
 
-#: .\civil\forms.py:63 .\civil\forms.py:64 .\civil\forms.py:295
-#: .\civil\forms.py:296
+#: .\civil\forms.py:63 .\civil\forms.py:64 .\civil\forms.py:356
+#: .\civil\forms.py:357
 msgid "Insert her/his first name"
 msgstr "Ampidiro ny fanampin'anarana"
 
@@ -99,6 +132,7 @@ msgid "Choose the gender"
 msgstr "Fidio ny sokajinao"
 
 #: .\civil\forms.py:81 .\civil\forms.py:138 .\civil\forms.py:208
+#: .\civil\forms.py:268
 msgid "Place of Birth"
 msgstr "Toerana nahaterahany"
 
@@ -107,6 +141,7 @@ msgid "Insert the place of birth"
 msgstr "Ampidiro ny toerana nahaterahany"
 
 #: .\civil\forms.py:92 .\civil\forms.py:150 .\civil\forms.py:219
+#: .\civil\forms.py:279
 msgid "Birthday"
 msgstr "Andro nahaterahany"
 
@@ -182,49 +217,85 @@ msgstr "Asan'ny Reny"
 msgid "Insert her/his mother's job"
 msgstr "Andraso ny fivoahan'ny asany"
 
-#: .\civil\forms.py:242 .\civil\forms_model.py:65
+#: .\civil\forms.py:243
+msgid "Existing Declarer"
+msgstr ""
+
+#: .\civil\forms.py:250
+msgid "Search for Declarer..."
+msgstr "Tadiavina ny efa voasoaratra"
+
+#: .\civil\forms.py:257
+msgid "Declarer's Full Name"
+msgstr "Anaran'ny Ray"
+
+#: .\civil\forms.py:261 .\civil\forms.py:262
+msgid "Wait for the declarer's full name"
+msgstr "Andraso ny fivoahan'ny anarany feno"
+
+#: .\civil\forms.py:272 .\civil\forms.py:273
+msgid "Wait for the declarer's place of birth"
+msgstr "Andraso ny fivoahan'ny toerana nahaterahany"
+
+#: .\civil\forms.py:285
+msgid "Wait for the declarer's date of birth"
+msgstr " Andraso ny fivoahan'ny daty nahaterahany"
+
+#: .\civil\forms.py:291
+msgid "Declarer's Job"
+msgstr "Asan'ny Ray"
+
+#: .\civil\forms.py:295 .\civil\forms.py:296
+msgid "Insert the declarer's job"
+msgstr "Ampidiro ny asan'"
+
+#: .\civil\forms.py:302 .\civil\forms_model.py:65
 #: .\civil\templates\civil\register.html:5 .\civil\views.py:275
 msgid "Matricule"
 msgstr "Nomerao"
 
-#: .\civil\forms.py:243 .\civil\forms.py:325 .\civil\forms_model.py:66
+#: .\civil\forms.py:303 .\civil\forms.py:386 .\civil\forms_model.py:66
 #: .\civil\forms_model.py:92 .\civil\views.py:270
 msgid "Informations"
 msgstr "Mombamomba"
 
-#: .\civil\forms.py:244 .\civil\templates\civil\register.html:4
-msgid "Informations about Parents"
-msgstr "Mombamomban'ireo Ray aman-dReny"
+#: .\civil\forms.py:304 .\civil\templates\civil\register.html:4
+msgid "Other Informations"
+msgstr "Mombamomba ny afa"
 
-#: .\civil\forms.py:245
+#: .\civil\forms.py:305
 msgid "Father"
 msgstr "Ray"
 
-#: .\civil\forms.py:249
+#: .\civil\forms.py:309
 msgid "Mother"
 msgstr "Reny"
 
-#: .\civil\forms.py:302
+#: .\civil\forms.py:312
+msgid "Declarer"
+msgstr "Mpanambara"
+
+#: .\civil\forms.py:363
 msgid "Date of Death"
 msgstr "Andro nahafatesany"
 
-#: .\civil\forms.py:308
+#: .\civil\forms.py:369
 msgid "Enter/Choose the date of death"
 msgstr "Safidio ny daty nahafatesany"
 
-#: .\civil\forms.py:314
+#: .\civil\forms.py:375
 msgid "Place of Death"
 msgstr "Toerana nahafatesany"
 
-#: .\civil\forms.py:318 .\civil\forms.py:319
+#: .\civil\forms.py:379 .\civil\forms.py:380
 msgid "Insert the place of death"
 msgstr "Ampidiro ny toerana nahafatesany"
 
-#: .\civil\forms.py:347
+#: .\civil\forms.py:408
 msgid "Date of Marriage"
 msgstr "Andro hanambadiany"
 
-#: .\civil\forms.py:352
+#: .\civil\forms.py:413
 msgid "Place of Marriage"
 msgstr "Toerana hanambadiany"
 
@@ -236,62 +307,51 @@ msgstr "Ray aman-dReny"
 msgid "Informations Mariage"
 msgstr "Andro hanambadiany"
 
-#: .\civil\models.py:10
-msgid "Male"
-msgstr "Lahy"
-
-#: .\civil\models.py:11
-msgid "Female"
-msgstr "Vavy"
-
 #: .\civil\models.py:30 .\civil\models.py:33
 #, python-format
 msgid "%(first_name)s %(last_name)s"
 msgstr "%(last_name)s %(first_name)s"
 
-#: .\civil\models.py:61
-#, python-format
-msgid "%(born)s born at %(birthday)s son of %(father)s%(mother)s done at %(date_created)s"
-msgstr "%(born)s teraka tamin'ny %(birthday)s zanakalahin'i %(father)s%(mother)s natao tamin'ny %(date_created)s"
-
 #: .\civil\models.py:63
 #, python-format
-msgid "%(born)s born at %(birthday)s daughter of %(father)s%(mother)s done at %(date_created)s"
-msgstr "%(born)s teraka tamin'ny %(birthday)s zanakavavin'i %(father)s%(mother)s natao tamin'ny %(date_created)s"
+msgid "%(born)s born at %(birthday)s son of %(father)s%(mother)s declared by %(declarer)s at %(date_created)s"
+msgstr "%(born)s teraka tamin'ny %(birthday)s zanakalahin'i %(father)s%(mother)s araka nambaran'i %(declarer)s tamin'ny %(date_created)s"
 
-#: .\civil\models.py:64
+#: .\civil\models.py:65
+#, python-format
+msgid "%(born)s born at %(birthday)s daughter of %(father)s%(mother)s declared by %(declarer)s at %(date_created)s"
+msgstr "%(born)s teraka tamin'ny %(birthday)s zanakavavin'i %(father)s%(mother)s araka nambaran'i %(declarer)s tamin'ny %(date_created)s"
+
+#: .\civil\models.py:66
 msgid " and "
 msgstr " sy i "
 
-#: .\civil\models.py:70
+#: .\civil\models.py:72
 msgid "Draft"
 msgstr ""
 
-#: .\civil\models.py:71
+#: .\civil\models.py:73
 msgid "Validated"
 msgstr ""
 
-#: .\civil\models.py:72
+#: .\civil\models.py:74
 msgid "Cancelled"
 msgstr ""
 
-#: .\civil\models.py:97
+#: .\civil\models.py:99
 msgid "Digital signature or stamp info"
 msgstr ""
 
-#: .\civil\models.py:104
-#, fuzzy
-#| msgid "Do a Certificate"
+#: .\civil\models.py:106
 msgid "Certificate Document"
 msgstr "taratasy mpahafatesana"
 
-#: .\civil\models.py:105
+#: .\civil\models.py:107
 msgid "Certificate Documents"
 msgstr ""
 
-#: .\civil\models.py:108
-#, fuzzy, python-format
-#| msgid "birth certificate"
+#: .\civil\models.py:110
+#, python-format
 msgid "Birth Certificate - %(number)s"
 msgstr "taratasy mpahaterana"
 
@@ -299,112 +359,49 @@ msgstr "taratasy mpahaterana"
 msgid "Lines"
 msgstr "fitrandrahana"
 
-#: .\civil\templates\civil\preview.html:9
-#: .\civil\templates\civil\preview.html:47
-#, fuzzy
-#| msgid "Do a Certificate"
+#: .\civil\templates\civil\preview.html:92
 msgid "Certificate Preview"
 msgstr "taratasy mpahafatesana"
 
-#: .\civil\templates\civil\preview.html:67
-msgid "Print"
-msgstr ""
-
-#: .\civil\templates\civil\preview.html:77
-msgid "Edit"
-msgstr ""
-
-#: .\civil\templates\civil\preview.html:88
-msgid "Delete"
-msgstr ""
-
-#: .\civil\templates\civil\preview.html:98
-msgid "Back"
-msgstr ""
-
-#: .\civil\templates\civil\preview.html:110
-msgid "Republic of Madagascar"
-msgstr ""
-
-#: .\civil\templates\civil\preview.html:111
-msgid "Ministry of Interior"
-msgstr ""
-
 #: .\civil\templates\civil\preview.html:118
-#, fuzzy
-#| msgid "birth certificate"
-msgid "Birth Certificate"
-msgstr "taratasy mpahaterana"
-
-#: .\civil\templates\civil\preview.html:126
-msgid "The year"
-msgstr ""
-
-#: .\civil\templates\civil\preview.html:127
-msgid "on"
-msgstr ""
+msgid "Print"
+msgstr "Mamoaka"
 
 #: .\civil\templates\civil\preview.html:128
-#: .\civil\templates\civil\preview.html:138
-#: .\civil\templates\civil\preview.html:146
-#: .\civil\templates\civil\preview.html:156
-msgid "at"
-msgstr ""
+msgid "Edit"
+msgstr "Manova"
 
-#: .\civil\templates\civil\preview.html:133
-msgid "Was born a child of male sex named"
-msgstr ""
+#: .\civil\templates\civil\preview.html:139
+msgid "Delete"
+msgstr "Mamafa"
 
-#: .\civil\templates\civil\preview.html:135
-msgid "Was born a child of female sex named"
-msgstr ""
-
-#: .\civil\templates\civil\preview.html:144
-msgid "Child of"
-msgstr ""
-
-#: .\civil\templates\civil\preview.html:145
-#: .\civil\templates\civil\preview.html:155
-msgid "born on"
-msgstr ""
-
-#: .\civil\templates\civil\preview.html:147
-#: .\civil\templates\civil\preview.html:157
-#, fuzzy
-#| msgid "profil"
-msgid "profession"
-msgstr "endrika"
-
-#: .\civil\templates\civil\preview.html:148
-#: .\civil\templates\civil\preview.html:158
-msgid "residing at"
-msgstr ""
-
-#: .\civil\templates\civil\preview.html:154
-msgid "And of"
-msgstr ""
-
-#: .\civil\templates\civil\preview.html:162
-msgid "Drawn up on"
-msgstr ""
+#: .\civil\templates\civil\preview.html:149
+msgid "Back"
+msgstr "Miverina"
 
 #: .\civil\templates\civil\preview.html:169
-msgid "The Civil Status Officer"
+#: .\civil\templates\civil\preview.html:195
+#: .\civil\templates\civil\preview.html:207
+msgid "Desambra"
 msgstr ""
 
-#: .\civil\templates\civil\preview.html:176
-msgid "Signature"
+#: .\civil\templates\civil\preview.html:200
+msgid "January"
 msgstr ""
 
-#: .\civil\templates\civil\preview.html:184
+#: .\civil\templates\civil\preview.html:232
+msgid "Oktobra"
+msgstr ""
+
+#: .\civil\templates\civil\preview.html:263
 msgid "Issued on"
 msgstr ""
 
-#: .\civil\templates\civil\preview.html:185
+#: .\civil\templates\civil\preview.html:264
 msgid "Document"
 msgstr ""
 
-#: .\civil\templates\civil\preview.html:192
+#: .\civil\templates\civil\preview.html:294
 msgid "Are you sure you want to delete this certificate?"
 msgstr ""
 
@@ -434,12 +431,12 @@ msgid "%(last_name)s %(first_name)s - born at %(birthday_day)s at %(birthday_hou
 msgstr "%(last_name)s %(first_name)s - teraka tamin'ny %(birthday_day)s tamin'ny %(birthday_hour)s."
 
 #: .\civil\views.py:188
-msgid "number"
-msgstr "Nomerao"
+msgid "date of creation"
+msgstr "Andro nahafatesany"
 
 #: .\civil\views.py:188
-msgid "date"
-msgstr ""
+msgid "number"
+msgstr "Nomerao"
 
 #: .\civil\views.py:188
 msgid "full name"
@@ -492,19 +489,19 @@ msgstr ""
 msgid "delete"
 msgstr ""
 
-#: .\civil\views.py:392
+#: .\civil\views.py:424
 msgid "Certificate validated successfully."
 msgstr ""
 
-#: .\civil\views.py:394
+#: .\civil\views.py:426
 msgid "This certificate cannot be validated."
 msgstr ""
 
-#: .\civil\views.py:408
+#: .\civil\views.py:440
 msgid "This certificate cannot be deleted."
 msgstr ""
 
-#: .\civil\views.py:411
+#: .\civil\views.py:443
 msgid "Certificate deleted successfully."
 msgstr ""
 
@@ -529,3 +526,16 @@ msgstr "hiala"
 #: .\theme\templates\components\header.html:16
 msgid "welcome"
 msgstr "tongasoa"
+
+#~ msgid "Informations about Parents"
+#~ msgstr "Mombamomban'ireo Ray aman-dReny"
+
+#, fuzzy
+#~| msgid "birth certificate"
+#~ msgid "Birth Certificate"
+#~ msgstr "taratasy mpahaterana"
+
+#, fuzzy
+#~| msgid "profil"
+#~ msgid "profession"
+#~ msgstr "endrika"

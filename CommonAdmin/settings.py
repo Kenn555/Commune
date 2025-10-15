@@ -30,6 +30,36 @@ CHECKED_ENV = ENV('PROJECT_ENV') == 'common'
 COMMON_NAME = "Betsiaka"
 
 # CREATED SERVICES
+MENU_SERVICES = {
+    "dashboard": [
+            {"name": "dashboard", "title": _("dashboard"), "url": "dashboard:index"},
+        ],
+    "civil": [
+            {"name": "dashboard", "title": _("dashboard"), "url": "civil:index"}, 
+            {"name": "birth", "title": _("birth certificate"), "url": "civil:birth"},
+            {"name": "death", "title": _("death certificate"), "url": "civil:death"},
+            {"name": "marriage", "title": _("marriage certificate"), "url": "civil:marriage"},
+        ],
+    "events": [
+            {"name": "dashboard", "title": _("dashboard"), "url": "events:index"}, 
+        ],
+    "finances": [
+            {"name": "dashboard", "title": _("dashboard"), "url": "finances:index"}, 
+        ],
+    "mines": [
+            {"name": "dashboard", "title": _("dashboard"), "url": "mines:index"}, 
+        ],
+    "social": [
+            {"name": "dashboard", "title": _("dashboard"), "url": "social:index"}, 
+        ],
+    "administration": [
+            {"name": "dashboard", "title": _("dashboard"), "url": "administration:index"},  
+            {"name": "staff", "title": _("staff"), "url": "administration:staff"},
+            {"name": "user", "title": _("user"), "url": "administration:user"},
+            {"name": "application", "title": _("application"), "url": "administration:application"},
+            {"name": "settings", "title": _("settings"), "url": "administration:settings"},
+        ]
+}
 SERVICES_APP = [
     {"name": "dashboard", "title": _("home"), "url": "dashboard:index", "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "dashboard:index"},
@@ -56,8 +86,11 @@ SERVICES_APP = [
         {"name": "", "title": "", "url": ""}
         ]},
     {"name": "administration", "title": _("administration"), "url": "administration:index", "submenus": [
-        {"name": "dashboard", "title": _("dashboard"), "url": "administration:index"}, 
-        {"name": "", "title": "", "url": ""}
+        {"name": "dashboard", "title": _("dashboard"), "url": "administration:index"},  
+        {"name": "staff", "title": _("staff"), "url": "administration:staff"},
+        {"name": "user", "title": _("user"), "url": "administration:user"},
+        {"name": "application", "title": _("application"), "url": "administration:application"},
+        {"name": "settings", "title": _("settings"), "url": "administration:settings"},
         ]},
 ]
 

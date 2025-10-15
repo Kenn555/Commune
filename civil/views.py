@@ -42,14 +42,14 @@ actions = [
     },
 ]
 
-def add_action_url(menu_name):
+def add_action_url(app, menu_name):
     for action in actions:
         if action['name'] == 'list':
             action['title'] = _("list")
-            action['url'] = __package__ + ":" + menu_name
+            action['url'] = app + ":" + menu_name
         elif action['name'] == 'register':
             action['title'] = _("register")
-            action['url'] = __package__ + ":" + menu_name + "-register"
+            action['url'] = app + ":" + menu_name + "-register"
 
 class PersonAutocomplete(autocomplete.Select2QuerySetView):
     """Autocomplete pour rechercher des personnes existantes"""
@@ -153,7 +153,7 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
 
     menu_name = "birth"
     
-    add_action_url(menu_name)
+    add_action_url(__package__, menu_name)
 
     line_bypage = str(request.GET.get('line', 10))
 
@@ -185,14 +185,14 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
         "actions": actions,
         "table_length": line_bypage,
         "table": {
-            "headers": [_("number"), _("date"), _("full name"), _("gender"), _("age"), _("birthday"), _("father"), _("mother"), _("fokotany"), _("action")], 
+            "headers": [_("date of creation"), _("number"), _("full name"), _("gender"), _("age"), _("birthday"), _("father"), _("mother"), _("fokotany"), _("action")], 
             "datas": [
                 {                                
                     "index" : index,
                     "pk": (CertificateDocument.objects.filter(birth_certificate=birth).first()).pk if CertificateDocument.objects.filter(birth_certificate=birth).exists() else int(birth.pk),
                     "row": [
-                        {"header": "number", "value": str(birth.pk).zfill(9), "style": "text-center w-12 text-nowrap", "title": str(birth.pk).zfill(9)},
                         {"header": "date", "value": birth.date_created, "style": "text-start w-4 text-nowrap", "title": birth.date_created},
+                        {"header": "number", "value": str(birth.pk).zfill(9), "style": "text-center w-12 text-nowrap", "title": str(birth.pk).zfill(9)},
                         {"header": "full name", "value": birth.born.full_name, "style": "text-start w-4 text-nowrap", "title": birth.born.full_name},
                         {"header": "gender", "value": Person.GENDER_CHOICES[birth.born.gender], "style": "text-center text-nowrap", "title": Person.GENDER_CHOICES[birth.born.gender]},
                         {"header": "age", "value": date.today().year - birth.born.birthday.year, "style": "text-center text-nowrap", "title": ngettext("%(age)d year old", "%(age)d years old", date.today().year - birth.born.birthday.year) % {"age": date.today().year - birth.born.birthday.year}},
@@ -201,9 +201,9 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                         {"header": "mother", "value": birth.mother.full_name, "style": "text-start w-4 text-nowrap", "title": birth.mother.full_name},
                         {"header": "fokotany", "value": birth.fokotany.name, "style": "text-start w-4 text-nowrap", "title": birth.fokotany},
                         {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
-                            {"name": _("open"), "url": "civil:certificate-preview", "style": "green"},
-                            {"name": _("modify"), "url": "civil:birth-modify", "style": "blue"},
-                            {"name": _("delete"), "url": "civil:birth-delete", "style": "red"},
+                            {"name": _("open"), "url": "civil:certificate-print", "style": "green"},
+                            {"name": _("print"), "url": "civil:certificate-preview", "style": "blue"},
+                            # {"name": _("delete"), "url": "civil:birth-delete", "style": "red"},
                         ]},
                     ],
                 } for index, birth in enumerate(certificate_bypage.get_page(1))
@@ -232,7 +232,7 @@ def birth_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponseP
 
     menu_name = "birth"
     
-    add_action_url(menu_name)
+    add_action_url(__package__, menu_name)
 
     request.session['menu_app'] = menu_name
 
@@ -449,7 +449,7 @@ def death(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
 
     menu_name = "death"
     
-    add_action_url(menu_name)
+    add_action_url(__package__, menu_name)
 
     context = {
         "user": request.user,
@@ -496,7 +496,7 @@ def death_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponseP
 
     menu_name = "death"
     
-    add_action_url(menu_name)
+    add_action_url(__package__, menu_name)
 
     request.session['menu_app'] = menu_name
 
@@ -533,7 +533,7 @@ def marriage(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermane
 
     menu_name = "marriage"
 
-    add_action_url(menu_name)
+    add_action_url(__package__, menu_name)
 
     context = {
         "user": request.user,
@@ -564,7 +564,7 @@ def marriage_register(request: WSGIRequest) -> HttpResponseRedirect | HttpRespon
 
     menu_name = "marriage"
 
-    add_action_url(menu_name)
+    add_action_url(__package__, menu_name)
 
     context = {
         "user": request.user,

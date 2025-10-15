@@ -2,7 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as  _
 
-from administration.models import Fokotany
+from administration.models import Fokotany, Staff
 
 # Create your models here.
 class Person(models.Model):
@@ -45,6 +45,7 @@ class BirthCertificate(models.Model):
     mother_carreer = models.CharField(max_length=80)
     declarer = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name='birth_declarer')
     declarer_carreer = models.CharField(max_length=80)
+    staff_responsible = models.ForeignKey(Staff, on_delete=models.DO_NOTHING, related_name="birth_reponsible", null=True)
     fokotany = models.ForeignKey(Fokotany, on_delete=models.DO_NOTHING, related_name="birth_fokotany", default=0)
     certificate_type = models.CharField(max_length=1, choices=CERTIFICATE_TYPES)
     date_created = models.DateTimeField(auto_now_add=True)

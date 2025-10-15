@@ -173,7 +173,7 @@
                 </div>
                 
                 <!-- Corps du texte en malgache -->
-                <div class="flex flex-col col-span-7 gap-y-12 leading-tight text-justify" style="position: relative; z-index: 1;">
+                <div class="flex flex-col col-span-7 gap-y-10 leading-tight text-justify" style="position: relative; z-index: 1;">
                     
                     <!-- Titre en écriture manuscrite -->
                     <div class="">
@@ -185,34 +185,55 @@
                         after:bottom-[0.2em]">Kopian'ny Sora-piankohonana</h1>
                     </div>
 
-                    <p class="inline text-justify bg-clip-text">
-                        _______Nalaina tamin'ny bokim-piankohonana ao {{ certificate.fokotany.name }}, taona {{ certificate.date_created|date:"Y" }},
-                        izao soratra manaraka izao.
-                    </p>
+                    <div class="relative 
+                        after:content-[''] after:absolute
+                        after:bg-white
+                        after:left-0 after:w-full after:h-[20px]"
+                    >
+                        <p class="inline text-justify bg-clip-text">
+                            _______Nalaina tamin'ny bokim-piankohonana ao {{ certificate.fokotany.name }}, taona {{ certificate.date_created|date:"Y" }},
+                            izao soratra manaraka izao.
+                        </p>
+                        <p class="inline">-------------------------------------------------------------------------------------------</p>
+                    </div>
 
-                    <p class="text-justify">
-                        _________Tamin'ny roapolo {% trans "Desambra" %}, taona dimy sy roa arivo, tamin'ny iraiky
-                        ambin'ny folo ora maraina, no teraka tao amin'ny trano
-                        fampivelonanana ao {{ certificate.born.birth_place }}, Commune io ihany: 
-                        {{ certificate.born.full_name }},
-                        {% if certificate.born.gender == 'M' %}zanakalahy{% else %}zanakavavy{% endif %}, zanak'i
-                        {% if certificate.father %}{{ certificate.father.full_name|default:"" }} teraka tamin'ny roa {% trans "January" %}, taona sivy amby enim-polo sy sivin-jato sy arivo, 
-                        tao Sakaramy, izay nanjana'azy teo amin'ny fahaterahany sy {% endif %}
-                        {{ certificate.mother.full_name }}, teraka tamin'ny roa ambin'ny folo Jolay, taona fito amby fitopolo sy sivin-jato sy arivo,
-                        tao Ambilobe, samy mpamboly sy monina ao Ampiampianona, Commune ao {{ certificate.fokotany.name }}.
-                    </p>
-                    
-                    <p class="text-justify">
-                        _________Nosoratana androany roa amby roapolo {% trans "Desambra" %}, taona dimy sy roa arivo,
-                        tamin'ny valo ora maraina, araky ny fanambarana nataon'i
-                        {{ certificate.declarer.full_name }},
-                        teraka tamin'ny telo Septambra, taona efatra amby fitopolo sy sivin-jato sy arivo,
-                        tao itaosy-Antananarivo, Mpitsabo, monina ao {{ certificate.fokotany.name }},
-                        izay nanatrika ny fahaterahany ka miara manao Sonia aminay:
-                        {{ certificate.father.full_name|upper }}, Ben'ny Tanàna,
-                        mpiandraikitra sora-piankohonana ao {{ certificate.fokotany.name }},
-                        rehefa novakina taminy ity soratra ity.
-                    </p>
+                    <div class="relative 
+                        after:content-[''] after:absolute
+                        after:bg-white
+                        after:left-0 after:w-full after:h-[20px]"
+                    >
+                        <p class="inline text-justify">
+                            _________Tamin'ny roapolo {% trans "Desambra" %}, taona dimy sy roa arivo, tamin'ny iraiky
+                            ambin'ny folo ora maraina, no teraka tao amin'ny trano
+                            fampivelonanana ao {{ certificate.born.birth_place }}, Commune io ihany: 
+                            {{ certificate.born.full_name }},
+                            {% if certificate.born.gender == 'M' %}zanakalahy{% else %}zanakavavy{% endif %}, zanak'i
+                            {% if certificate.father %}{{ certificate.father.full_name|default:"" }} teraka tamin'ny roa {% trans "January" %}, taona sivy amby enim-polo sy sivin-jato sy arivo, 
+                            tao Sakaramy, izay nanjana'azy teo amin'ny fahaterahany sy {% endif %}
+                            {{ certificate.mother.full_name }}, teraka tamin'ny roa ambin'ny folo Jolay, taona fito amby fitopolo sy sivin-jato sy arivo,
+                            tao Ambilobe, samy mpamboly sy monina ao Ampiampianona, Commune ao {{ certificate.fokotany.name }}.
+                        </p>
+                        <p class="inline">-------------------------------------------------------------------------------------------</p>
+                    </div>
+
+                    <div class="relative 
+                        after:content-[''] after:absolute
+                        after:bg-white
+                        after:left-0 after:w-full after:h-[20px]"
+                    >
+                        <p class="inline text-justify">
+                            _________Nosoratana androany roa amby roapolo {% trans "Desambra" %}, taona dimy sy roa arivo,
+                            tamin'ny valo ora maraina, araky ny fanambarana nataon'i
+                            {% if certificate.declarer == certificate.father %} rainy izay {% elif certificate.declarer == certificate.mother %} reniny izay {% else %}{{ certificate.declarer.full_name }},
+                            teraka tamin'ny telo Septambra, taona efatra amby fitopolo sy sivin-jato sy arivo,
+                            tao itaosy-Antananarivo, Mpitsabo, monina ao {{ certificate.fokotany.name }},
+                            izay nanatrika ny fahaterahany ka {% endif %} miara manao Sonia aminay:
+                            {{ certificate.father.full_name|upper }}, Ben'ny Tanàna,
+                            mpiandraikitra sora-piankohonana ao {{ certificate.fokotany.name }},
+                            rehefa novakina taminy ity soratra ity.
+                        </p>
+                        <p class="inline">-------------------------------------------------------------------------------------------</p>
+                    </div>
                 </div>
                 
                 <p class="col-span-3 text-[11pt] underline mt-4 indent-4">SARANY : 1000 Ariary</p>
