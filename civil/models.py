@@ -2,7 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as  _
 
-from administration.models import Fokotany, Staff
+from administration.models import Fokotany, Role, Staff
 
 # Create your models here.
 class Person(models.Model):
@@ -34,18 +34,20 @@ class Person(models.Model):
 
 class BirthCertificate(models.Model):
     CERTIFICATE_TYPES = {
-        'F': 'Fatherless',
-        'N': 'Normal',
-        'R': 'Recognition'
+        'F': _('Fatherless Birth'),
+        'N': _('Normal Birth'),
+        'R': _('Birth and Recognition')
     }
     born = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="birth_born")
     father = models.ForeignKey(Person, on_delete=models.SET_NULL, related_name="birth_father", null=True,)
     father_carreer = models.CharField(max_length=80, null=True)
+    father_address = models.CharField(max_length=100, null=True)
     mother = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name="birth_mother")
     mother_carreer = models.CharField(max_length=80)
+    mother_address = models.CharField(max_length=100, default="Betsiaka")
     declarer = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name='birth_declarer')
     declarer_carreer = models.CharField(max_length=80)
-    staff_responsible = models.ForeignKey(Staff, on_delete=models.DO_NOTHING, related_name="birth_reponsible", null=True)
+    declarer_address = models.CharField(max_length=100, default="Betsiaka")
     fokotany = models.ForeignKey(Fokotany, on_delete=models.DO_NOTHING, related_name="birth_fokotany", default=0)
     certificate_type = models.CharField(max_length=1, choices=CERTIFICATE_TYPES)
     date_created = models.DateTimeField(auto_now_add=True)

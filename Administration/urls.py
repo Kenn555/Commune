@@ -10,7 +10,8 @@ urlpatterns = [
     path("", views.index, name="index"),
     # Personnels
     path("staff/", views.staff_list, name="staff"),
-    path("staff/register/", views.staff_list, name="staff-register"),
+    path("staff/register/", views.staff_register, name="staff-register"),
+    path("staff/save/", views.staff_save, name="staff-save"),
     # Utilisateurs
     path("user/", views.user_list, name="user"),
     path("user/register/", views.user_register, name="user-register"),

@@ -19,7 +19,7 @@
             <div class="table-header-group text-md font-semibold border-b">
                 {% for header in table.headers %}
                     <div class="table-cell px-4 py-2 text-center text-nowrap border-b-2 border-gray-200">
-                        {{ header|title }}
+                        {{ header|capfirst }}
                     </div>
                 {% endfor %}
             </div>

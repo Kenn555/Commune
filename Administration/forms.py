@@ -2,6 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from account.models import User
+from administration.models import Application, Service, Staff
 
 
 CLASS_FIELD = """
@@ -80,53 +81,212 @@ class UserForm(forms.Form):
         )
     )
 
-    civil = forms.BooleanField(
-        label=_("civil status").title(),
-        required=False,
-        label_suffix="",
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
-    )
-
-    events = forms.BooleanField(
-        label=_("events").title(),
-        required=False,
-        label_suffix="",
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
-    )
-
-    finances = forms.BooleanField(
-        label=_("finances").title(),
-        required=False,
-        label_suffix="",
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
-    )
-
-    mines = forms.BooleanField(
-        label=_("mines").title(),
-        required=False,
-        label_suffix="",
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
-    )
-
-    administration = forms.BooleanField(
-        label=_("administration").title(),
-        required=False,
-        label_suffix="",
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
-    )
-
-    social = forms.BooleanField(
-        label=_("social").title(),
-        required=False,
-        label_suffix="",
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
-    )
-
     fieldsets = {
         _("Matricule"): ["number"],
         _("Informations"): ["last_name", "first_name", "email",],
         _("Logins"): ["username", "password",],
-        _("Applications"): ["civil", "events", "finances", "mines", "social", "administration"],
+    }
+
+    @property
+    def fieldsets_fields(self):
+        fs = {}
+        for title, fields in self.fieldsets.items():
+            # Cas 1 : la section est une simple liste de champs
+            if isinstance(fields, (list, tuple)):
+                fs[title] = [self[ch] for ch in fields]
+
+            # Cas 2 : la section contient des sous-groupes (dictionnaire imbriqué)
+            elif isinstance(fields, dict):
+                sub_fs = {}
+                for sub_title, sub_fields in fields.items():
+                    sub_fs[sub_title] = [self[ch] for ch in sub_fields]
+                fs[title] = sub_fs
+
+            # Cas 3 : si un autre type apparaît (sécurité)
+            else:
+                raise TypeError(f"Invalid type for fieldset '{title}': {type(fields).__name__}")
+
+        return fs
+    
+
+class StaffForm(forms.Form):    
+    number = forms.CharField(
+        label=_("Number"), 
+        disabled=True,
+        initial="1".zfill(9) if not User.objects.count() else str(User.objects.last().id + 1).zfill(9),
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD.replace("w-full min-w-52", "w-36 text-gray-500") + " text-center text-lg tracking-widest cursor-pointer", 
+                "placeholder": "0000000001",
+                "title": "Matricule",
+            }
+        )
+    )
+
+    first_name = forms.CharField(
+        label=_("First Name"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert her/his first name"),
+                "title": _("Insert her/his first name"),
+            }
+        )
+    )
+    
+    last_name = forms.CharField(
+        label=_("Last Name"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert her/his last name"),
+                "title": _("Insert her/his last name"),
+            }
+        )
+    )
+    
+    gender = forms.ChoiceField(
+        label=_("Gender"), 
+        choices=Staff.GENDER_CHOICES,
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD,
+                "title": _("Choose the gender")
+            }
+        )
+    )
+    
+    birthday = forms.DateTimeField(
+        label=_("Birthday"), 
+        # initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "title": _("Enter/Choose the date of birth")
+            }
+        )
+    )
+    
+    contact_1 = forms.CharField(
+        label=_("Contact 1"), 
+        max_length=10,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert her/his first contact"),
+                "title": _("Insert her/his first contact"),
+            }
+        )
+    )
+    
+    contact_2 = forms.CharField(
+        label=_("Contact 2"),
+        required=False,
+        max_length=10,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert her/his second contact"),
+                "title": _("Insert her/his second contact"),
+            }
+        )
+    )
+
+    email = forms.EmailField(
+        label=_("Email"), 
+        widget=forms.EmailInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert her/his email"),
+                "title": _("Insert her/his email"),
+            }
+        )
+    )
+
+    username = forms.CharField(
+        label=_("Username"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert her/his username"),
+                "title": _("Insert her/his username"),
+            }
+        )
+    )
+
+    password = forms.CharField(
+        label=_("Password"), 
+        widget=forms.PasswordInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert her/his password"),
+                "title": _("Insert her/his password"),
+            }
+        )
+    )
+
+    title = forms.CharField(
+        label=_("Title"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert her/his role"),
+                "title": _("Insert her/his role"),
+            }
+        )
+    )
+
+    description = forms.CharField(
+        label=_("Description"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert her/his title"),
+                "title": _("Insert her/his title"),
+            }
+        )
+    )
+
+    application = forms.ModelChoiceField(
+        label=_("Application"),
+        queryset=Application.objects.all(),
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD,
+                "placeholder": _("Select a Application..."),
+            }
+        )
+    )
+
+    service = forms.ModelChoiceField(
+        label=_("Service"),
+        queryset=Service.objects.all(),
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD,
+                "placeholder": _("Select a Service..."),
+            }
+        )
+    )
+
+    is_boss = forms.BooleanField(
+        label=_("Manager"),
+        required=False,
+        label_suffix="",
+        widget=forms.CheckboxInput(
+            attrs={
+                
+            }
+        )
+    )
+
+
+    fieldsets = {
+        _("Matricule"): ["number"],
+        _("Informations"): ["last_name","first_name","email","gender","birthday","contact_1","contact_2",],
+        _("Role"): ["title", "description", "application", "service", "is_boss"],
+        _("Logins"): ["username", "password",],
     }
 
     @property

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-14 14:58+0300\n"
+"POT-Creation-Date: 2025-10-16 14:52+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,68 +18,156 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: .\CommonAdmin\settings.py:34
-msgid "home"
-msgstr "accueil"
-
 #: .\CommonAdmin\settings.py:35 .\CommonAdmin\settings.py:38
 #: .\CommonAdmin\settings.py:44 .\CommonAdmin\settings.py:47
-#: .\CommonAdmin\settings.py:51 .\CommonAdmin\settings.py:55
-#: .\CommonAdmin\settings.py:59
+#: .\CommonAdmin\settings.py:50 .\CommonAdmin\settings.py:53
+#: .\CommonAdmin\settings.py:56 .\CommonAdmin\settings.py:65
+#: .\CommonAdmin\settings.py:68 .\CommonAdmin\settings.py:74
+#: .\CommonAdmin\settings.py:77 .\CommonAdmin\settings.py:81
+#: .\CommonAdmin\settings.py:85 .\CommonAdmin\settings.py:89
 msgid "dashboard"
 msgstr "tableau de bord"
 
-#: .\CommonAdmin\settings.py:37
-msgid "civil status"
-msgstr "état civil"
-
-#: .\CommonAdmin\settings.py:39 .\civil\templates\civil\dashboard.html:13
+#: .\CommonAdmin\settings.py:39 .\CommonAdmin\settings.py:69
+#: .\civil\templates\civil\dashboard.html:13
 msgid "birth certificate"
 msgstr "acte de naissance"
 
-#: .\CommonAdmin\settings.py:40 .\civil\templates\civil\dashboard.html:21
+#: .\CommonAdmin\settings.py:40 .\CommonAdmin\settings.py:70
+#: .\civil\templates\civil\dashboard.html:21
 msgid "death certificate"
 msgstr "acte de décès"
 
-#: .\CommonAdmin\settings.py:41 .\civil\templates\civil\dashboard.html:29
+#: .\CommonAdmin\settings.py:41 .\CommonAdmin\settings.py:71
+#: .\civil\templates\civil\dashboard.html:29
 msgid "marriage certificate"
 msgstr "acte de mariage"
 
-#: .\CommonAdmin\settings.py:43
-msgid "events"
-msgstr "événements"
-
-#: .\CommonAdmin\settings.py:46
-msgid "finances"
-msgstr "trésorerie"
-
-#: .\CommonAdmin\settings.py:50
-msgid "mines"
-msgstr "mines"
-
-#: .\CommonAdmin\settings.py:54
-msgid "social business"
-msgstr "affaires sociales"
-
-#: .\CommonAdmin\settings.py:58
-msgid "administration"
-msgstr "administration"
-
-#: .\CommonAdmin\settings.py:60
+#: .\CommonAdmin\settings.py:57 .\CommonAdmin\settings.py:90
 msgid "staff"
 msgstr ""
 
-#: .\CommonAdmin\settings.py:61
+#: .\CommonAdmin\settings.py:58 .\CommonAdmin\settings.py:91
 msgid "user"
 msgstr ""
 
-#: .\CommonAdmin\settings.py:62
+#: .\CommonAdmin\settings.py:59 .\CommonAdmin\settings.py:92
 #: .\administration\templates\administration\dashboard.html:29
 msgid "application"
 msgstr ""
 
-#: .\CommonAdmin\settings.py:63
+#: .\CommonAdmin\settings.py:60 .\CommonAdmin\settings.py:93
 msgid "settings"
+msgstr ""
+
+#: .\CommonAdmin\settings.py:64
+msgid "home"
+msgstr "accueil"
+
+#: .\CommonAdmin\settings.py:67 .\administration\forms.py:84
+msgid "civil status"
+msgstr "état civil"
+
+#: .\CommonAdmin\settings.py:73 .\administration\forms.py:91
+msgid "events"
+msgstr "événements"
+
+#: .\CommonAdmin\settings.py:76 .\administration\forms.py:98
+msgid "finances"
+msgstr "trésorerie"
+
+#: .\CommonAdmin\settings.py:80 .\administration\forms.py:105
+msgid "mines"
+msgstr "mines"
+
+#: .\CommonAdmin\settings.py:84
+msgid "social business"
+msgstr "affaires sociales"
+
+#: .\CommonAdmin\settings.py:88 .\administration\forms.py:112
+msgid "administration"
+msgstr "administration"
+
+#: .\administration\forms.py:16 .\civil\forms.py:34
+msgid "Number"
+msgstr "Novembre"
+
+#: .\administration\forms.py:29 .\civil\forms.py:59 .\civil\forms.py:353
+#: .\civil\forms.py:405
+msgid "First Name"
+msgstr "Prénom"
+
+#: .\administration\forms.py:33 .\administration\forms.py:34
+#: .\civil\forms.py:64 .\civil\forms.py:65 .\civil\forms.py:357
+#: .\civil\forms.py:358
+msgid "Insert her/his first name"
+msgstr "Insérez le prénom"
+
+#: .\administration\forms.py:40 .\civil\forms.py:48 .\civil\forms.py:342
+#: .\civil\forms.py:400
+msgid "Last Name"
+msgstr "Nom"
+
+#: .\administration\forms.py:44 .\administration\forms.py:45
+#: .\civil\forms.py:52 .\civil\forms.py:53 .\civil\forms.py:346
+#: .\civil\forms.py:347 .\civil\forms.py:401
+msgid "Insert her/his last name"
+msgstr "Insérez le nom"
+
+#: .\administration\forms.py:51
+msgid "Username"
+msgstr ""
+
+#: .\administration\forms.py:55 .\administration\forms.py:56
+#, fuzzy
+#| msgid "Insert her/his last name"
+msgid "Insert her/his username"
+msgstr "Insérez le nom"
+
+#: .\administration\forms.py:62
+msgid "Password"
+msgstr ""
+
+#: .\administration\forms.py:66 .\administration\forms.py:67
+#, fuzzy
+#| msgid "Insert her/his last name"
+msgid "Insert her/his password"
+msgstr "Insérez le nom"
+
+#: .\administration\forms.py:73
+msgid "Email"
+msgstr ""
+
+#: .\administration\forms.py:77 .\administration\forms.py:78
+#, fuzzy
+#| msgid "Insert her/his last name"
+msgid "Insert her/his email"
+msgstr "Insérez le nom"
+
+#: .\administration\forms.py:119
+msgid "social"
+msgstr ""
+
+#: .\administration\forms.py:126
+#: .\administration\templates\administration\user_register.html:5
+#: .\civil\forms.py:303 .\civil\forms_model.py:65
+#: .\civil\templates\civil\register.html:5 .\civil\views.py:275
+msgid "Matricule"
+msgstr ""
+
+#: .\administration\forms.py:127 .\administration\views.py:243
+#: .\civil\forms.py:304 .\civil\forms.py:387 .\civil\forms_model.py:66
+#: .\civil\forms_model.py:92 .\civil\views.py:270
+msgid "Informations"
+msgstr ""
+
+#: .\administration\forms.py:128 .\administration\views.py:244
+msgid "Logins"
+msgstr ""
+
+#: .\administration\forms.py:129
+#: .\administration\templates\administration\user_register.html:6
+msgid "Applications"
 msgstr ""
 
 #: .\administration\models.py:30 .\civil\models.py:10
@@ -90,6 +178,16 @@ msgstr "Homme"
 msgid "Female"
 msgstr "Femme"
 
+#: .\administration\models.py:45 .\civil\models.py:30 .\civil\models.py:33
+#, python-format
+msgid "%(first_name)s %(last_name)s"
+msgstr ""
+
+#: .\administration\models.py:69
+#, python-format
+msgid "%(staff)s, %(title)s"
+msgstr ""
+
 #: .\administration\templates\administration\dashboard.html:13
 msgid "staffs"
 msgstr ""
@@ -98,205 +196,252 @@ msgstr ""
 msgid "users"
 msgstr ""
 
+#: .\administration\templates\administration\user_list.html:13
+#: .\civil\templates\civil\list.html:13
+msgid "Lines"
+msgstr "Lignes"
+
+#: .\administration\templates\administration\user_register.html:4
+#: .\civil\forms.py:305 .\civil\templates\civil\register.html:4
+msgid "Other Informations"
+msgstr "Informations sur le mariage"
+
+#: .\administration\templates\administration\user_register.html:110
+#: .\civil\templates\civil\register.html:110
+msgid "Do a Certificate"
+msgstr "Faire un certificat"
+
+#: .\administration\templates\administration\user_register.html:147
+#: .\civil\templates\civil\register.html:143
+msgid "Submit"
+msgstr "Enregistrer"
+
+#: .\administration\templates\administration\user_register.html:148
+#: .\civil\templates\civil\register.html:144
+msgid "Reset"
+msgstr "Refaire"
+
+#: .\administration\views.py:91 .\administration\views.py:168
+#: .\civil\views.py:188
+msgid "number"
+msgstr "numéro"
+
+#: .\administration\views.py:91 .\administration\views.py:168
+#: .\civil\views.py:188
+msgid "full name"
+msgstr "nom complet"
+
+#: .\administration\views.py:91 .\civil\views.py:188
+msgid "gender"
+msgstr "genre"
+
+#: .\administration\views.py:91 .\civil\views.py:188
+msgid "age"
+msgstr "âge"
+
+#: .\administration\views.py:91 .\civil\views.py:188
+msgid "birthday"
+msgstr "Date de naissance"
+
+#: .\administration\views.py:91 .\administration\views.py:168
+#: .\civil\views.py:188
+msgid "action"
+msgstr ""
+
+#: .\administration\views.py:100 .\civil\views.py:198
+#, python-format
+msgid "%(age)d year old"
+msgid_plural "%(age)d years old"
+msgstr[0] "%(age)d an"
+msgstr[1] "%(age)d ans"
+
+#: .\administration\views.py:103 .\civil\views.py:204
+msgid "open"
+msgstr "ouvrir"
+
+#: .\administration\views.py:104 .\civil\views.py:205
+msgid "print"
+msgstr ""
+
+#: .\administration\views.py:105 .\administration\views.py:180
+msgid "delete"
+msgstr "supprimer"
+
+#: .\administration\views.py:168
+msgid "username"
+msgstr ""
+
+#: .\administration\views.py:168
+msgid "password"
+msgstr ""
+
+#: .\administration\views.py:179
+msgid "modify"
+msgstr "modifier"
+
 #: .\civil\forms.py:21
 msgid "Fokotany"
 msgstr ""
 
-#: .\civil\forms.py:34
-msgid "Number"
-msgstr "Novembre"
-
-#: .\civil\forms.py:48 .\civil\forms.py:341 .\civil\forms.py:399
-msgid "Last Name"
-msgstr "Nom"
-
-#: .\civil\forms.py:52 .\civil\forms.py:53 .\civil\forms.py:345
-#: .\civil\forms.py:346 .\civil\forms.py:400
-msgid "Insert her/his last name"
-msgstr "Insérez le nom"
-
-#: .\civil\forms.py:59 .\civil\forms.py:352 .\civil\forms.py:404
-msgid "First Name"
-msgstr "Prénom"
-
-#: .\civil\forms.py:63 .\civil\forms.py:64 .\civil\forms.py:356
-#: .\civil\forms.py:357
-msgid "Insert her/his first name"
-msgstr "Insérez le prénom"
-
-#: .\civil\forms.py:70
+#: .\civil\forms.py:71
 msgid "Gender"
 msgstr "Genre"
 
-#: .\civil\forms.py:75
+#: .\civil\forms.py:76
 msgid "Choose the gender"
 msgstr "Choisissez le genre"
 
-#: .\civil\forms.py:81 .\civil\forms.py:138 .\civil\forms.py:208
-#: .\civil\forms.py:268
+#: .\civil\forms.py:82 .\civil\forms.py:139 .\civil\forms.py:209
+#: .\civil\forms.py:269
 msgid "Place of Birth"
 msgstr "Lieu de naissance"
 
-#: .\civil\forms.py:85 .\civil\forms.py:86
+#: .\civil\forms.py:86 .\civil\forms.py:87
 msgid "Insert the place of birth"
 msgstr "Insérez le lieu de naissance"
 
-#: .\civil\forms.py:92 .\civil\forms.py:150 .\civil\forms.py:219
-#: .\civil\forms.py:279
+#: .\civil\forms.py:93 .\civil\forms.py:151 .\civil\forms.py:220
+#: .\civil\forms.py:280
 msgid "Birthday"
 msgstr "Date de naissance"
 
-#: .\civil\forms.py:98
+#: .\civil\forms.py:99
 msgid "Enter/Choose the date of birth"
 msgstr "Entrez/Choisissez la date de naissance"
 
-#: .\civil\forms.py:105 .\civil\forms.py:176
+#: .\civil\forms.py:106 .\civil\forms.py:177
 msgid "Search for a existing Mother"
 msgstr "Recherchez d'une mère existante"
 
-#: .\civil\forms.py:112
+#: .\civil\forms.py:113
 msgid "Existing Father"
 msgstr "Père existant"
 
-#: .\civil\forms.py:119
+#: .\civil\forms.py:120
 msgid "Search for Father..."
 msgstr "Recherchez le père"
 
-#: .\civil\forms.py:126
+#: .\civil\forms.py:127
 msgid "Father's Full Name"
 msgstr "Nom complet du père"
 
-#: .\civil\forms.py:131 .\civil\forms.py:132
+#: .\civil\forms.py:132 .\civil\forms.py:133
 msgid "Wait for her/his father's full name"
 msgstr "Attendre le nom complet du père"
 
-#: .\civil\forms.py:143 .\civil\forms.py:144
+#: .\civil\forms.py:144 .\civil\forms.py:145
 msgid "Wait for her/his father's place of birth"
 msgstr "Attendre le lieu de naissance du père"
 
-#: .\civil\forms.py:157
+#: .\civil\forms.py:158
 msgid "Wait for her/his father's date of birth"
 msgstr "Attendre la date de naissance du père"
 
-#: .\civil\forms.py:163
+#: .\civil\forms.py:164
 msgid "Father's Job"
 msgstr "Profession du père"
 
-#: .\civil\forms.py:168 .\civil\forms.py:169
+#: .\civil\forms.py:169 .\civil\forms.py:170
 msgid "Insert her/his father's job"
 msgstr "Insérez la profession du père"
 
-#: .\civil\forms.py:183
+#: .\civil\forms.py:184
 msgid "Existing Mother"
 msgstr "Mère existante"
 
-#: .\civil\forms.py:190
+#: .\civil\forms.py:191
 msgid "Search for Mother..."
 msgstr "Recherchez la mère"
 
-#: .\civil\forms.py:197
+#: .\civil\forms.py:198
 msgid "Mother's Full Name"
 msgstr "Nom complet de la mère"
 
-#: .\civil\forms.py:201 .\civil\forms.py:202
+#: .\civil\forms.py:202 .\civil\forms.py:203
 msgid "Wait for her/his mother's full name"
 msgstr "Attendre le nom complet du mère"
 
-#: .\civil\forms.py:212 .\civil\forms.py:213
+#: .\civil\forms.py:213 .\civil\forms.py:214
 msgid "Wait for her/his mother's place of birth"
 msgstr "Attendre le lieu de naissance de la mère"
 
-#: .\civil\forms.py:225
+#: .\civil\forms.py:226
 msgid "Wait for her/his mother's date of birth"
 msgstr "Attendre la date de naissance de la mère"
 
-#: .\civil\forms.py:231
+#: .\civil\forms.py:232
 msgid "Mother's Job"
 msgstr "Profession de la mère"
 
-#: .\civil\forms.py:235 .\civil\forms.py:236
+#: .\civil\forms.py:236 .\civil\forms.py:237
 msgid "Insert her/his mother's job"
 msgstr "Insérez la profession de la mère"
 
-#: .\civil\forms.py:243
+#: .\civil\forms.py:244
 msgid "Existing Declarer"
 msgstr "Père existant"
 
-#: .\civil\forms.py:250
+#: .\civil\forms.py:251
 msgid "Search for Declarer..."
 msgstr "Recherchez le père"
 
-#: .\civil\forms.py:257
+#: .\civil\forms.py:258
 msgid "Declarer's Full Name"
 msgstr "Nom complet du père"
 
-#: .\civil\forms.py:261 .\civil\forms.py:262
+#: .\civil\forms.py:262 .\civil\forms.py:263
 msgid "Wait for the declarer's full name"
 msgstr "Attendre le nom complet du père"
 
-#: .\civil\forms.py:272 .\civil\forms.py:273
+#: .\civil\forms.py:273 .\civil\forms.py:274
 msgid "Wait for the declarer's place of birth"
 msgstr "Attendre le lieu de naissance du père"
 
-#: .\civil\forms.py:285
+#: .\civil\forms.py:286
 msgid "Wait for the declarer's date of birth"
 msgstr "Attendre la date de naissance du père"
 
-#: .\civil\forms.py:291
+#: .\civil\forms.py:292
 msgid "Declarer's Job"
 msgstr "Profession du père"
 
-#: .\civil\forms.py:295 .\civil\forms.py:296
+#: .\civil\forms.py:296 .\civil\forms.py:297
 msgid "Insert the declarer's job"
 msgstr "Insérez la profession du père"
 
-#: .\civil\forms.py:302 .\civil\forms_model.py:65
-#: .\civil\templates\civil\register.html:5 .\civil\views.py:275
-msgid "Matricule"
-msgstr ""
-
-#: .\civil\forms.py:303 .\civil\forms.py:386 .\civil\forms_model.py:66
-#: .\civil\forms_model.py:92 .\civil\views.py:270
-msgid "Informations"
-msgstr ""
-
-#: .\civil\forms.py:304 .\civil\templates\civil\register.html:4
-msgid "Other Informations"
-msgstr "Informations sur le mariage"
-
-#: .\civil\forms.py:305
+#: .\civil\forms.py:306
 msgid "Father"
 msgstr "Père"
 
-#: .\civil\forms.py:309
+#: .\civil\forms.py:310
 msgid "Mother"
 msgstr "Mère"
 
-#: .\civil\forms.py:312
+#: .\civil\forms.py:313
 msgid "Declarer"
 msgstr ""
 
-#: .\civil\forms.py:363
+#: .\civil\forms.py:364
 msgid "Date of Death"
 msgstr "Date de décès"
 
-#: .\civil\forms.py:369
+#: .\civil\forms.py:370
 msgid "Enter/Choose the date of death"
 msgstr "Entrez/Choisissez la date du décès"
 
-#: .\civil\forms.py:375
+#: .\civil\forms.py:376
 msgid "Place of Death"
 msgstr "Lieu de décès"
 
-#: .\civil\forms.py:379 .\civil\forms.py:380
+#: .\civil\forms.py:380 .\civil\forms.py:381
 msgid "Insert the place of death"
 msgstr "Insérez le lieu du décès"
 
-#: .\civil\forms.py:408
+#: .\civil\forms.py:409
 msgid "Date of Marriage"
 msgstr "Date du mariage"
 
-#: .\civil\forms.py:413
+#: .\civil\forms.py:414
 msgid "Place of Marriage"
 msgstr "Lieu du mariage"
 
@@ -308,115 +453,92 @@ msgstr ""
 msgid "Informations Mariage"
 msgstr "Informations sur le mariage"
 
-#: .\civil\models.py:30 .\civil\models.py:33
-#, python-format
-msgid "%(first_name)s %(last_name)s"
+#: .\civil\models.py:37
+msgid "Fatherless Birth"
 msgstr ""
 
-#: .\civil\models.py:63
+#: .\civil\models.py:38
+msgid "Normal Birth"
+msgstr ""
+
+#: .\civil\models.py:39
+msgid "Birth and Recognition"
+msgstr ""
+
+#: .\civil\models.py:66
 #, python-format
 msgid "%(born)s born at %(birthday)s son of %(father)s%(mother)s declared by %(declarer)s at %(date_created)s"
-msgstr "%(born)s né le %(birthday)s, fils de %(father)s%(mother)s, fait le %(date_created)s"
+msgstr "%(born)s né le %(birthday)s, fils de %(father)s%(mother)s, fanambarana nataon'i %(declarer)s fait le %(date_created)s"
 
-#: .\civil\models.py:65
+#: .\civil\models.py:68
 #, python-format
 msgid "%(born)s born at %(birthday)s daughter of %(father)s%(mother)s declared by %(declarer)s at %(date_created)s"
 msgstr "%(born)s née le %(birthday)s, fille de %(father)s%(mother)s, fait le %(date_created)s"
 
-#: .\civil\models.py:66
+#: .\civil\models.py:69
 msgid " and "
 msgstr " et "
 
-#: .\civil\models.py:72
+#: .\civil\models.py:75
 msgid "Draft"
 msgstr ""
 
-#: .\civil\models.py:73
+#: .\civil\models.py:76
 msgid "Validated"
 msgstr ""
 
-#: .\civil\models.py:74
+#: .\civil\models.py:77
 msgid "Cancelled"
 msgstr ""
 
-#: .\civil\models.py:99
+#: .\civil\models.py:102
 msgid "Digital signature or stamp info"
 msgstr ""
 
-#: .\civil\models.py:106
+#: .\civil\models.py:109
 msgid "Certificate Document"
 msgstr "Document du certificat"
 
-#: .\civil\models.py:107
+#: .\civil\models.py:110
 msgid "Certificate Documents"
 msgstr "Les documents de certificate"
 
-#: .\civil\models.py:110
+#: .\civil\models.py:113
 #, python-format
 msgid "Birth Certificate - %(number)s"
 msgstr "Certificat de naissance - %(number)s"
 
-#: .\civil\templates\civil\list.html:13
-msgid "Lines"
-msgstr "Lignes"
-
-#: .\civil\templates\civil\preview.html:92
+#: .\civil\templates\civil\preview.html:93
 msgid "Certificate Preview"
 msgstr "Aperçu du certificat"
 
-#: .\civil\templates\civil\preview.html:118
+#: .\civil\templates\civil\preview.html:119
 msgid "Print"
 msgstr ""
 
-#: .\civil\templates\civil\preview.html:128
+#: .\civil\templates\civil\preview.html:129
 msgid "Edit"
 msgstr ""
 
-#: .\civil\templates\civil\preview.html:139
+#: .\civil\templates\civil\preview.html:140
 msgid "Delete"
 msgstr "Supprimer"
 
-#: .\civil\templates\civil\preview.html:149
+#: .\civil\templates\civil\preview.html:150
 msgid "Back"
 msgstr "Retour"
 
-#: .\civil\templates\civil\preview.html:169
-#: .\civil\templates\civil\preview.html:195
-#: .\civil\templates\civil\preview.html:207
-msgid "Desambra"
-msgstr ""
-
-#: .\civil\templates\civil\preview.html:200
-msgid "January"
-msgstr ""
-
-#: .\civil\templates\civil\preview.html:232
-msgid "Oktobra"
-msgstr ""
-
-#: .\civil\templates\civil\preview.html:263
+#: .\civil\templates\civil\preview.html:286
 msgid "Issued on"
 msgstr ""
 
-#: .\civil\templates\civil\preview.html:264
+#: .\civil\templates\civil\preview.html:287
 msgid "Document"
 msgstr ""
 
-#: .\civil\templates\civil\preview.html:294
+#: .\civil\templates\civil\preview.html:317
 msgid "Are you sure you want to delete this certificate?"
 msgstr ""
-
-#: .\civil\templates\civil\register.html:110
-msgid "Do a Certificate"
-msgstr "Faire un certificat"
-
-#: .\civil\templates\civil\register.html:143
-msgid "Submit"
-msgstr "Enregistrer"
-
-#: .\civil\templates\civil\register.html:144
-msgid "Reset"
-msgstr "Refaire"
 
 #: .\civil\views.py:48
 msgid "list"
@@ -436,26 +558,6 @@ msgid "date of creation"
 msgstr "Date de décès"
 
 #: .\civil\views.py:188
-msgid "number"
-msgstr "numéro"
-
-#: .\civil\views.py:188
-msgid "full name"
-msgstr "nom complet"
-
-#: .\civil\views.py:188
-msgid "gender"
-msgstr "genre"
-
-#: .\civil\views.py:188
-msgid "age"
-msgstr "âge"
-
-#: .\civil\views.py:188
-msgid "birthday"
-msgstr "Date de naissance"
-
-#: .\civil\views.py:188
 msgid "father"
 msgstr "père"
 
@@ -467,42 +569,19 @@ msgstr "mère"
 msgid "fokotany"
 msgstr ""
 
-#: .\civil\views.py:188
-msgid "action"
-msgstr ""
-
-#: .\civil\views.py:198
-#, python-format
-msgid "%(age)d year old"
-msgid_plural "%(age)d years old"
-msgstr[0] "%(age)d an"
-msgstr[1] "%(age)d ans"
-
-#: .\civil\views.py:204
-msgid "open"
-msgstr "ouvrir"
-
-#: .\civil\views.py:205
-msgid "modify"
-msgstr "modifier"
-
-#: .\civil\views.py:206
-msgid "delete"
-msgstr "supprimer"
-
-#: .\civil\views.py:424
+#: .\civil\views.py:425
 msgid "Certificate validated successfully."
 msgstr ""
 
-#: .\civil\views.py:426
+#: .\civil\views.py:427
 msgid "This certificate cannot be validated."
 msgstr ""
 
-#: .\civil\views.py:440
+#: .\civil\views.py:441
 msgid "This certificate cannot be deleted."
 msgstr ""
 
-#: .\civil\views.py:443
+#: .\civil\views.py:444
 msgid "Certificate deleted successfully."
 msgstr ""
 

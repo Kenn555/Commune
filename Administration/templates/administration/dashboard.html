@@ -11,24 +11,28 @@
     max-sm:w-full
     ">
       <p class="font-semibold">{% trans "staffs"|capfirst %}</p>
-      <span class="text-right text-2xl">{{ birth_count }}</span>
+      <span class="text-right text-2xl">{{ staff.count }}</span>
     </a>
-    <div class="
+    <a 
+    href="{% url 'administration:user' %}"
+    class="
     flex flex-col bg-white shadow-md rounded-lg 
     h-20 px-4 py-2 w-60
     max-sm:w-full
     ">
       <p class="font-semibold">{% trans "users"|capfirst %}</p>
-      <span class="text-right text-2xl">145</span>
-    </div>
-    <div class="
+      <span class="text-right text-2xl">{{ user.count }}</span>
+    </a>
+    <a 
+    href="{% url 'administration:application' %}"
+    class="
     flex flex-col bg-white shadow-md rounded-lg 
     h-20 px-4 py-2 w-60
     max-sm:w-full
     ">
       <p class="font-semibold">{% trans "application"|capfirst %}</p>
-      <span class="text-right text-2xl">145</span>
-    </div>
+      <span class="text-right text-2xl">{{ application.count }}</span>
+    </a>
   </div>
   
   <div class="flex h-[400px] px-4 py-8 bg-white rounded-lg shadow-md">

@@ -1257,8 +1257,8 @@ select {
   margin-top: 0.5rem;
 }
 
-.mt-36 {
-  margin-top: 9rem;
+.mt-32 {
+  margin-top: 8rem;
 }
 
 .mt-4 {
@@ -1614,10 +1614,6 @@ select {
 
 .gap-y-10 {
   row-gap: 2.5rem;
-}
-
-.gap-y-12 {
-  row-gap: 3rem;
 }
 
 .gap-y-2 {
@@ -2388,11 +2384,6 @@ select {
   position: absolute;
 }
 
-.after\:relative::after {
-  content: var(--tw-content);
-  position: relative;
-}
-
 .after\:bottom-\[0\.2em\]::after {
   content: var(--tw-content);
   bottom: 0.2em;
@@ -2403,24 +2394,14 @@ select {
   left: 0px;
 }
 
-.after\:h-\[2px\]::after {
-  content: var(--tw-content);
-  height: 2px;
-}
-
-.after\:h-\[px\]::after {
-  content: var(--tw-content);
-  height: px;
-}
-
-.after\:h-\[10px\]::after {
-  content: var(--tw-content);
-  height: 10px;
-}
-
 .after\:h-\[20px\]::after {
   content: var(--tw-content);
   height: 20px;
+}
+
+.after\:h-\[2px\]::after {
+  content: var(--tw-content);
+  height: 2px;
 }
 
 .after\:w-full::after {
@@ -2442,18 +2423,6 @@ select {
   content: var(--tw-content);
   --tw-border-opacity: 1;
   border-color: rgb(0 0 0 / var(--tw-border-opacity));
-}
-
-.after\:bg-black::after {
-  content: var(--tw-content);
-  --tw-bg-opacity: 1;
-  background-color: rgb(0 0 0 / var(--tw-bg-opacity));
-}
-
-.after\:bg-blue-600::after {
-  content: var(--tw-content);
-  --tw-bg-opacity: 1;
-  background-color: rgb(37 99 235 / var(--tw-bg-opacity));
 }
 
 .after\:bg-white::after {

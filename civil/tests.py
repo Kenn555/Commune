@@ -1,13 +1,15 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.test import TestCase
 
-from administration.models import Fokotany
+from administration.models import Fokotany, Role, Staff
 from civil import views
 from civil.models import CertificateDocument, Person, BirthCertificate
 from django.utils.translation import activate
 from django.utils.translation import gettext as _
+
+from civil.templatetags.isa_gasy import OraGasy
 
 # Create your tests here.
 
@@ -72,6 +74,7 @@ activate('mg')
 
 document = get_object_or_404(CertificateDocument, pk=1)
 
+print(Role.objects.get(pk=1))
 
 # print(_(views.actions[0]['title']))
 

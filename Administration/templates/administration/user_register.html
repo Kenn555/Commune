@@ -89,7 +89,7 @@
         }
     </style>
 
-  <form action="{% url 'administration:user-save' %}" method="post" class="flex flex-col gap-y-8">
+  <form action="{% url save_url %}" method="post" class="flex flex-col gap-y-8">
   {% csrf_token %}
   
   {% for title, fields in form.fieldsets_fields.items %}

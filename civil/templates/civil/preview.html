@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block article %}
+{% load isa_gasy %}
 {% load static %}
 {% load i18n %}
     
@@ -106,7 +107,7 @@
                     <!-- Bouton Zoom -->
                     <div class="flex items-center gap-2 no-print">
                         <button onclick="zoomOut()" class="bg-gray-200 px-3 py-1 rounded">−</button>
-                        <span onclick="zoomAjust()" id="zoom-level" class="text-sm font-semibold cursor-pointer">100%</span>
+                        <span onclick="zoomAjust()" id="zoom-level" class="text-sm font-semibold w-10 text-center cursor-pointer">100%</span>
                         <button onclick="zoomIn()" class="bg-gray-200 px-3 py-1 rounded">+</button>
                     </div>
                     <!-- Bouton Imprimer -->
@@ -155,6 +156,7 @@
     
     <!-- Document A4 -->
    <div class="zoom-container">
+        {% language 'mg' %}
         <div class="a4-page text-[12pt] font-['Times_New_Roman']" id="print-area">
             {% comment %} <!-- Watermark -->
             {% if document.status == 'DRAFT' %}
@@ -163,17 +165,23 @@
             
             <div class="grid  grid-cols-10 mt-[90px] gap-y-8 gap-x-4">
                 <!-- Informations administratives -->
-                <div class="flex text-[11pt] col-span-3 flex-col items-start mt-36 gap-y-2 leading-tight">
+                <div class="flex text-[11pt] col-span-3 flex-col items-start mt-32 gap-y-2 leading-tight">
                     <p class="indent-8 underline">N° {{ document.pk }}/</p>
-                    <p class="indent-3">{{ certificate.date_created|date:"d" }} {% trans "Desambra" %} {{ certificate.date_created|date:"Y" }}</p>
-                    <p class="indent-1 uppercase">FAHATERAHANA SY<br>FANJANAHANA</p>
+                    <p class="indent-3">{{ certificate.date_created|date:"d" }} {{ certificate.date_created|date:"m"|volana_gasy|capfirst }} {{ certificate.date_created|date:"Y" }}</p>
+                    <p class="indent-1 uppercase">
+                        {% if certificate.certificate_type == "R" %}
+                            FAHATERAHANA SY<br>FANJANAHANA
+                        {% else %}
+                            FAHATERAHANA
+                        {% endif %}
+                    </p>
                     <p class="">{{ certificate.born.full_name }}</p>
                     <p class="indent-8">{{ certificate.born.birthday|date:"d-m-y" }}</p>
                     <p class="font-semibold indent-7 tracking-widest">---------------</p>
                 </div>
                 
                 <!-- Corps du texte en malgache -->
-                <div class="flex flex-col col-span-7 gap-y-10 leading-tight text-justify" style="position: relative; z-index: 1;">
+                <div class="flex flex-col col-span-7 gap-y-8 leading-tight text-justify" style="position: relative; z-index: 1;">
                     
                     <!-- Titre en écriture manuscrite -->
                     <div class="">
@@ -203,15 +211,15 @@
                         after:left-0 after:w-full after:h-[20px]"
                     >
                         <p class="inline text-justify">
-                            _________Tamin'ny roapolo {% trans "Desambra" %}, taona dimy sy roa arivo, tamin'ny iraiky
-                            ambin'ny folo ora maraina, no teraka tao amin'ny trano
-                            fampivelonanana ao {{ certificate.born.birth_place }}, Commune io ihany: 
-                            {{ certificate.born.full_name }},
-                            {% if certificate.born.gender == 'M' %}zanakalahy{% else %}zanakavavy{% endif %}, zanak'i
-                            {% if certificate.father %}{{ certificate.father.full_name|default:"" }} teraka tamin'ny roa {% trans "January" %}, taona sivy amby enim-polo sy sivin-jato sy arivo, 
-                            tao Sakaramy, izay nanjana'azy teo amin'ny fahaterahany sy {% endif %}
-                            {{ certificate.mother.full_name }}, teraka tamin'ny roa ambin'ny folo Jolay, taona fito amby fitopolo sy sivin-jato sy arivo,
-                            tao Ambilobe, samy mpamboly sy monina ao Ampiampianona, Commune ao {{ certificate.fokotany.name }}.
+                            _________Tamin'ny {{ certificate.born.birthday|date:"d"|isa_gasy }} {{ certificate.born.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ certificate.born.birthday|date:"Y"|isa_gasy }}, tamin'ny {{ certificate.born.birthday|date:"h"|isa_gasy }} ora {{ certificate.born.birthday|date:"h"|ora_gasy }}, no teraka tao amin'ny {{ certificate.born.birth_place }} {{ certificate.fokotany.name }}, 
+                            Commune {% if certificate.fokotany.name|lower == common_name|lower %} io ihany{% else %} Betsiaka{% endif %}: 
+                            {{ certificate.born.full_name }}, {% if certificate.born.gender == 'M' %}zanakalahy{% else %}zanakavavy{% endif %}, zanak'i 
+                            {% if certificate.father %}{{ certificate.father.full_name }} teraka tamin'ny {{ certificate.father.birthday|date:"d"|isa_gasy }} {{ certificate.father.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ certificate.father.birthday|date:"Y"|isa_gasy }}, tao {{ certificate.father.birth_place }},{% if certificate.father_carreer|lower != certificate.mother_carreer|lower %} {{certificate.father_carreer|lower}}, {% endif %}{% if certificate.father_address != certificate.mother_address %} monina ao {{certificate.father_address}} {% endif %}
+                            {% if certificate.certificate_type == 'R' %}izay nanjana'azy teo amin'ny fahaterahany {% endif %} sy {% endif %}
+                            {{ certificate.mother.full_name }}, teraka tamin'ny {{ certificate.mother.birthday|date:"d"|isa_gasy }} {{ certificate.mother.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ certificate.mother.birthday|date:"Y"|isa_gasy }}, tao {{ certificate.mother.birth_place }}{% if certificate.father_carreer|lower != certificate.mother_carreer|lower %}, {{certificate.mother_carreer|lower}}, {% endif %}{% if certificate.father_address != certificate.mother_address %} monina ao {{certificate.mother_address}} {% endif %}
+                            {% if certificate.father_carreer|lower == certificate.mother_carreer|lower and certificate.father_address == certificate.mother_address %}, samy {{certificate.mother_carreer|lower}} sy monina ao {{certificate.mother_address}}{% if not '-' in certificate.mother_address %}, Commune ao {{ certificate.fokotany.name }}{% endif %}
+                            {% elif certificate.father_carreer|lower|lower == certificate.mother_carreer|lower|lower %}, samy {{certificate.mother_carreer|lower|lower}}
+                            {% elif certificate.father_address == certificate.mother_address %}, samy monina ao {{certificate.mother_address}}{% if not '-' in certificate.mother_address %}, Commune ao {{ certificate.fokotany.name }}{% endif %}{% endif %}.
                         </p>
                         <p class="inline">-------------------------------------------------------------------------------------------</p>
                     </div>
@@ -222,15 +230,13 @@
                         after:left-0 after:w-full after:h-[20px]"
                     >
                         <p class="inline text-justify">
-                            _________Nosoratana androany roa amby roapolo {% trans "Desambra" %}, taona dimy sy roa arivo,
-                            tamin'ny valo ora maraina, araky ny fanambarana nataon'i
+                            _________Nosoratana androany {{ certificate.date_created|date:"d"|isa_gasy }} {{ certificate.date_created|date:"m"|volana_gasy|capfirst }}, taona {{ certificate.date_created|date:"Y"|isa_gasy }},
+                            tamin'ny {{ certificate.date_created|date:"h"|isa_gasy }} ora {{ certificate.date_created|date:"h"|ora_gasy }}, araky ny fanambarana nataon'i
                             {% if certificate.declarer == certificate.father %} rainy izay {% elif certificate.declarer == certificate.mother %} reniny izay {% else %}{{ certificate.declarer.full_name }},
-                            teraka tamin'ny telo Septambra, taona efatra amby fitopolo sy sivin-jato sy arivo,
-                            tao itaosy-Antananarivo, Mpitsabo, monina ao {{ certificate.fokotany.name }},
+                            teraka tamin'ny {{ certificate.declarer.birthday|date:"d"|isa_gasy }} {{ certificate.declarer.birthday|date:"F"|capfirst }}, taona {{ certificate.declarer.birthday|date:"Y"|isa_gasy }}, 
+                            tao {{ certificate.declarer.birth_place }}, {{ certificate.declarer_carreer|lower }}, monina ao {{ certificate.declarer_address }},
                             izay nanatrika ny fahaterahany ka {% endif %} miara manao Sonia aminay:
-                            {{ certificate.father.full_name|upper }}, Ben'ny Tanàna,
-                            mpiandraikitra sora-piankohonana ao {{ certificate.fokotany.name }},
-                            rehefa novakina taminy ity soratra ity.
+                            {{ staff_reponsible }} mpiandraikitra sora-piankohonana ao {{ certificate.fokotany.name }}, rehefa novakina taminy ity soratra ity.
                         </p>
                         <p class="inline">-------------------------------------------------------------------------------------------</p>
                     </div>
@@ -249,7 +255,7 @@
                     <div class="flex justify-between items-end mt-12">                        
                         <div class="flex flex-col gap-8">
                             <p class="indent-8 leading-tight">Kopia manontolo nadika tamin'ny boky androany 
-                                {{ document.created_at|date:"d" }} {% trans "Oktobra" %} {{ document.created_at|date:"Y" }}.</p>
+                                {{ document.created_at|date:"d" }} {{ document.created_at|date:"m"|volana_gasy|capfirst }} {{ document.created_at|date:"Y" }}.</p>
                             
                             <p class="font-bold uppercase mb-2 text-center">NY MPIANDRAIKITRA SORA-PIANKOHONANA</p>
                             
@@ -276,6 +282,7 @@
             </div>
             
         </div>
+        {% endlanguage %}
     </div>
     <!-- Pied de page -->
     <div class="absolute no-print bottom-8 left-0 right-0 text-center text-xs text-gray-500">

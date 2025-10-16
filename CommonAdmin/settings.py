@@ -116,6 +116,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
+    # Fonctions template personnalisées
+    "civil.templatetags.isa_gasy",
     # Applications
     "account.apps.AccountConfig",
     *[service['name'] for service in SERVICES_APP],

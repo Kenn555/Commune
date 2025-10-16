@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import DetailView, DeleteView
 
 import django.db.utils
-from administration.models import Fokotany
+from administration.models import Fokotany, Role
 from django.db.models import Q
 from civil import forms
 from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect, JsonResponse
@@ -58,7 +58,7 @@ class PersonAutocomplete(autocomplete.Select2QuerySetView):
         if not self.request.user.is_authenticated:
             return Person.objects.none()
 
-        qs = Person.objects.all()
+        qs = Person.objects.filter(birthday__lte=date.today() - timedelta(days=18*365))
 
         if self.q:
             qs = qs.filter(
@@ -84,7 +84,7 @@ class FatherAutocomplete(PersonAutocomplete):
     def get_queryset(self):
         qs = super().get_queryset()
         print(qs)
-        return qs.filter(gender='M', birthday__lte=date.today() - timedelta(days=18*365))
+        return qs.filter(gender='M')
 
 
 class MotherAutocomplete(PersonAutocomplete):
@@ -92,7 +92,7 @@ class MotherAutocomplete(PersonAutocomplete):
     
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.filter(gender='F', birthday__lte=date.today() - timedelta(days=18*365))
+        return qs.filter(gender='F')
 
 @login_required 
 def get_person_details(request, person_id):
@@ -108,6 +108,8 @@ def get_person_details(request, person_id):
             'birth_place': person.birth_place,
             'gender': person.gender,
         }
+
+        print(data)
         
         return JsonResponse(data)
     except Person.DoesNotExist:
@@ -185,20 +187,20 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
         "actions": actions,
         "table_length": line_bypage,
         "table": {
-            "headers": [_("date of creation"), _("number"), _("full name"), _("gender"), _("age"), _("birthday"), _("father"), _("mother"), _("fokotany"), _("action")], 
+            "headers": [_("date"), _("number"), _("full name"), _("gender"), _("age"), _("birthday"), _("father"), _("mother"), _("fokotany"), _("action")], 
             "datas": [
                 {                                
                     "index" : index,
                     "pk": (CertificateDocument.objects.filter(birth_certificate=birth).first()).pk if CertificateDocument.objects.filter(birth_certificate=birth).exists() else int(birth.pk),
                     "row": [
-                        {"header": "date", "value": birth.date_created, "style": "text-start w-4 text-nowrap", "title": birth.date_created},
+                        {"header": "date", "value": format(birth.date_created,'%d/%m/%Y'), "style": "text-center w-4 text-nowrap", "title": birth.date_created},
                         {"header": "number", "value": str(birth.pk).zfill(9), "style": "text-center w-12 text-nowrap", "title": str(birth.pk).zfill(9)},
-                        {"header": "full name", "value": birth.born.full_name, "style": "text-start w-4 text-nowrap", "title": birth.born.full_name},
+                        {"header": "full name", "value": birth.born, "style": "text-start w-4 text-nowrap", "title": birth.born},
                         {"header": "gender", "value": Person.GENDER_CHOICES[birth.born.gender], "style": "text-center text-nowrap", "title": Person.GENDER_CHOICES[birth.born.gender]},
                         {"header": "age", "value": date.today().year - birth.born.birthday.year, "style": "text-center text-nowrap", "title": ngettext("%(age)d year old", "%(age)d years old", date.today().year - birth.born.birthday.year) % {"age": date.today().year - birth.born.birthday.year}},
                         {"header": "date", "value": birth.born.birthday, "style": "text-start w-4 text-nowrap", "title": birth.born.birthday},
-                        {"header": "father", "value": birth.father.full_name, "style": "text-start w-4 text-nowrap", "title": birth.father.full_name},
-                        {"header": "mother", "value": birth.mother.full_name, "style": "text-start w-4 text-nowrap", "title": birth.mother.full_name},
+                        {"header": "father", "value": birth.father or _("unknown"), "style": "text-start w-4 text-nowrap", "title": birth.father or _("unknown")},
+                        {"header": "mother", "value": birth.mother, "style": "text-start w-4 text-nowrap", "title": birth.mother},
                         {"header": "fokotany", "value": birth.fokotany.name, "style": "text-start w-4 text-nowrap", "title": birth.fokotany},
                         {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
                             {"name": _("open"), "url": "civil:certificate-print", "style": "green"},
@@ -286,9 +288,11 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 father = Person.objects.get(pk=request.POST['existing_father'])
                 print(father)
                 father_carreer = request.POST['father_job']
+                father_address = request.POST['father_address']
                 certificate_type = list(BirthCertificate.CERTIFICATE_TYPES.keys())[1]
                 if father and not father.is_parent:
                     father.is_parent = True
+                    father.save(update_fields=["is_parent"])
             else:
                 father = None
                 father_carreer = None
@@ -299,15 +303,18 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 mother = Person.objects.get(pk=request.POST['existing_mother'])
                 print(mother)
                 mother_carreer = request.POST['mother_job']
+                mother_address = request.POST['mother_address']
                 if not mother.is_parent:
                     mother.is_parent = True
+                    mother.save(update_fields=["is_parent"])
             # déclarant
             print(request.POST['existing_declarer'])
             declarer = Person.objects.get(pk=request.POST['existing_declarer'])
             print(declarer)
             declarer_carreer = request.POST['declarer_job']
+            declarer_address = request.POST['declarer_address']
         else:
-            print(born.pk, born.full_name)
+            print(born.pk, born)
 
         print(form.errors)
 
@@ -318,33 +325,28 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             except django.db.utils.IntegrityError:
                 born = Person.objects.get(last_name=born.last_name, first_name=born.first_name, gender=born.gender, birthday=born.birthday)
 
-            certificate = BirthCertificate(
-                BirthCertificate.objects.last().id + 1 if BirthCertificate.objects.last() else 1,
+            certificate = BirthCertificate.objects.create(
                 fokotany = fokotany,
                 born = born,
                 father = father,
                 father_carreer = father_carreer,
+                father_address = father_address,
                 mother = mother,
                 mother_carreer = mother_carreer,
+                mother_address = mother_address,
                 declarer = declarer,
                 declarer_carreer = declarer_carreer,
+                declarer_address = declarer_address,
                 certificate_type = certificate_type,
             )
-
-            print(certificate)
-            print(father.is_parent, mother.is_parent)
-            print(certificate)
-            # Mettre à jour le statut de parent
-            certificate.save()
-            CertificateDocument.objects.create(
+            
+            document = CertificateDocument.objects.create(
                         birth_certificate=certificate,
                         document_number=f"BC-{fokotany.pk}-{certificate.date_created.year}-{str(certificate.pk).zfill(9)}",
                         status='DRAFT'
                     )
-            father.save(update_fields=["is_parent"])
-            mother.save(update_fields=["is_parent"])
 
-            return redirect('civil:birth')
+            return redirect('civil:certificate-preview', pk=document.pk)
         else:
             born.save()
 
@@ -389,7 +391,8 @@ def certificate_preview(request: WSGIRequest, pk) -> HttpResponseRedirect | Http
         "action_name": "register",
         "actions": actions,
         "document": document,
-        "certificate": document.birth_certificate
+        "certificate": document.birth_certificate,
+        "staff_reponsible": Role.objects.get(pk=1),
     }
 
     for service in request.session['urls']:

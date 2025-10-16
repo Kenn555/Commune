@@ -3,6 +3,7 @@
 {% load i18n %}
 {% translate "Other Informations" as parents_information %}
 {% translate 'Matricule' as matricule %}
+{% translate 'Declarer' as declarer %}
 
   <style>
     div > label {
@@ -114,7 +115,7 @@
             <legend class="text-lg font-semibold text-gray-500 mb-2">{{ sub_title }}</legend>
                 
               {% for field in sub_fields %}
-                <div class="min-w-20 w-full {% if title == parents_information and sub_title != 'Declarer' %} parents_information{% if forloop.first %} col-span-full{% endif %}{% endif %}">
+                <div class="min-w-20 w-full {% if title == parents_information and sub_title != declarer %} parents_information{% if forloop.first %} col-span-full{% endif %}{% endif %}">
                   {{ field.label_tag }} {{ field }}
                 </div>
               {% endfor %}
@@ -173,17 +174,17 @@
 
           if (isChecked) {
               // Afficher l'autocomplete
-              $('[aria-controls="select2-id_existing_father-results"], [name="existing_father"], [name="father_name"], [name="father_place_of_birth"], [name="father_birthday"], [name="father_job"]').closest('.parents_information').show();
+              $('[aria-controls="select2-id_existing_father-results"], [name="existing_father"], [name="father_name"], [name="father_place_of_birth"], [name="father_birthday"], [name="father_job"], [name="father_address"]').closest('.parents_information').show();
               // Mettre les autres champs en lecture seule
               $('[name="father_name"], [name="father_place_of_birth"], [name="father_birthday"]')
                   .prop('readonly', true)
                   .addClass('bg-gray-100 cursor-not-allowed');
-              $('[name="father_job"]').prop("required", true);
+              $('[name="father_job"], [name="father_address"]').prop("required", true);
           } else {
               // Cacher l'autocomplete
-              $('[aria-controls="select2-id_existing_father-results"], [name="existing_father"], [name="father_name"], [name="father_place_of_birth"], [name="father_birthday"], [name="father_job"]').closest('.parents_information').hide();
+              $('[aria-controls="select2-id_existing_father-results"], [name="existing_father"], [name="father_name"], [name="father_place_of_birth"], [name="father_birthday"], [name="father_job"], [name="father_address"]').closest('.parents_information').hide();
               // Tous les champs deviennent éditables
-              $('[name="father_name"], [name="father_place_of_birth"], [name="father_birthday"], [name="father_job"]')
+              $('[name="father_name"], [name="father_place_of_birth"], [name="father_birthday"], [name="father_job"], [name="father_address"]')
                   .prop('readonly', false)
                   .removeClass('bg-gray-100 cursor-not-allowed')
                   .prop("required", false);
@@ -197,17 +198,17 @@
             
             if (isChecked) {
                 // Afficher l'autocomplete
-                $('[aria-controls="select2-id_existing_mother-results"], [name="existing_mother"], [name="mother_name"], [name="mother_place_of_birth"], [name="mother_birthday"], [name="mother_job"]').closest('.parents_information').show();
+                $('[aria-controls="select2-id_existing_mother-results"], [name="existing_mother"], [name="mother_name"], [name="mother_place_of_birth"], [name="mother_birthday"], [name="mother_job"], [name="mother_address"]').closest('.parents_information').show();
                 // Garder les autres champs visibles mais en lecture seule
                 $('[name="mother_name"], [name="mother_place_of_birth"], [name="mother_birthday"]')
                     .prop('readonly', true)
                     .addClass('bg-gray-100 cursor-not-allowed');
-                $('[name="mother_job"]').prop("required", true);
+                $('[name="mother_job"], [name="mother_address"]').prop("required", true);
             } else {
                 // Cacher l'autocomplete
-                $('[aria-controls="select2-id_existing_mother-results"],[name="existing_mother"], [name="mother_name"], [name="mother_place_of_birth"], [name="mother_birthday"], [name="mother_job"]').closest('.parents_information').hide();
+                $('[aria-controls="select2-id_existing_mother-results"],[name="existing_mother"], [name="mother_name"], [name="mother_place_of_birth"], [name="mother_birthday"], [name="mother_job"], [name="mother_address"]').closest('.parents_information').hide();
                 // Tous les champs deviennent éditables
-                $('[name="mother_name"], [name="mother_place_of_birth"], [name="mother_birthday"], [name="mother_job"]')
+                $('[name="mother_name"], [name="mother_place_of_birth"], [name="mother_birthday"], [name="mother_job"], [name="mother_address"]')
                     .prop('readonly', false)
                     .removeClass('bg-gray-100 cursor-not-allowed')
                     .prop("required", false);
@@ -221,17 +222,17 @@
             
             if (isChecked) {
                 // Afficher l'autocomplete
-                $('[aria-controls="select2-id_existing_declarer-results"], [name="existing_declarer"], [name="declarer_name"], [name="declarer_place_of_birth"], [name="declarer_birthday"], [name="declarer_job"]').closest('.parents_information').show();
+                $('[aria-controls="select2-id_existing_declarer-results"], [name="existing_declarer"], [name="declarer_name"], [name="declarer_place_of_birth"], [name="declarer_birthday"], [name="declarer_job"], [name="declarer_address"]').closest('.parents_information').show();
                 // Garder les autres champs visibles mais en lecture seule
-                $('[name="existing_declarer"], [name="declarer_name"], [name="declarer_place_of_birth"], [name="declarer_birthday"]')
+                $('[name="declarer_name"], [name="declarer_place_of_birth"], [name="declarer_birthday"]')
                     .prop('readonly', true)
                     .addClass('bg-gray-100 cursor-not-allowed');
-                $('[name="existing_declarer"], [name="declarer_job"]').prop("required", true);
+                $('[name="declarer_job"], [name="declarer_address"]').prop("required", true);
             } else {
                 // Cacher l'autocomplete
-                $('[name="existing_declarer"], [name="declarer_name"], [name="declarer_place_of_birth"], [name="declarer_birthday"], [name="declarer_job"]').closest('.parents_information').hide();
+                $('[aria-controls="select2-id_existing_declarer-results"], [name="existing_declarer"], [name="declarer_name"], [name="declarer_place_of_birth"], [name="declarer_birthday"], [name="declarer_job"], [name="declarer_address"]').closest('.parents_information').hide();
                 // Tous les champs deviennent éditables
-                $('[name="existing_declarer"], [name="declarer_name"], [name="declarer_place_of_birth"], [name="declarer_birthday"], [name="declarer_job"]')
+                $('[name="declarer_name"], [name="declarer_place_of_birth"], [name="declarer_birthday"], [name="declarer_job"], [name="declarer_address"]')
                     .prop('readonly', false)
                     .removeClass('bg-gray-100 cursor-not-allowed')
                     .prop("required", false);
@@ -319,15 +320,15 @@
         
         // Réinitialiser les champs quand on déselectionne
         $('#id_existing_father').on('select2:unselect', function(e) {
-            $('[name="father_name"], [name="father_place_of_birth"], [name="father_birthday"], [name="father_job"]').val('');
+            $('[name="father_name"], [name="father_place_of_birth"], [name="father_birthday"], [name="father_job"], [name="father_address"]').val('');
         });
         
         $('#id_existing_mother').on('select2:unselect', function(e) {
-            $('[name="mother_name"], [name="mother_place_of_birth"], [name="mother_birthday"], [name="mother_job"]').val('');
+            $('[name="mother_name"], [name="mother_place_of_birth"], [name="mother_birthday"], [name="mother_job"], [name="mother_address"]').val('');
         });
 
         $('[name="existing_declarer"]').on('select2:unselect', function(e) {
-            $('[name="declarer_name"], [name="declarer_place_of_birth"], [name="declarer_birthday"], [name="declarer_job"]').val('');
+            $('[name="declarer_name"], [name="declarer_place_of_birth"], [name="declarer_birthday"], [name="declarer_job"], [name="declarer_address"]').val('');
         });
         
         // Gestion du bouton Reset

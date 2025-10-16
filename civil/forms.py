@@ -57,6 +57,7 @@ class BirthCertificateForm(forms.Form):
     
     first_name = forms.CharField(
         label=_("First Name"), 
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -112,7 +113,6 @@ class BirthCertificateForm(forms.Form):
         label=_("Existing Father"),
         queryset=Person.objects.filter(gender='M', birthday__lte=date.today() - timedelta(days=18*365)),
         required=False,
-        initial=1,
         widget=autocomplete.ModelSelect2(
             url='civil:father-autocomplete',
             attrs={
@@ -168,6 +168,18 @@ class BirthCertificateForm(forms.Form):
                 "class": CLASS_FIELD, 
                 "placeholder": _("Insert her/his father's job"),
                 "title": _("Insert her/his father's job"),
+            }
+        )
+    )
+
+    father_address = forms.CharField(
+        label=_("Father's Address"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert her/his father's address"),
+                "title": _("Insert her/his father's address"),
             }
         )
     )
@@ -238,6 +250,17 @@ class BirthCertificateForm(forms.Form):
             }
         )
     )
+    
+    mother_address = forms.CharField(
+        label=_("Mother's Address"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert her/his mother's address"),
+                "title": _("Insert her/his mother's address"),
+            }
+        )
+    )
 
     # Déclarant    
     existing_declarer = forms.ModelChoiceField(
@@ -298,18 +321,14 @@ class BirthCertificateForm(forms.Form):
             }
         )
     )
-
-    # Responsable    
-    existing_declarer = forms.ModelChoiceField(
-        label=_("Existing Declarer"),
-        queryset=Role.objects.filter(is_boss=True, staff__birthday__lte=date.today() - timedelta(days=18*365)),
-        required=False,
-        widget=autocomplete.ModelSelect2(
-            url='civil:person-autocomplete',
+    
+    declarer_address = forms.CharField(
+        label=_("Declarer's Address"), 
+        widget=forms.TextInput(
             attrs={
-                "class": CLASS_FIELD,
-                "data-placeholder": _("Search for Declarer..."),
-                "data-minimum-input-length": 2,
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert the declarer's address"),
+                "title": _("Insert the declarer's address"),
             }
         )
     )
@@ -320,12 +339,12 @@ class BirthCertificateForm(forms.Form):
         _("Other Informations"): {
             _("Father"): [
                 "use_existing_father", "existing_father",
-                "father_name", "father_place_of_birth", "father_birthday", "father_job",
+                "father_name", "father_place_of_birth", "father_birthday", "father_job", "father_address"
             ],
             _("Mother"): ["use_existing_mother", "existing_mother",
-                "mother_name", "mother_place_of_birth", "mother_birthday", "mother_job"
+                "mother_name", "mother_place_of_birth", "mother_birthday", "mother_job", "mother_address"
             ],
-            _("Declarer"): ["existing_declarer", "declarer_name", "declarer_place_of_birth", "declarer_birthday", "declarer_job",]
+            _("Declarer"): ["existing_declarer", "declarer_name", "declarer_place_of_birth", "declarer_birthday", "declarer_job", "declarer_address"]
         },
     }
 
