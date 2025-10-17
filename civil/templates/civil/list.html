@@ -13,15 +13,12 @@
             <label for="id_line_select" class="text-md font-semibold">{% translate "Lines" %}</label>
         </div>
         <div class="flex flex-row">
-            <input type="checkbox" name="preview_page" id="id_preview_page" onchange="this.form.submit()" class="hidden">
-            <input type="checkbox" name="next_page" id="id_next_page" onchange="this.form.submit()" class="hidden">
-
-            <label for="id_preview_page" class="py-2 px-3 rounded-md bg-gray-200 text-center font-extrabold cursor-pointer"><</label>
+            <button type="submit" name="paging" value="{{prev_page}}" class="py-2 px-3 rounded-md bg-gray-200 text-center font-extrabold cursor-pointer"><</button>
             <div class="p-2 text-center">
                 <input type="text" value="{{ num_page }}" class="w-10 text-right ring-0 border-none focus:ring-0 h-4 p-0" name="num_page" id="id_num_page">
                 {{ per_page }}
             </div>
-            <label for="id_next_page" class="py-2 px-3 rounded-md bg-gray-200 text-center font-extrabold cursor-pointer">></label>
+            <button type="submit" name="paging" value="{{next_page}}" class="py-2 px-3 rounded-md bg-gray-200 text-center font-extrabold cursor-pointer">></button>
         </div>
         <div class="flex flex-row gap-2">
             <input type="search" name="q" onsubmit="this.form.submit()" id="id_query" placeholder="Rechercher..." class="rounded-lg">

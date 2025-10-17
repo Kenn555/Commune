@@ -207,12 +207,14 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
     # Pagination
     certificate_bypage = Paginator(certificates_data, line_bypage)
 
-    if "preview_page" in list(request.GET.keys()):
-        certificate_bypage.get_page(certificate_bypage.num_pages - 1)
-    elif "next_page" in list(request.GET.keys()):
-        certificate_bypage.get_page(certificate_bypage.num_pages + 1)
-    elif "num_page" in list(request.GET.keys()):
-        certificate_bypage.get_page(request.GET['num_page'])
+    n_page = int(request.GET.get('num_page', 1))
+
+    if "paging" in list(request.GET.keys()) and n_page in (int(request.GET['paging']) + 1, int(request.GET['paging']) - 1) and int(request.GET['paging']) in certificate_bypage.page_range:
+        n_page = int(request.GET['paging'])
+        
+    print(n_page)
+
+    certificate_page = certificate_bypage.get_page(n_page)
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
@@ -226,8 +228,10 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
         "action_name": "list",
         "actions": actions,
         "table_length": line_bypage,
-        "num_page": certificate_bypage.num_pages,
-        "per_page": _(' per ') + str(certificate_bypage.orphans + certificate_bypage.num_pages),
+        "num_page": certificate_page.number,
+        "prev_page": n_page - 1,
+        "next_page": n_page + 1,
+        "per_page": _(' per ') + str(certificate_bypage.num_pages),
         "table": {
             "headers": headers['headers'], 
             "datas": [
@@ -251,7 +255,7 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                             # {"name": _("delete"), "url": "civil:birth-delete", "style": "red"},
                         ]},
                     ],
-                } for index, birth in enumerate(certificate_bypage.get_page(1))
+                } for index, birth in enumerate(certificate_page)
             ],
         }
     }
