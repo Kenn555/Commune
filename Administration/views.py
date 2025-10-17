@@ -1,4 +1,5 @@
 from datetime import date
+from functools import wraps
 from django.conf import settings
 from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
 from CommonAdmin.settings import COMMON_NAME
@@ -23,10 +24,10 @@ from civil.views import add_action_url, actions
 def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
     """  """
     
-    print(request.session['urls'])
-
     menu_name = "dashboard"
+
     context = {
+        "accessed": __package__ in request.session['app_accessed'],
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -47,7 +48,6 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
                 for submenu in service['submenus']:
                     if submenu['name'] == menu_name:
                         context['menu_title'] = _(submenu['title'])
-    print(context['services'])
 
     return render(request, "administration/dashboard.html", context)
 
@@ -80,6 +80,7 @@ def staff_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
     staff_bypage = Paginator(role_data, line_bypage)
 
     context = {
+        "accessed": __package__ in request.session['app_accessed'],
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -91,7 +92,7 @@ def staff_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
         "actions": actions,
         "table_length": line_bypage,
         "table": {
-            "headers": [_("number"), _("full name"), _("title"), _("gender"), _("age"), _("birthday"), _("contacts"), _("status"), _("action")], 
+            "headers": [_("number"), _("full name"), _("title"), _("gender"), _("age"), _("birthday"), _("contacts"), _("service"), _("status"), _("action")], 
             "datas": [
                 {                                
                     "index" : index,
@@ -104,11 +105,11 @@ def staff_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                         {"header": "age", "value": date.today().year - role.staff.birthday.year, "style": "text-center text-nowrap", "title": ngettext("%(age)d year old", "%(age)d years old", date.today().year - role.staff.birthday.year) % {"age": date.today().year - role.staff.birthday.year}},
                         {"header": "date", "value": role.staff.birthday, "style": "text-start w-4 text-nowrap", "title": role.staff.birthday},
                         {"header": "contact", "value": role.staff.contact_1 + '/' + role.staff.contact_2 if role.staff.contact_2 else role.staff.contact_1, "style": "text-start w-4 text-nowrap", "title": role.staff.contact_1 + '/' + role.staff.contact_2 if role.staff.contact_2 else role.staff.contact_1},
+                        {"header": "service", "value": role.service.title.title(), "style": "text-start w-4 text-nowrap", "title": role.service.title.title()},
                         {"header": "status", "value": "✅" if role.access.is_active else "❌", "style": "text-center w-4 text-nowrap", "title": "Is active" if role.access.is_active else "Is not active"},
                         {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
                             {"name": _("open"), "url": "civil:certificate-print", "style": "green"},
-                            {"name": _("print"), "url": "civil:certificate-preview", "style": "blue"},
-                            {"name": _("delete"), "url": "civil:birth-delete", "style": "red"},
+                            {"name": _("stop"), "url": "civil:birth-delete", "style": "red"},
                         ]},
                     ],
                 } for index, role in enumerate(staff_bypage.get_page(1))
@@ -138,6 +139,7 @@ def staff_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponseP
     request.session['menu_app'] = menu_name
 
     context = {
+        "accessed": __package__ in request.session['app_accessed'],
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -261,6 +263,7 @@ def user_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerman
     user_bypage = Paginator(user_data, line_bypage)
 
     context = {
+        "accessed": __package__ in request.session['app_accessed'],
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -279,7 +282,7 @@ def user_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerman
                     "pk": user.pk,
                     "row": [
                         {"header": "number", "value": str(user.pk).zfill(9), "style": "text-center w-12 text-nowrap", "title": str(user.pk).zfill(9)},
-                        {"header": "full name", "value": user.get_full_name(), "style": "text-start w-4 text-nowrap", "title": user.get_full_name()},
+                        {"header": "full name", "value": user.get_full_name(), "style": "text-start w-4 text-nowrap", "title": _("It's Me") if user == request.user else user.get_full_name()},
                         {"header": "username", "value": user.username, "style": "text-center text-nowrap", "title": user.username},
                         {"header": "password", "value": "************", "style": "text-center text-nowrap", "title": _("Password")},
                         {"header": "password", "value": user.email, "style": "text-center text-nowrap", "title": user.email},
@@ -318,6 +321,7 @@ def user_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePe
     request.session['menu_app'] = menu_name
 
     context = {
+        "accessed": __package__ in request.session['app_accessed'],
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,

@@ -101,6 +101,14 @@ class BirthCertificateForm(forms.Form):
         )
     )
 
+    is_alive = forms.BooleanField(
+        label=_("Alive"),
+        required=False,
+        initial=True,
+        label_suffix="",
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+    )
+
     # Informations sur les parents avec autocomplete
     use_existing_father = forms.BooleanField(
         label=_("Search for a existing Mother"),
@@ -335,7 +343,7 @@ class BirthCertificateForm(forms.Form):
 
     fieldsets = {
         _("Matricule"): ["fokotany", "number"],
-        _("Informations"): ["last_name", "first_name", "gender", "birth_place", "birthday"],
+        _("Informations"): ["last_name", "first_name", "gender", "birth_place", "birthday", "is_alive"],
         _("Other Informations"): {
             _("Father"): [
                 "use_existing_father", "existing_father",

@@ -5,6 +5,8 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
 from django.conf import settings
+
+from administration.models import Role
 # from django.contrib.auth.models import Group
 # from django.contrib import messages
 # from .permissions import create_groups_and_permissions
@@ -12,7 +14,6 @@ from django.conf import settings
 # from .permissions import has_civil_permission, has_finance_permission
 
 User = get_user_model()
-
 
 # Create your views here.
 @login_required
@@ -34,6 +35,7 @@ def login_page(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
 
     # Nettoyer la session existante
     request.session.flush()
+    request.session['app_accessed'] = []
     
     validated_user = ""
     message = ""
@@ -51,8 +53,15 @@ def login_page(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             if not 'urls' in list(request.session.keys()):
                 request.session['urls'] = []
                 for service in getattr(settings, "SERVICES_APP"):
-                    if service["name"] in ("dashboard", "civil", "mines", "events", "administration"):
+                    if validated_user.is_superuser and service["name"] in ("dashboard", "civil", "mines", "events", "administration"):
                         request.session['urls'].append(service)
+                    elif service["name"] == Role.objects.get(access=validated_user).app.name:
+                        request.session['urls'].append(service)
+                        settings
+
+            for app in request.session['urls']:
+                request.session['app_accessed'].append(app['name'])
+
                         
             # Gérer la redirection
             if request.GET.get("next"):

@@ -121,9 +121,11 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
     """  """
     
     print(request.session['urls'])
+    print(__package__ in request.session['app_accessed'])
 
     menu_name = "dashboard"
     context = {
+        "accessed":__package__ in request.session['app_accessed'],
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -154,7 +156,12 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
     """  """
 
     menu_name = "birth"
-    
+
+    headers = {
+        "headers": [_("date"), _("number"), _("full name"), _("gender"), _("age"), _("birthday"), _("father"), _("mother"), _("birth"), _("fokotany"), _("action")],
+        "db_col_name": ["date_created","pk", "born__last_name", "born__gender", "born__birthday", "born__birthday", "father__last_name", "mother__last_name", "fokotany", "born__is_alive"],
+    }
+
     add_action_url(__package__, menu_name)
 
     line_bypage = str(request.GET.get('line', 10))
@@ -165,17 +172,50 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
     # Recherche
     if 'q' in request.GET.keys():
         certificates_data = certificates_data.filter(
-                    Q(born__first_name__icontains=request.GET['q']) |
-                    Q(born__last_name__icontains=request.GET['q'])
+                    Q(**{"born__first_name__icontains":request.GET['q']}) |
+                    Q(**{"born__last_name__icontains":request.GET['q']})
                 )
 
     # Ordre
-    certificates_data = certificates_data.order_by("pk").reverse()
+    if not 'order_name' in list(request.session.keys()):
+        request.session['order_name'] = ""
+    if not 'order_sense' in list(request.session.keys()):
+        request.session['order_sense'] = True
+    
+    if 'order' in list(request.GET) and request.GET['order'] in headers["headers"]:
+        if request.GET['order'] == request.session['order_name']:
+            request.session['order_sense'] = not request.session['order_sense']
+            print("same !!!!!!!!!")
+            print(request.session['order_sense'])
+        else:
+            request.session['order_name'] = request.GET['order']
+            request.session['order_sense'] = True
+            print("other !!!!!!!!!")
+            print(request.session['order_sense'])
+        
+
+    for index, column in enumerate(headers['db_col_name']):
+        if request.session['order_name'] == headers['headers'][index]:
+            if request.session['order_sense']:
+                certificates_data = certificates_data.order_by(column)
+            else:
+                certificates_data = certificates_data.order_by(column).reverse()
+            break
+        else:
+            certificates_data = certificates_data.order_by("pk").reverse()
 
     # Pagination
     certificate_bypage = Paginator(certificates_data, line_bypage)
 
+    if "preview_page" in list(request.GET.keys()):
+        certificate_bypage.get_page(certificate_bypage.num_pages - 1)
+    elif "next_page" in list(request.GET.keys()):
+        certificate_bypage.get_page(certificate_bypage.num_pages + 1)
+    elif "num_page" in list(request.GET.keys()):
+        certificate_bypage.get_page(request.GET['num_page'])
+
     context = {
+        "accessed": __package__ in request.session['app_accessed'],
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -186,8 +226,10 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
         "action_name": "list",
         "actions": actions,
         "table_length": line_bypage,
+        "num_page": certificate_bypage.num_pages,
+        "per_page": _(' per ') + str(certificate_bypage.orphans + certificate_bypage.num_pages),
         "table": {
-            "headers": [_("date"), _("number"), _("full name"), _("gender"), _("age"), _("birthday"), _("father"), _("mother"), _("fokotany"), _("action")], 
+            "headers": headers['headers'], 
             "datas": [
                 {                                
                     "index" : index,
@@ -201,6 +243,7 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                         {"header": "date", "value": birth.born.birthday, "style": "text-start w-4 text-nowrap", "title": birth.born.birthday},
                         {"header": "father", "value": birth.father or _("unknown"), "style": "text-start w-4 text-nowrap", "title": birth.father or _("unknown")},
                         {"header": "mother", "value": birth.mother, "style": "text-start w-4 text-nowrap", "title": birth.mother},
+                        {"header": "birth", "value": _("alive") if birth.born.is_alive else _("dead"), "style": "text-center w-4 text-nowrap", "title": _("alive") if birth.born.is_alive else _("dead")},
                         {"header": "fokotany", "value": birth.fokotany.name, "style": "text-start w-4 text-nowrap", "title": birth.fokotany},
                         {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
                             {"name": _("open"), "url": "civil:certificate-print", "style": "green"},
@@ -239,6 +282,7 @@ def birth_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponseP
     request.session['menu_app'] = menu_name
 
     context = {
+        "accessed": __package__ in request.session['app_accessed'],
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -357,7 +401,9 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
 def birth_detail(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
 
     print("DETAILLE !!!!!!!!!!!!!!!!!!!")
-    context = {}
+    context = {
+        "accessed": __package__ in request.session['app_accessed'],
+        }
     return render(request, "civil/certificate.html", context)
 
 @login_required
@@ -380,6 +426,7 @@ def certificate_preview(request: WSGIRequest, pk) -> HttpResponseRedirect | Http
     print(document.birth_certificate.born.birthday)
 
     context = {
+        "accessed": __package__ in request.session['app_accessed'],
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -455,6 +502,7 @@ def death(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
     add_action_url(__package__, menu_name)
 
     context = {
+        "accessed": __package__ in request.session['app_accessed'],
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -504,6 +552,7 @@ def death_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponseP
     request.session['menu_app'] = menu_name
 
     context = {
+        "accessed": __package__ in request.session['app_accessed'],
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -539,6 +588,7 @@ def marriage(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermane
     add_action_url(__package__, menu_name)
 
     context = {
+        "accessed": __package__ in request.session['app_accessed'],
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -570,6 +620,7 @@ def marriage_register(request: WSGIRequest) -> HttpResponseRedirect | HttpRespon
     add_action_url(__package__, menu_name)
 
     context = {
+        "accessed": __package__ in request.session['app_accessed'],
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,

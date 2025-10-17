@@ -29,7 +29,7 @@
                     {% for cell in data.row %}
                     {% if cell.header == "action" %}
                     <div class="peer table-cell sticky py-1 px-4 right-0 invisible peer-hover:visible hover:visible">
-                        <div class="flex flex-row flex-nowrap justify-center gap-2">  
+                        <div class="flex flex-row flex-nowrap justify-center gap-3">  
                             {% for button in cell.buttons %}                 
                             <a href="{% url button.url data.pk %}" class="px-3 py-1 text-white rounded-md ring-2 ring-white 
                             {% if button.style == 'green' %}

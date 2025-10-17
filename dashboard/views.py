@@ -15,6 +15,7 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
 
     menu_name = "dashboard"
     context = {
+        "accessed":__package__ in request.session['app_accessed'],
         "user": request.user,
         "app_name": app_name,
         "menu_name": menu_name,

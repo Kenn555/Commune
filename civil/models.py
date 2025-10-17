@@ -15,6 +15,7 @@ class Person(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     birth_place = models.CharField(max_length=100)
     birthday = models.DateTimeField()
+    is_alive = models.BooleanField(default=False)
     is_parent = models.BooleanField(default=False)
     
     class Meta:

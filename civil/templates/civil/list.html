@@ -3,7 +3,7 @@
 {% load humanize %}
 {% load i18n %}
 <form method="get" class="flex flex-col">
-    <div class="flex justify-between items-center w-full mb-10">
+    <div class="flex flex-wrap gap-4 justify-between items-center w-full mb-10">
         <div class="flex items-center">
             <select name="line" onchange="this.form.submit()" id="id_line_select" class="border-none focus:ring-0 text-right bg-gray-100 rounded-xl mr-2" required>
                 <option value="10" {% if table_length == '10' %}selected{%endif%}>10</option>
@@ -12,14 +12,28 @@
             </select>
             <label for="id_line_select" class="text-md font-semibold">{% translate "Lines" %}</label>
         </div>
-        <input type="text" name="q" onended="this.form.submit()" id="id_query" placeholder="Rechercher..." class="rounded-lg">
+        <div class="flex flex-row">
+            <input type="checkbox" name="preview_page" id="id_preview_page" onchange="this.form.submit()" class="hidden">
+            <input type="checkbox" name="next_page" id="id_next_page" onchange="this.form.submit()" class="hidden">
+
+            <label for="id_preview_page" class="py-2 px-3 rounded-md bg-gray-200 text-center font-extrabold cursor-pointer"><</label>
+            <div class="p-2 text-center">
+                <input type="text" value="{{ num_page }}" class="w-10 text-right ring-0 border-none focus:ring-0 h-4 p-0" name="num_page" id="id_num_page">
+                {{ per_page }}
+            </div>
+            <label for="id_next_page" class="py-2 px-3 rounded-md bg-gray-200 text-center font-extrabold cursor-pointer">></label>
+        </div>
+        <div class="flex flex-row gap-2">
+            <input type="search" name="q" onsubmit="this.form.submit()" id="id_query" placeholder="Rechercher..." class="rounded-lg">
+            <button type="submit" class="py-2 px-6 rounded-lg bg-blue-600 text-white">{% translate "Valid" %}</button>
+        </div>
     </div>
     <div class="overflow-auto">
         <div class="table w-full">
             <div class="table-header-group text-md font-semibold border-b">
                 {% for header in table.headers %}
-                    <div class="table-cell px-4 py-2 text-center text-nowrap border-b-2 border-gray-200">
-                        {{ header|title }}
+                    <div title="{% translate 'click for sorting' %}" class="table-cell px-4 py-2 text-center text-nowrap border-b-2 border-gray-200 cursor-pointer">
+                        <button type="submit" name="order" value="{{ header }}"  class="inline-block w-full">{{ header|title }}</button> {% if header != "action" %}{% if request.GET.order == header %}{% if not request.session.order_sense %}⬇{% else %}⬆{% endif %}{% endif %}{% endif %}
                     </div>
                 {% endfor %}
             </div>
