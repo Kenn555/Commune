@@ -3,7 +3,7 @@ from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.test import TestCase
 
-from administration.models import Fokotany, Role, Staff
+from administration.models import Common, Fokotany, Role, Staff
 from civil import views
 from civil.models import CertificateDocument, Person, BirthCertificate
 from django.utils.translation import activate
@@ -74,7 +74,7 @@ activate('mg')
 
 document = get_object_or_404(CertificateDocument, pk=1)
 
-print(Role.objects.get(pk=1))
+print(Fokotany.objects.get(name=Common.objects.get(pk=1).name.capitalize()))
 
 # print(_(views.actions[0]['title']))
 

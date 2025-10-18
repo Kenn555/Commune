@@ -83,7 +83,7 @@ def login_page(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
 
 def logout_page(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
     """Déconnexion de l'utilisateur et nettoyage de la session"""
-    request.session.flush()  # Nettoie complètement la session
+    request.session.set_expiry(0)  # Nettoie complètement la session
     logout(request)  # Déconnexion de l'utilisateur
     return redirect("account:login")  # Redirection vers la page de connexion
 

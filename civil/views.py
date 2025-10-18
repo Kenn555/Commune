@@ -177,12 +177,10 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 )
 
     # Ordre
-    if not 'order_name' in list(request.session.keys()):
-        request.session['order_name'] = ""
-    if not 'order_sense' in list(request.session.keys()):
-        request.session['order_sense'] = True
-    
     if 'order' in list(request.GET) and request.GET['order'] in headers["headers"]:
+        if not 'order_name' in list(request.session.keys()):
+            request.session['order_name'] = ""
+            request.session['order_sense'] = False
         if request.GET['order'] == request.session['order_name']:
             request.session['order_sense'] = not request.session['order_sense']
             print("same !!!!!!!!!")
@@ -192,17 +190,16 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             request.session['order_sense'] = True
             print("other !!!!!!!!!")
             print(request.session['order_sense'])
-        
 
-    for index, column in enumerate(headers['db_col_name']):
-        if request.session['order_name'] == headers['headers'][index]:
-            if request.session['order_sense']:
-                certificates_data = certificates_data.order_by(column)
-            else:
-                certificates_data = certificates_data.order_by(column).reverse()
-            break
-        else:
-            certificates_data = certificates_data.order_by("pk").reverse()
+        for index, column in enumerate(headers['db_col_name']):
+            if request.session['order_name'] == headers['headers'][index]:
+                if request.session['order_sense']:
+                    certificates_data = certificates_data.order_by(column)
+                else:
+                    certificates_data = certificates_data.order_by(column).reverse()
+                break
+    else:
+        certificates_data = certificates_data.order_by("pk").reverse()
 
     # Pagination
     certificate_bypage = Paginator(certificates_data, line_bypage)
@@ -247,7 +244,7 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                         {"header": "date", "value": birth.born.birthday, "style": "text-start w-4 text-nowrap", "title": birth.born.birthday},
                         {"header": "father", "value": birth.father or _("unknown"), "style": "text-start w-4 text-nowrap", "title": birth.father or _("unknown")},
                         {"header": "mother", "value": birth.mother, "style": "text-start w-4 text-nowrap", "title": birth.mother},
-                        {"header": "birth", "value": _("alive") if birth.born.is_alive else _("dead"), "style": "text-center w-4 text-nowrap", "title": _("alive") if birth.born.is_alive else _("dead")},
+                        {"header": "birth", "value": _("alive") if birth.was_alive else _("dead"), "style": "text-center w-4 text-nowrap", "title": _("alive") if birth.was_alive else _("dead")},
                         {"header": "fokotany", "value": birth.fokotany.name, "style": "text-start w-4 text-nowrap", "title": birth.fokotany},
                         {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
                             {"name": _("open"), "url": "civil:certificate-print", "style": "green"},
@@ -386,6 +383,7 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 declarer_carreer = declarer_carreer,
                 declarer_address = declarer_address,
                 certificate_type = certificate_type,
+                was_alive = form.cleaned_data.get('is_alive'),
             )
             
             document = CertificateDocument.objects.create(

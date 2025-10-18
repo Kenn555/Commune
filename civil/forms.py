@@ -3,7 +3,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from dal import autocomplete
 
-from administration.models import Fokotany, Role, Service
+from administration.models import Common, Fokotany, Role, Service
 from civil.models import BirthCertificate, Person
 
 
@@ -20,7 +20,7 @@ class BirthCertificateForm(forms.Form):
     fokotany = forms.ChoiceField(
         label=_("Fokotany"), 
         choices=Fokotany.objects.values_list("id","name").order_by('name'),
-        initial=2,
+        initial=Fokotany.objects.get(name=Common.objects.get(pk=1).name.capitalize()).pk,
         widget=forms.Select(
             attrs={
                 "class": CLASS_FIELD + "text-lg cursor-pointer", 
