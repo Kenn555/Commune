@@ -185,8 +185,6 @@ msgid "Contact 1"
 msgstr ""
 
 #: .\administration\forms.py:177 .\administration\forms.py:178
-#, fuzzy
-#| msgid "Insert her/his first name"
 msgid "Insert her/his first contact"
 msgstr "Ampidiro ny fanampin'anarana"
 
@@ -195,8 +193,6 @@ msgid "Contact 2"
 msgstr ""
 
 #: .\administration\forms.py:190 .\administration\forms.py:191
-#, fuzzy
-#| msgid "Insert her/his username"
 msgid "Insert her/his second contact"
 msgstr "Ampidiro ny anarana"
 
@@ -205,8 +201,6 @@ msgid "Title"
 msgstr ""
 
 #: .\administration\forms.py:234 .\administration\forms.py:235
-#, fuzzy
-#| msgid "Insert her/his email"
 msgid "Insert her/his role"
 msgstr "Ampidiro ny anarana"
 
@@ -215,20 +209,14 @@ msgid "Description"
 msgstr ""
 
 #: .\administration\forms.py:245 .\administration\forms.py:246
-#, fuzzy
-#| msgid "Insert her/his email"
 msgid "Insert her/his title"
 msgstr "Ampidiro ny anarana"
 
 #: .\administration\forms.py:252
-#, fuzzy
-#| msgid "Applications"
 msgid "Application"
 msgstr "fitaovana"
 
 #: .\administration\forms.py:257
-#, fuzzy
-#| msgid "application"
 msgid "Select a Application..."
 msgstr "fitaovana"
 
@@ -338,8 +326,6 @@ msgid "service"
 msgstr ""
 
 #: .\administration\views.py:95 .\administration\views.py:278
-#, fuzzy
-#| msgid "civil status"
 msgid "status"
 msgstr "sora-piakohonana"
 
@@ -380,8 +366,6 @@ msgid "It's Me"
 msgstr ""
 
 #: .\administration\views.py:289
-#, fuzzy
-#| msgid "staff"
 msgid "Is a staff"
 msgstr "mpiasa"
 
@@ -459,14 +443,10 @@ msgid "Insert her/his father's job"
 msgstr "Ampidiro ny asan'"
 
 #: .\civil\forms.py:184
-#, fuzzy
-#| msgid "Father's Job"
 msgid "Father's Address"
 msgstr "Asan'ny Ray"
 
 #: .\civil\forms.py:189 .\civil\forms.py:190
-#, fuzzy
-#| msgid "Insert her/his father's job"
 msgid "Insert her/his father's address"
 msgstr "Ampidiro ny asan'"
 
@@ -503,14 +483,10 @@ msgid "Insert her/his mother's job"
 msgstr "Andraso ny fivoahan'ny asany"
 
 #: .\civil\forms.py:263
-#, fuzzy
-#| msgid "Mother's Job"
 msgid "Mother's Address"
 msgstr "Asan'ny Reny"
 
 #: .\civil\forms.py:267 .\civil\forms.py:268
-#, fuzzy
-#| msgid "Insert her/his mother's job"
 msgid "Insert her/his mother's address"
 msgstr "Andraso ny fivoahan'ny asany"
 
@@ -547,14 +523,10 @@ msgid "Insert the declarer's job"
 msgstr "Ampidiro ny asan'"
 
 #: .\civil\forms.py:334
-#, fuzzy
-#| msgid "Declarer's Job"
 msgid "Declarer's Address"
 msgstr "Asan'ny Ray"
 
 #: .\civil\forms.py:338 .\civil\forms.py:339
-#, fuzzy
-#| msgid "Insert the declarer's job"
 msgid "Insert the declarer's address"
 msgstr "Ampidiro ny asan'"
 

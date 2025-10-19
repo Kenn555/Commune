@@ -1,12 +1,13 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.test import TestCase
 
 from administration.models import Common, Fokotany, Role, Staff
+from django.db.models import Q
 from civil import views
 from civil.models import CertificateDocument, Person, BirthCertificate
-from django.utils.translation import activate
+from django.utils.translation import activate, get_language, get_language_info
 from django.utils.translation import gettext as _
 
 from civil.templatetags.isa_gasy import OraGasy
@@ -74,7 +75,13 @@ activate('mg')
 
 document = get_object_or_404(CertificateDocument, pk=1)
 
-print(Fokotany.objects.get(name=Common.objects.get(pk=1).name.capitalize()))
+# print(BirthCertificate.objects.all().filter(
+#     Q(**{"born__birthday__lte": datetime.today() - timedelta(days=18*365)})
+# ))
+
+print(datetime.now() - timedelta(days=1))
+
+# print(BirthCertificate.objects.all().filter(date_created=))
 
 # print(_(views.actions[0]['title']))
 

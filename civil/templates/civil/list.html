@@ -21,7 +21,22 @@
             <button type="submit" name="paging" value="{{next_page}}" class="py-2 px-3 rounded-md bg-gray-200 text-center font-extrabold cursor-pointer">></button>
         </div>
         <div class="flex flex-row gap-2">
-            <input type="search" name="q" onsubmit="this.form.submit()" id="id_query" placeholder="Rechercher..." class="rounded-lg">
+            <select name="search_filter" id="id_search_filter"
+            class="text-right font-semibold focus:ring-0 border-0 border-b-2 border-gray-400"
+            >
+            <optgroup>
+                <legend>{% translate 'Column' %}</legend>
+                    {% for header in table.headers %}
+                        <option value="{{ forloop.counter0 }}" {% if searched_domain == forloop.counter0 %}selected{% endif %}>{{ header.header|title }}</option>
+                    {% endfor %}
+                </optgroup>
+            </select>
+            <div class="w-56" id="id_search_fields">
+                <input type="date" name="q" class="border-0 border-b-2 rounded-lg w-full">
+                <input type="number" name="q" placeholder="0" class="border-0 border-b-2 rounded-lg w-full text-right">
+                <input type="search" name="q" id="id_query" placeholder="Rechercher..." class="border-0 border-b-2 rounded-lg w-full" {% if request.GET.q %}value="{{ request.GET.q }}"{% endif %}>
+                <select name="q" id="id_query_select" class="border-0 border-b-2 rounded-lg w-full text-right"></select>
+            </div>
             <button type="submit" class="py-2 px-6 rounded-lg bg-blue-600 text-white">{% translate "Valid" %}</button>
         </div>
     </div>
@@ -30,7 +45,7 @@
             <div class="table-header-group text-md font-semibold border-b">
                 {% for header in table.headers %}
                     <div title="{% translate 'click for sorting' %}" class="table-cell px-4 py-2 text-center text-nowrap border-b-2 border-gray-200 cursor-pointer">
-                        <button type="submit" name="order" value="{{ header }}"  class="inline-block w-full">{{ header|title }}</button> {% if header != "action" %}{% if request.GET.order == header %}{% if not request.session.order_sense %}⬇{% else %}⬆{% endif %}{% endif %}{% endif %}
+                        <button type="submit" name="order" value="{{ header.header }}"  class="inline-block w-full">{{ header.header|title }}</button> {% if header.header != "action" %}{% if request.GET.order == header.header %}{% if not request.session.order_sense %}⬇{% else %}⬆{% endif %}{% endif %}{% endif %}
                     </div>
                 {% endfor %}
             </div>
@@ -67,4 +82,61 @@
     </div>
 
 </form>
+
+<script>
+    const headers = {{ table.headers|safe }};
+
+    $('#id_search_fields').children().each((i, e) => {
+        if (e.getAttribute("type") === headers[{{ searched_domain|safe }}].type){
+            e.setAttribute("style", "");
+            $(e).val("{{ request.GET.q|safe }}");
+            e.setAttribute("name", "q");
+        } else if($(e).is(headers[{{ searched_domain|safe }}].type)){
+            const select = headers[{{ searched_domain|safe }}].select;
+            console.log();
+            $(e).children().remove();
+            for (let index = 0; index < Object.values(select).length; index++) {
+                if ("{{ q_value|safe }}" === Object.keys(select)[index]){
+                    $(e).append("<option class='text-center' value="+Object.keys(select)[index]+" selected>"+Object.values(select)[index]+"</option>");
+                } else {
+                    $(e).append("<option class='text-center' value="+Object.keys(select)[index]+">"+Object.values(select)[index]+"</option>");
+                }
+            }
+            e.setAttribute("style", "");
+            $(e).focus();
+            e.setAttribute("name", "q");
+        }  else {
+            e.setAttribute("style", "display: none");
+            e.setAttribute("name", "");
+        }
+    });
+    
+    // Auto-changement quand une colonne à rechercher est sélectionné
+    $('#id_search_filter').on('change', function(e) {
+        console.log(headers[this.value]);
+        console.log($('#id_search_fields').children()[0].focus());
+        console.log('[type=0]'.replace('0', headers[this.value].type));
+
+        $('#id_search_fields').children().each((i, e) => {
+            if (e.getAttribute("type") === headers[this.value].type){
+                e.setAttribute("style", "");
+                $(e).focus();
+                e.setAttribute("name", "q");
+            } else if($(e).is(headers[this.value].type)){
+                const select = headers[this.value].select;
+                console.log();
+                $(e).children().remove()
+                for (let index = 0; index < Object.values(select).length; index++) {
+                    $(e).append("<option class='text-center' value="+Object.keys(select)[index]+">"+Object.values(select)[index]+"</option>");
+                }
+                e.setAttribute("style", "");
+                $(e).focus();
+                e.setAttribute("name", "q");
+            } else {
+                e.setAttribute("style", "display: none");
+                e.setAttribute("name", "");
+            }
+        });
+    });
+</script>
 {% endblock action %}

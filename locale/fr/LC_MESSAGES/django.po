@@ -124,8 +124,6 @@ msgstr ""
 
 #: .\administration\forms.py:56 .\administration\forms.py:57
 #: .\administration\forms.py:212 .\administration\forms.py:213
-#, fuzzy
-#| msgid "Insert her/his last name"
 msgid "Insert her/his username"
 msgstr "Insérez le nom"
 
@@ -136,8 +134,6 @@ msgstr ""
 
 #: .\administration\forms.py:67 .\administration\forms.py:68
 #: .\administration\forms.py:223 .\administration\forms.py:224
-#, fuzzy
-#| msgid "Insert her/his last name"
 msgid "Insert her/his password"
 msgstr "Insérez le nom"
 
@@ -147,8 +143,6 @@ msgstr ""
 
 #: .\administration\forms.py:78 .\administration\forms.py:79
 #: .\administration\forms.py:201 .\administration\forms.py:202
-#, fuzzy
-#| msgid "Insert her/his last name"
 msgid "Insert her/his email"
 msgstr "Insérez le nom"
 
@@ -192,8 +186,6 @@ msgid "Contact 1"
 msgstr ""
 
 #: .\administration\forms.py:177 .\administration\forms.py:178
-#, fuzzy
-#| msgid "Insert her/his first name"
 msgid "Insert her/his first contact"
 msgstr "Insérez le prénom"
 
@@ -202,8 +194,6 @@ msgid "Contact 2"
 msgstr ""
 
 #: .\administration\forms.py:190 .\administration\forms.py:191
-#, fuzzy
-#| msgid "Insert her/his last name"
 msgid "Insert her/his second contact"
 msgstr "Insérez le nom"
 
@@ -212,8 +202,6 @@ msgid "Title"
 msgstr ""
 
 #: .\administration\forms.py:234 .\administration\forms.py:235
-#, fuzzy
-#| msgid "Insert her/his last name"
 msgid "Insert her/his role"
 msgstr "Insérez le nom"
 
@@ -222,8 +210,6 @@ msgid "Description"
 msgstr ""
 
 #: .\administration\forms.py:245 .\administration\forms.py:246
-#, fuzzy
-#| msgid "Insert her/his last name"
 msgid "Insert her/his title"
 msgstr "Insérez le nom"
 
@@ -341,8 +327,6 @@ msgid "service"
 msgstr ""
 
 #: .\administration\views.py:95 .\administration\views.py:278
-#, fuzzy
-#| msgid "civil status"
 msgid "status"
 msgstr "état civil"
 
@@ -460,14 +444,10 @@ msgid "Insert her/his father's job"
 msgstr "Insérez la profession du père"
 
 #: .\civil\forms.py:184
-#, fuzzy
-#| msgid "Father's Job"
 msgid "Father's Address"
 msgstr "Profession du père"
 
 #: .\civil\forms.py:189 .\civil\forms.py:190
-#, fuzzy
-#| msgid "Insert her/his father's job"
 msgid "Insert her/his father's address"
 msgstr "Insérez la profession du père"
 
@@ -504,14 +484,10 @@ msgid "Insert her/his mother's job"
 msgstr "Insérez la profession de la mère"
 
 #: .\civil\forms.py:263
-#, fuzzy
-#| msgid "Mother's Job"
 msgid "Mother's Address"
 msgstr "Profession de la mère"
 
 #: .\civil\forms.py:267 .\civil\forms.py:268
-#, fuzzy
-#| msgid "Insert her/his mother's job"
 msgid "Insert her/his mother's address"
 msgstr "Insérez la profession de la mère"
 
@@ -548,14 +524,10 @@ msgid "Insert the declarer's job"
 msgstr "Insérez la profession du père"
 
 #: .\civil\forms.py:334
-#, fuzzy
-#| msgid "Declarer's Job"
 msgid "Declarer's Address"
 msgstr "Profession du père"
 
 #: .\civil\forms.py:338 .\civil\forms.py:339
-#, fuzzy
-#| msgid "Insert the declarer's job"
 msgid "Insert the declarer's address"
 msgstr "Insérez la profession du père"
 
@@ -716,8 +688,6 @@ msgid "mother"
 msgstr "mère"
 
 #: .\civil\views.py:193
-#, fuzzy
-#| msgid "birthday"
 msgid "birth"
 msgstr "Date de naissance"
 

@@ -14,7 +14,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.utils.translation import gettext as _
-from django.utils.translation import ngettext
+from django.utils.translation import ngettext, get_language
 from dal import autocomplete
 
 from civil.forms import BirthCertificateForm, DeathCertificateForm, MarriageCertificateForm
@@ -157,10 +157,19 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
 
     menu_name = "birth"
 
-    headers = {
-        "headers": [_("date"), _("number"), _("full name"), _("gender"), _("age"), _("birthday"), _("father"), _("mother"), _("birth"), _("fokotany"), _("action")],
-        "db_col_name": ["date_created","pk", "born__last_name", "born__gender", "born__birthday", "born__birthday", "father__last_name", "mother__last_name", "fokotany", "born__is_alive"],
-    }
+    headers = [
+            {"header": _("date"), "db_col_name": "date_created", "type": "date", "query": ["date_created__date"]},
+            {"header": _("number"), "db_col_name": "pk", "type": "number", "query": ["pk"]},
+            {"header": _("full name"), "db_col_name": "born__last_name" if get_language() == 'mg' else "born__first_name", "type": "search", "query": ["born__last_name__icontains", "born__first_name__icontains"]},
+            {"header": _("gender"), "db_col_name": "born__gender", "type": "select", "query": ["born__gender__icontains"], 'select': Person.GENDER_CHOICES},
+            {"header": _("age"), "db_col_name": "born__birthday", "type": "number", "query": ["born__birthday__lte"]},
+            {"header": _("birthday"), "db_col_name": "born__birthday", "type": "date", "query": ["born__birthday"]},
+            {"header": _("father"), "db_col_name": "father__last_name", "type": "search", "query": ["father__last_name__icontains", "father__first_name__icontains"]},
+            {"header": _("mother"), "db_col_name": "mother__last_name", "type": "search", "query": ["mother__last_name__icontains", "mother__first_name__icontains"]},
+            {"header": _("birth"), "db_col_name": "was_alive", "type": "select", "query": ["was_alive"], 'select': {'0': _('alive').capitalize(), '1': _('dead').capitalize()}},
+            {"header": _("fokotany"), "db_col_name": "fokotany", "type": "search", "query": ["fokotany__name"]},
+            {"header": _("action"), "db_col_name": "", "type": "", "query": []},
+        ]
 
     add_action_url(__package__, menu_name)
 
@@ -170,14 +179,39 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
     certificates_data = BirthCertificate.objects.all()
 
     # Recherche
+    index_search = int(request.GET.get('search_filter', 2))
+
     if 'q' in request.GET.keys():
+        print(headers[index_search])
+        print(
+        date.today() - timedelta(days=int(request.GET['q'])*365) 
+                        if headers[index_search]['header'] == _('age') 
+                        else date(int(request.GET['q'].split('-')[0]), int(request.GET['q'].split('-')[1]), int(request.GET['q'].split('-')[2]))
+                        if headers[index_search]['header'] == _('date') 
+                        else request.GET['q']
+        )
         certificates_data = certificates_data.filter(
-                    Q(**{"born__first_name__icontains":request.GET['q']}) |
-                    Q(**{"born__last_name__icontains":request.GET['q']})
+                    Q(**{f"{headers[index_search]['query'][0]}":request.GET['q']}) |
+                    Q(**{f"{headers[index_search]['query'][1]}":request.GET['q']})
+                    if len(headers[index_search]['query']) == 2
+                    else
+                    Q(
+                        **{
+                            f"{headers[index_search]['query'][0]}": 
+                            date.today() - timedelta(days=int(request.GET['q'])*365) 
+                            if headers[index_search]['header'] == _('age') 
+                            else date(int(request.GET['q'].split('-')[0]), int(request.GET['q'].split('-')[1]), int(request.GET['q'].split('-')[2]))
+                            if headers[index_search]['header'] == _('date') 
+                            else True if request.GET['q'] == '0' else False
+                            if headers[index_search]['header'] == _('birth') 
+                            else request.GET['q']
+                           }
+                        )
+
                 )
 
     # Ordre
-    if 'order' in list(request.GET) and request.GET['order'] in headers["headers"]:
+    if 'order' in list(request.GET) and request.GET['order'] in [header['header'] for header in headers]:
         if not 'order_name' in list(request.session.keys()):
             request.session['order_name'] = ""
             request.session['order_sense'] = False
@@ -191,12 +225,12 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             print("other !!!!!!!!!")
             print(request.session['order_sense'])
 
-        for index, column in enumerate(headers['db_col_name']):
-            if request.session['order_name'] == headers['headers'][index]:
+        for index, column in enumerate(headers):
+            if column['db_col_name'] != "" and request.session['order_name'] == column['header']:
                 if request.session['order_sense']:
-                    certificates_data = certificates_data.order_by(column)
+                    certificates_data = certificates_data.order_by(column['db_col_name'])
                 else:
-                    certificates_data = certificates_data.order_by(column).reverse()
+                    certificates_data = certificates_data.order_by(column['db_col_name']).reverse()
                 break
     else:
         certificates_data = certificates_data.order_by("pk").reverse()
@@ -224,13 +258,15 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
         "submenus": [],
         "action_name": "list",
         "actions": actions,
+        "searched_domain": int(request.GET.get('search_filter', 2)),
+        "q_value": request.GET.get('q', ""),
         "table_length": line_bypage,
         "num_page": certificate_page.number,
         "prev_page": n_page - 1,
         "next_page": n_page + 1,
         "per_page": _(' per ') + str(certificate_bypage.num_pages),
         "table": {
-            "headers": headers['headers'], 
+            "headers": headers, 
             "datas": [
                 {                                
                     "index" : index,
@@ -257,7 +293,7 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
         }
     }
 
-    print(actions)
+    print("text", context['searched_domain'])
 
     for service in request.session['urls']:
         if service['name'] == __package__:
