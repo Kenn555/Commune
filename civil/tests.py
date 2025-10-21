@@ -79,11 +79,15 @@ document = get_object_or_404(CertificateDocument, pk=1)
 #     Q(**{"born__birthday__lte": datetime.today() - timedelta(days=18*365)})
 # ))
 
-print(datetime.now() - timedelta(days=1))
+# print(datetime.now() - timedelta(days=1))
 
 # print(BirthCertificate.objects.all().filter(date_created=))
 
 # print(_(views.actions[0]['title']))
+
+father = BirthCertificate.objects.get(pk=1).father
+
+print(BirthCertificate.objects.get(born=father) if BirthCertificate.objects.filter(born=father) else None)
 
 # from django.utils.translation import ngettext as _n
 

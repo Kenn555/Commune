@@ -10,7 +10,6 @@ urlpatterns = [
     path("birth/", views.birth_list, name='birth'),
     path("birth/register/", views.birth_register, name='birth-register'),
     path("birth/save/", views.birth_save, name='birth-save'),
-    path("birth/detail/<int:birth_id>/", views.birth_detail, name='birth-detail'),
     path("birth/modify/<int:birth_id>/", views.birth_modify, name='birth-modify'),
     path("birth/delete/<int:birth_id>/", views.birth_delete, name='birth-delete'),    
     # URLs pour les certificats
@@ -26,7 +25,8 @@ urlpatterns = [
     path("marriage/register/", views.marriage_register, name='marriage-register'),
     # Gestion d'enregistrement
     path("regmanager/", views.register_manager, name='register-manager'),
-    
+    # Détails de Certificat
+    path("detail/<int:birth_id>/", views.birth_detail, name='birth-detail'),
     # URLs pour l'autocomplete
     path('autocomplete/person/', views.PersonAutocomplete.as_view(), name='person-autocomplete'),
     path('autocomplete/father/', views.FatherAutocomplete.as_view(), name='father-autocomplete'),

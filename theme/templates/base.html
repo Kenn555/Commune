@@ -80,15 +80,16 @@
 
         <div class="flex pt-16 h-full w-full">
             <!-- Menu principal Vertical -->
-            <aside class="
+            <aside class=" flex flex-col
             w-60 text-white bg-sky-900 
             transform transition-all duration-300 ease-in-out 
             max-lg:w-16
             max-sm:-translate-x-64 max-sm:w-0
             ">
-                <button></button>
-                
-                <a href="{% url 'account:index' %}"></a>
+                <a href="{% url app_home %}" class="my-4">
+                    <img src="{% static 'img/logo.png' %}" class="justify-self-center w-32" alt="logo commune betsiaka" sizes="" srcset="">
+                </a>
+
                 {% for service in services %}
                 <!-- Listes des services -->
                 <nav class="mt-4" title="{% translate service.title|title %}">

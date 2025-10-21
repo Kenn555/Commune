@@ -352,7 +352,7 @@ class BirthCertificateForm(forms.Form):
             _("Mother"): ["use_existing_mother", "existing_mother",
                 "mother_name", "mother_place_of_birth", "mother_birthday", "mother_job", "mother_address"
             ],
-            _("Declarer"): ["existing_declarer", "declarer_name", "declarer_place_of_birth", "declarer_birthday", "declarer_job", "declarer_address"]
+            _("declarer"): ["existing_declarer", "declarer_name", "declarer_place_of_birth", "declarer_birthday", "declarer_job", "declarer_address"]
         },
     }
 

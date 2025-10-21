@@ -13,10 +13,10 @@
   </style>
    <style>
         /* Styles personnalisés pour Select2 */
-        .select2-container {
-            min-width: 100% !important;
+        script ~ span.select2-container.select2-container--default.select2-container--open {
+          position: fixed !important;
         }
-        
+
         .select2-container--default .select2-selection--single {
             background-color: transparent;
             border: none;
@@ -150,8 +150,10 @@
     $(document).ready(function() {
         // Configuration de base des selects Select2
         $('.select2').select2({
-            width: '100%'
+            width: '100%',
         });
+
+        $('').on('click', (e)=>{console.log('Saluttttttt')});
 
         // Gestion de l'affichage conditionnel pour les informations des parents
         function toggleFamilyFields(){

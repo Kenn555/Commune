@@ -125,7 +125,8 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
 
     menu_name = "dashboard"
     context = {
-        "accessed":__package__ in request.session['app_accessed'],
+        "accessed": __package__ in request.session['app_accessed'],
+        "app_home": __package__ + ":index",
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -164,10 +165,10 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             {"header": _("gender"), "db_col_name": "born__gender", "type": "select", "query": ["born__gender__icontains"], 'select': Person.GENDER_CHOICES},
             {"header": _("age"), "db_col_name": "born__birthday", "type": "number", "query": ["born__birthday__lte"]},
             {"header": _("birthday"), "db_col_name": "born__birthday", "type": "date", "query": ["born__birthday"]},
-            {"header": _("father"), "db_col_name": "father__last_name", "type": "search", "query": ["father__last_name__icontains", "father__first_name__icontains"]},
-            {"header": _("mother"), "db_col_name": "mother__last_name", "type": "search", "query": ["mother__last_name__icontains", "mother__first_name__icontains"]},
+            {"header": _("father"), "db_col_name": "father__last_name" if get_language() == 'mg' else "father__first_name", "type": "search", "query": ["father__last_name__icontains", "father__first_name__icontains"]},
+            {"header": _("mother"), "db_col_name": "mother__last_name" if get_language() == 'mg' else "mother__first_name", "type": "search", "query": ["mother__last_name__icontains", "mother__first_name__icontains"]},
             {"header": _("birth"), "db_col_name": "was_alive", "type": "select", "query": ["was_alive"], 'select': {'0': _('alive').capitalize(), '1': _('dead').capitalize()}},
-            {"header": _("fokotany"), "db_col_name": "fokotany", "type": "search", "query": ["fokotany__name"]},
+            {"header": _("fokotany"), "db_col_name": "fokotany", "type": "search", "query": ["fokotany__name__icontains"]},
             {"header": _("action"), "db_col_name": "", "type": "", "query": []},
         ]
 
@@ -249,6 +250,7 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
+        "app_home": __package__ + ":index",
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -270,7 +272,10 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             "datas": [
                 {                                
                     "index" : index,
-                    "pk": (CertificateDocument.objects.filter(birth_certificate=birth).first()).pk if CertificateDocument.objects.filter(birth_certificate=birth).exists() else int(birth.pk),
+                    "pk": birth.pk,
+                    "father_cert_pk": BirthCertificate.objects.get(born=birth.father).pk if BirthCertificate.objects.filter(born=birth.father) else None,
+                    "mother_cert_pk": BirthCertificate.objects.get(born=birth.mother).pk if BirthCertificate.objects.filter(born=birth.mother) else None,
+                    "detail_url": 'civil:birth-detail',
                     "row": [
                         {"header": "date", "value": format(birth.date_created,'%d/%m/%Y'), "style": "text-center w-4 text-nowrap", "title": birth.date_created},
                         {"header": "number", "value": str(birth.pk).zfill(9), "style": "text-center w-12 text-nowrap", "title": str(birth.pk).zfill(9)},
@@ -283,9 +288,9 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                         {"header": "birth", "value": _("alive") if birth.was_alive else _("dead"), "style": "text-center w-4 text-nowrap", "title": _("alive") if birth.was_alive else _("dead")},
                         {"header": "fokotany", "value": birth.fokotany.name, "style": "text-start w-4 text-nowrap", "title": birth.fokotany},
                         {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
-                            {"name": _("open"), "url": "civil:certificate-print", "style": "green"},
-                            {"name": _("print"), "url": "civil:certificate-preview", "style": "blue"},
-                            # {"name": _("delete"), "url": "civil:birth-delete", "style": "red"},
+                            {"name": _("open"), "url": "civil:birth-detail", "style": "green"},
+                            # {"name": _("print"), "url": "civil:certificate-preview", "style": "blue"},
+                            {"name": _("delete"), "url": "civil:birth-delete", "style": "red"},
                         ]},
                     ],
                 } for index, birth in enumerate(certificate_page)
@@ -320,6 +325,7 @@ def birth_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponseP
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
+        "app_home": __package__ + ":index",
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -439,10 +445,38 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
 def birth_detail(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
 
     print("DETAILLE !!!!!!!!!!!!!!!!!!!")
+
+    menu_name = 'birth'
+
+    certificate = BirthCertificate.objects.get(pk=birth_id)
+    document = CertificateDocument.objects.filter(birth_certificate=certificate)
+    print(document)
+    
     context = {
         "accessed": __package__ in request.session['app_accessed'],
-        }
-    return render(request, "civil/certificate.html", context)
+        "app_home": __package__ + ":index",
+        "user": request.user,
+        "app_name": __package__,
+        "menu_name": menu_name,
+        "services": request.session['urls'],
+        "common_name": getattr(settings, "COMMON_NAME"),
+        "submenus": [],
+        "certificate": certificate,
+        "document": document,
+        "age": ngettext("%(age)d year old", "%(age)d years old", date.today().year - certificate.born.birthday.year) % {"age": date.today().year - certificate.born.birthday.year},
+        "status": _("alive") if certificate.born.is_alive else _("dead"),
+    }
+    
+    for service in request.session['urls']:
+        if service['name'] == __package__:
+            context['title'] = _(service['title'])
+            if 'submenus' in list(service.keys()):
+                context['submenus'] += service['submenus']
+                for submenu in service['submenus']:
+                    if submenu['name'] == menu_name:
+                        context['menu_title'] = _(submenu['title'])
+
+    return render(request, "civil/details.html", context)
 
 @login_required
 def birth_modify(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
@@ -461,10 +495,9 @@ def certificate_preview(request: WSGIRequest, pk) -> HttpResponseRedirect | Http
     menu_name = "birth"
     document = get_object_or_404(CertificateDocument, pk=pk)
 
-    print(document.birth_certificate.born.birthday)
-
     context = {
         "accessed": __package__ in request.session['app_accessed'],
+        "app_home": __package__ + ":index",
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -541,6 +574,7 @@ def death(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
+        "app_home": __package__ + ":index",
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -591,6 +625,7 @@ def death_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponseP
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
+        "app_home": __package__ + ":index",
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -627,6 +662,7 @@ def marriage(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermane
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
+        "app_home": __package__ + ":index",
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -659,6 +695,7 @@ def marriage_register(request: WSGIRequest) -> HttpResponseRedirect | HttpRespon
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
+        "app_home": __package__ + ":index",
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,

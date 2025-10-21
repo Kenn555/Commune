@@ -28,6 +28,7 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
+        "app_home": __package__ + ":index",
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -81,6 +82,7 @@ def staff_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
+        "app_home": __package__ + ":index",
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -140,6 +142,7 @@ def staff_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponseP
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
+        "app_home": __package__ + ":index",
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -264,6 +267,7 @@ def user_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerman
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
+        "app_home": __package__ + ":index",
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
@@ -322,6 +326,7 @@ def user_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePe
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
+        "app_home": __package__ + ":index",
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,

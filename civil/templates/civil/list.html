@@ -70,9 +70,17 @@
                         </div>
                     </div>
                     {% else %}
-                    <div class="peer table-cell px-4 py-2 {{ cell.style }}" title="{{ cell.title }}">
+                    <a 
+                    {% if cell.header == "full name" %}
+                    href="{% url data.detail_url data.pk %}"
+                    {% elif data.father_cert_pk and cell.header == "father" %}
+                    href="{% url data.detail_url data.father_cert_pk %}"
+                    {% elif data.mother_cert_pk and cell.header == "mother" %}
+                    href="{% url data.detail_url data.mother_cert_pk %}"
+                    {% endif %}
+                    class="peer table-cell px-4 py-2 {{ cell.style }}" title="{{ cell.title }}">
                         {{ cell.value }}
-                    </div>
+                    </a>
                     {% endif %}
                     {% endfor %}
                 </div>
