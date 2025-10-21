@@ -78,7 +78,7 @@
                     {% elif data.mother_cert_pk and cell.header == "mother" %}
                     href="{% url data.detail_url data.mother_cert_pk %}"
                     {% endif %}
-                    class="peer table-cell px-4 py-2 {{ cell.style }}" title="{{ cell.title }}">
+                    class="peer table-cell px-4 py-2 hover:bg-blue-500 {{ cell.style }}" title="{{ cell.title }}">
                         {{ cell.value }}
                     </a>
                     {% endif %}

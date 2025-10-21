@@ -13,8 +13,8 @@ urlpatterns = [
     path("birth/modify/<int:birth_id>/", views.birth_modify, name='birth-modify'),
     path("birth/delete/<int:birth_id>/", views.birth_delete, name='birth-delete'),    
     # URLs pour les certificats
-    path('certificate/<int:pk>/preview/', views.certificate_preview, name='certificate-preview'),
-    path('certificate/<int:pk>/print/', views.certificate_print_view, name='certificate-print'),
+    path('certificate/<str:pk_group>/preview/', views.certificate_preview, name='certificate-preview'),
+    path('certificate/create/<str:menu>/<int:pk>/<int:many>/', views.certificate_creation, name='certificate-creation'),
     path('certificate/<int:pk>/validate/', views.certificate_validate, name='certificate-validate'),
     path('certificate/<int:pk>/delete/', views.CertificateDeleteView.as_view(), name='certificate-delete'),
     # Décès

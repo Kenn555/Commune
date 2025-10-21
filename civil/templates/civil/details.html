@@ -9,36 +9,47 @@
         <div class="text-6xl font-bold">
             {{ certificate.born.full_name }}
         </div>
-        <div class="flex flex-row gap-x-7 ml-14">
-            <div class="flex justify-center items-center h-full">{{ age }}</div>
-            <div class="flex justify-center items-center h-full">{{ status|capfirst }}</div>
-            <div class="flex justify-center items-center h-full">Not married</div>
-        </div>
-        <div class="flex flex-row  flex-wrap gap-x-7 gap-y-2 ml-14 w-full">
-            {% if certificate.father %}
-                <p><b>{% trans 'father'|capfirst %} :</b> {{ certificate.father.full_name }}</p>
-            {% endif %}
-            <p><b>{% trans 'mother'|capfirst %} :</b> {{ certificate.mother.full_name }}</p>
-            {% if not certificate.father == certificate.declarer %}
-            <p><b>{% trans 'declarer'|capfirst %} :</b> {{ certificate.declarer.full_name }}</p>
-            {% endif %}
+        <div class="flex max-md:flex-wrap gap-4">
+            <div class="flex flex-col ml-10 gap-2 w-full">
+                <div class="flex flex-row  flex-wrap gap-x-7 gap-y-2 w-full">
+                    {% if certificate.father %}
+                        <p><b>{% trans 'father'|capfirst %} :</b> {{ certificate.father.full_name }}</p>
+                    {% endif %}
+                    <p><b>{% trans 'mother'|capfirst %} :</b> {{ certificate.mother.full_name }}</p>
+                    {% if not certificate.father == certificate.declarer %}
+                    <p><b>{% trans 'declarer'|capfirst %} :</b> {{ certificate.declarer.full_name }}</p>
+                    {% endif %}
+                </div>
+                <div class="w-full">
+                    <p><b>{% trans 'birthday'|capfirst %} :</b> {{ certificate.born.birthday|date:'d-m-Y H:i' }}</p>
+                </div>
+            </div>
+            <div class="flex flex-row gap-x-7 w-full justify-end self-end">
+                <div class="flex justify-center items-center h-full">{{ age }}</div>
+                <div class="flex justify-center items-center h-full">Not married</div>
+                <div class="flex justify-center items-center h-full">{{ status|capfirst }}</div>
+            </div>
         </div>
     </div>
-    <div class="rounded-b-3xl p-4 bg-white h-[1000px]">
-        <div class="flex justify-center gap-7">
+    <div class="flex flex-col gap-7 rounded-b-3xl p-4 bg-white min-h-[500px]">
+        <div class="flex justify-between gap-2">
+            <p class="text-sm">Date created : {{ certificate.date_created|date:'d-m-Y H:i' }}</p>
+            <p class="text-sm">Date modified : {{ certificate.date_modified|date:'d-m-Y H:i' }}</p>
+        </div>
+        <div class="flex flex-wrap justify-center gap-7">
             <a href="" class="flex items-center p-4 gap-4 rounded-xl shadow-md w-80">
-                <div class="flex rounded-full w-16 h-16 items-center justify-center border-4 border-gray-500 text-xl font-semibold">
+                <div class="flex rounded-full min-w-16 min-h-16 items-center justify-center border-4 border-blue-500 text-xl font-semibold">
                     {{ document.count }}
                 </div>
                 <div class="flex flex-col">
                     <p class="text-md font-semibold">{% trans "Copies de Naissance"|upper %}</p>
-                    <p class="text-blue-400">{% trans 'last at ' %}</p>
+                    <p class="text-blue-400">{% trans 'last at ' %}{{ document.last.created_at|date:'d-m-Y H:i' }}</p>
                 </div>
             </a>
             {% if not certificate.born.is_alive %}
             <a href="" class="disabled:cursor-not-allowed flex items-center p-4 gap-4 rounded-xl shadow-md w-80">
-                <div class="flex rounded-full w-16 h-16 items-center justify-center border-4 border-gray-500 text-xl font-semibold">
-                    {{ document.count }}
+                <div class="flex rounded-full min-w-16 min-h-16 items-center justify-center border-4 border-gray-500 text-xl font-semibold">
+                    {{ 0 }}
                 </div>
                 <div class="flex flex-col">
                     <p class="text-md font-semibold">{% trans "Copies de Décès"|upper %}</p>
@@ -47,8 +58,8 @@
             </a>
             {% endif %}
             <a href="" class="flex items-center p-4 gap-4 rounded-xl shadow-md w-80">
-                <div class="flex rounded-full w-16 h-16 items-center justify-center border-4 border-gray-500 text-xl font-semibold">
-                    {{ document.count }}
+                <div class="flex rounded-full min-w-16 min-h-16 items-center justify-center border-4 border-rose-500 text-xl font-semibold">
+                    {{ 0 }}
                 </div>
                 <div class="flex flex-col">
                     <p class="text-md font-semibold">{% trans "Copies de Mariage"|upper %}</p>
@@ -56,7 +67,82 @@
                 </div>
             </a>
         </div>
+
+        <!-- Liste de Copies de Naissance -->
+         <div class="flex flex-col gap-2">
+            {% for doc in document %}
+            <a href="{% url 'civil:certificate-preview' doc.pk %}" class="w-full shadow-md rounded-lg p-4 bg-white hover:bg-blue-50">
+                <p class="contain-content text-nowrap text-ellipsis">
+                <span class="text-blue-400">{{ doc.created_at|date:"d-m-Y H:i" }} </span>
+                --- N° {{ doc.pk }} --- {{ doc.birth_certificate.birth_type }} --- {{ doc.get_price }} Ar
+                </p>
+            </a>
+            {% endfor %}
+         </div>
+
+        <!-- Boutons d'Actions -->
+         <div class="flex flex-col items-center fixed gap-2 rounded-xl bg-white shadow-md min-w-52 p-4 right-10 bottom-7">
+            <a class="px-4 py-2 border border-white text-white shadow-md bg-gray-600 rounded-lg w-full text-center cursor-not-allowed"
+            title="En construction"
+            >
+                Arbre de Famille
+            </a>
+            <a class="px-4 py-2 border border-white text-white shadow-md bg-gray-600 rounded-lg w-full text-center cursor-not-allowed"
+            title="En construction"
+            >
+                Arbre Généalogique
+            </a>
+            <form action="" method="post" class="flex flex-col gap-1">
+                {% csrf_token %}
+                <div class="flex gap-x-2 justify-center">
+                    <button type="button" onclick="downManyCp()" class="px-4 text-xl bg-gray-100 rounded-lg">-</button>
+                    <input id="id_many_cp" name="many_cp" type="number" value=1 min=1 max=10 class="text-end w-16 focus:ring-0 border-0 border-b-2">
+                    <button type="button" onclick="upManyCp()" class="px-4 text-xl bg-gray-100 rounded-lg">+</button>
+                </div>
+                <button name="cp_birth" class="px-4 py-2 border border-white text-white shadow-md bg-green-600 hover:bg-green-500 rounded-lg w-full text-center"
+                title="Faire une Copie de Naissance"
+                >
+                    Faire Cp. Naissance
+                </button>
+                <button name="cp_death"  class="px-4 py-2 border border-white text-white shadow-md bg-green-600 hover:bg-green-500 rounded-lg w-full text-center"
+                title="Faire une Copie de Décès"
+                >
+                    Faire Cp. Décès
+                </button>
+                <a href="" class="px-4 py-2 border border-white text-white shadow-md bg-green-600 hover:bg-green-500 rounded-lg w-full text-center"
+                title="Faire une Copie de Mariage"
+                >
+                    Faire Cp. Mariage
+                </a>
+            </form>
+            {% if not certificate.father %}
+            <a href="" class="px-4 py-2 border border-white text-white shadow-md bg-yellow-500 hover:bg-yellow-400 rounded-lg w-full text-center"
+            title="Reconnaissance par le père"
+            >
+                Reconnaitre
+            </a>
+            {% endif %}
+            <a href="{% url 'civil:birth-delete' certificate.pk %}" class="px-4 py-2 border border-white text-white shadow-md bg-rose-600 hover:bg-rose-500 rounded-lg w-full text-center"
+            title="Supprimer"
+            >
+                Supprimer
+            </a>
+         </div>
     </div>
 </div>
+
+<script>
+    function downManyCp() {
+        if ($('#id_many_cp').val() > 1) {
+            $('#id_many_cp').val(Number($('#id_many_cp').val()) - 1);
+        }
+    }
+
+    function upManyCp() {
+        if ($('#id_many_cp').val() < 10) {
+            $('#id_many_cp').val(Number($('#id_many_cp').val()) + 1);
+        }
+    }
+</script>
 
 {% endblock article %}

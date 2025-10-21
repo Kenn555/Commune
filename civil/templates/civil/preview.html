@@ -13,7 +13,6 @@
             body * {
                 visibility: hidden !important;
             }
-
             #print-area, #print-area * {
                 visibility: visible !important;
             }
@@ -24,6 +23,7 @@
                 top: 0;
                 width: 100%;
             }
+
             .zoom-container {
                 transform: none !important;
             }
@@ -41,7 +41,7 @@
         .a4-page {
             width: 210mm;
             min-height: 297mm;
-            padding: 12mm;
+            padding: 8mm 12mm;
             background: white;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             margin: 0px auto;
@@ -93,12 +93,12 @@
                         {% trans "Certificate Preview" %}
                     </h1>
                     <p class="text-sm text-gray-600">
-                        {{ document.get_document_type_display }} - {{ document.document_number }}
+                        {{ document_info.get_document_type_display }} - {{ document_info.document_number }}
                         <span class="ml-2 px-2 py-1 text-xs rounded-full
-                            {% if document.status == 'VALIDATED' %}bg-green-100 text-green-800
-                            {% elif document.status == 'DRAFT' %}bg-yellow-100 text-yellow-800
+                            {% if document_info.status == 'VALIDATED' %}bg-green-100 text-green-800
+                            {% elif document_info.status == 'DRAFT' %}bg-yellow-100 text-yellow-800
                             {% else %}bg-red-100 text-red-800{% endif %}">
-                            {{ document.get_status_display }}
+                            {{ document_info.get_status_display }}
                         </span>
                     </p>
                 </div>
@@ -120,7 +120,7 @@
                     </button>
                     
                     <!-- Bouton Modifier -->
-                    {% if document.can_edit %}
+                    {% if document_info.can_edit %}
                     <a href="" 
                         class="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,7 +131,7 @@
                     {% endif %}
                     
                     <!-- Bouton Supprimer -->
-                    {% if document.can_delete %}
+                    {% if document_info.can_delete %}
                     <button onclick="confirmDelete()" 
                         class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -157,137 +157,141 @@
     <!-- Document A4 -->
    <div class="zoom-container">
         {% language 'mg' %}
-        <div class="a4-page text-[12pt] font-['Times_New_Roman']" id="print-area">
-            {% comment %} <!-- Watermark -->
-            {% if document.status == 'DRAFT' %}
-            <div class="watermark">BROUILLON</div>
-            {% endif %} {% endcomment %}
-            
-            <div class="grid  grid-cols-10 mt-[90px] gap-y-8 gap-x-4">
-                <!-- Informations administratives -->
-                <div class="flex text-[11pt] col-span-3 flex-col items-start mt-32 gap-y-2 leading-tight">
-                    <p class="indent-8 underline">N° {{ document.pk }}/</p>
-                    <p class="indent-3">{{ certificate.date_created|date:"d" }} {{ certificate.date_created|date:"m"|volana_gasy|capfirst }} {{ certificate.date_created|date:"Y" }}</p>
-                    <p class="indent-1 uppercase">
-                        {% if certificate.certificate_type == "R" %}
-                            FAHATERAHANA SY<br>FANJANAHANA
-                        {% else %}
-                            FAHATERAHANA
-                        {% endif %}
-                    </p>
-                    <p class="">{{ certificate.born.full_name }}</p>
-                    <p class="indent-8">{{ certificate.born.birthday|date:"d-m-y" }}</p>
-                    <p class="font-semibold indent-7 tracking-widest">---------------</p>
+        <div class="flex flex-col" id="print-area">
+            {% for document in document_group %}
+            <div class="a4-page flex flex-col items-end text-[12pt] font-['Times_New_Roman']">
+                {% comment %} <!-- Watermark -->
+                {% if document.status == 'DRAFT' %}
+                <div class="watermark">BROUILLON</div>
+                {% endif %} {% endcomment %}
+                    
+                <!-- Note en haut à droite (filigrane) -->
+                <div class="font-sans text-[8pt] text-gray-500 ring-1 ring-black pt-1 pr-14 pb-4 pl-2 max-w-xs bg-white">
+                    Teny midina laharana faha: 788-MJ/CAB<br>
+                    tamin'ny 29 desambra 1961 nataon'ny<br>
+                    <span class="pl-8">Minisitry ny Fitsiavana</span><br>
+                    sy Mpitahiry ny Kasem-panjakana
                 </div>
                 
-                <!-- Corps du texte en malgache -->
-                <div class="flex flex-col col-span-7 gap-y-8 leading-tight text-justify" style="position: relative; z-index: 1;">
-                    
-                    <!-- Titre en écriture manuscrite -->
-                    <div class="">
-                        <h1 class="handwriting-title
-                        relative inline-block
-                        after:content-[''] after:absolute
-                        after:border-b-2 after:border-dashed after:border-black
-                        after:left-0 after:w-full after:h-[2px]
-                        after:bottom-[0.2em]">Kopian'ny Sora-piankohonana</h1>
-                    </div>
-
-                    <div class="relative 
-                        after:content-[''] after:absolute
-                        after:bg-white
-                        after:left-0 after:w-full after:h-[20px]"
-                    >
-                        <p class="inline text-justify bg-clip-text">
-                            _______Nalaina tamin'ny bokim-piankohonana ao {{ certificate.fokotany.name }}, taona {{ certificate.date_created|date:"Y" }},
-                            izao soratra manaraka izao.
-                        </p>
-                        <p class="inline">-------------------------------------------------------------------------------------------</p>
-                    </div>
-
-                    <div class="relative 
-                        after:content-[''] after:absolute
-                        after:bg-white
-                        after:left-0 after:w-full after:h-[20px]"
-                    >
-                        <p class="inline text-justify">
-                            _________Tamin'ny {{ certificate.born.birthday|date:"d"|isa_gasy }} {{ certificate.born.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ certificate.born.birthday|date:"Y"|isa_gasy }}, tamin'ny {{ certificate.born.birthday|date:"h"|isa_gasy }} ora {{ certificate.born.birthday|date:"h"|ora_gasy }}, no {% if certificate.born.is_alive %}teraka {% else %}maty teo ampiterahana {% endif %}tao amin'ny {{ certificate.born.birth_place }}, 
-                            Commune {% if common_name|lower in certificate.born.birth_place|lower %} io ihany{% else %} {{ common_name }}{% endif %}: 
-                            {{ certificate.born.full_name }}, {% if certificate.born.gender == 'M' %}zanakalahy{% else %}zanakavavy{% endif %}, zanak'i 
-                            {% if certificate.father %}{{ certificate.father.full_name }} teraka tamin'ny {{ certificate.father.birthday|date:"d"|isa_gasy }} {{ certificate.father.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ certificate.father.birthday|date:"Y"|isa_gasy }}, tao {{ certificate.father.birth_place }},{% if certificate.father_carreer|lower != certificate.mother_carreer|lower %} {{certificate.father_carreer|lower}}, {% endif %}{% if certificate.father_address != certificate.mother_address %} monina ao {{certificate.father_address}} {% endif %}
-                            {% if certificate.certificate_type == 'R' %}izay nanjana'azy teo amin'ny fahaterahany {% endif %} sy {% endif %}
-                            {{ certificate.mother.full_name }}, teraka tamin'ny {{ certificate.mother.birthday|date:"d"|isa_gasy }} {{ certificate.mother.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ certificate.mother.birthday|date:"Y"|isa_gasy }}, tao {{ certificate.mother.birth_place }}{% if certificate.father_carreer|lower != certificate.mother_carreer|lower %}, {{certificate.mother_carreer|lower}}, {% endif %}{% if certificate.father_address != certificate.mother_address %} monina ao {{certificate.mother_address}} {% endif %}
-                            {% if certificate.father_carreer|lower == certificate.mother_carreer|lower and certificate.father_address == certificate.mother_address %}, samy {{certificate.mother_carreer|lower}} sy monina ao {{certificate.mother_address}}{% if not '-' in certificate.mother_address %}, Commune ao {{ certificate.fokotany.name }}{% endif %}
-                            {% elif certificate.father_carreer|lower|lower == certificate.mother_carreer|lower|lower %}, samy {{certificate.mother_carreer|lower|lower}}
-                            {% elif certificate.father_address == certificate.mother_address %}, samy monina ao {{certificate.mother_address}}{% if not '-' in certificate.mother_address %}, Commune ao {{ certificate.fokotany.name }}{% endif %}{% endif %}.
-                        </p>
-                        <p class="inline">-------------------------------------------------------------------------------------------</p>
-                    </div>
-
-                    <div class="relative 
-                        after:content-[''] after:absolute
-                        after:bg-white
-                        after:left-0 after:w-full after:h-[20px]"
-                    >
-                        <p class="inline text-justify">
-                            _________Nosoratana androany {{ certificate.date_created|date:"d"|isa_gasy }} {{ certificate.date_created|date:"m"|volana_gasy|capfirst }}, taona {{ certificate.date_created|date:"Y"|isa_gasy }},
-                            tamin'ny {{ certificate.date_created|date:"h"|isa_gasy }} ora {{ certificate.date_created|date:"h"|ora_gasy }}, araky ny fanambarana nataon'i
-                            {% if certificate.declarer == certificate.father %} rainy izay {% elif certificate.declarer == certificate.mother %} reniny izay {% else %}{{ certificate.declarer.full_name }},
-                            teraka tamin'ny {{ certificate.declarer.birthday|date:"d"|isa_gasy }} {{ certificate.declarer.birthday|date:"F"|capfirst }}, taona {{ certificate.declarer.birthday|date:"Y"|isa_gasy }}, 
-                            tao {{ certificate.declarer.birth_place }}, {{ certificate.declarer_carreer|lower }}, monina ao {{ certificate.declarer_address }},
-                            izay nanatrika ny fahaterahany ka {% endif %} miara manao Sonia aminay:
-                            {{ staff_reponsible }} mpiandraikitra sora-piankohonana ao {{ certificate.fokotany.name }}, rehefa novakina taminy ity soratra ity.
-                        </p>
-                        <p class="inline">-------------------------------------------------------------------------------------------</p>
-                    </div>
-                </div>
-                
-                <p class="col-span-3 text-[11pt] underline mt-4 indent-4">SARANY : 1000 Ariary</p>
-
-                <div class="col-span-7 space-y-1 leading-relaxed text-justify" style="position: relative; z-index: 1;">
-                    <p class="indent-20">= MANARAKA NY SONIA =</p>
-                    <div class="pl-32">
-                        <p class="indent-10"> = </p>
-                        <p class="indent-16"> = </p>
-                        <p class="indent-24"> = </p>
-                    </div>
-                    
-                    <div class="flex justify-between items-end mt-12">                        
-                        <div class="flex flex-col gap-8">
-                            <p class="indent-8 leading-tight">Kopia manontolo nadika tamin'ny boky androany 
-                                {{ document.created_at|date:"d" }} {{ document.created_at|date:"m"|volana_gasy|capfirst }} {{ document.created_at|date:"Y" }}.</p>
-                            
-                            <p class="font-bold uppercase mb-2 text-center">NY MPIANDRAIKITRA SORA-PIANKOHONANA</p>
-                            
-                            {% comment %} {% if document.validated_by %}
-                            <div class="relative inline-block">
-                                <p class="font-bold text-blue-800" style="transform: rotate(-5deg);">
-                                    {{ document.validated_by }}
-                                </p>
-                            </div>
+                <div class="grid  grid-cols-10 mt-[8px] gap-y-8 gap-x-4">
+                    <!-- Informations administratives -->
+                    <div class="flex text-[11pt] col-span-3 flex-col items-start mt-[138px] gap-y-2 leading-tight">
+                        <p class="indent-8 underline">N° {{ document.pk }}/</p>
+                        <p class="indent-3">{{ document.birth_certificate.date_created|date:"d" }} {{ document.birth_certificate.date_created|date:"m"|volana_gasy|capfirst }} {{ document.birth_certificate.date_created|date:"Y" }}</p>
+                        <p class="indent-1 uppercase">
+                            {% if document.birth_certificate.certificate_type == "R" %}
+                                FAHATERAHANA SY<br>FANJANAHANA
                             {% else %}
-                            <div class="h-16 border-b-2 border-gray-400 w-48 ml-auto"></div>
-                            {% endif %} {% endcomment %}
+                                FAHATERAHANA
+                            {% endif %}
+                        </p>
+                        <p class="">{{ document.birth_certificate.born.full_name }}</p>
+                        <p class="indent-8">{{ document.birth_certificate.born.birthday|date:"d-m-y" }}</p>
+                        <p class="font-semibold indent-7 tracking-widest">---------------</p>
+                    </div>
+                    
+                    <!-- Corps du texte en malgache -->
+                    <div class="flex flex-col col-span-7 gap-y-10 leading-tight text-justify" style="position: relative; z-index: 1;">
+                        
+                        <!-- Titre en écriture manuscrite -->
+                        <div class="">
+                            <h1 class="handwriting-title
+                            relative inline-block
+                            after:content-[''] after:absolute
+                            after:border-b-2 after:border-dashed after:border-black
+                            after:left-0 after:w-full after:h-[2px]
+                            after:bottom-[0.2em]">Kopian'ny Sora-piankohonana</h1>
+                        </div>
+
+                        <div class="relative 
+                            after:content-[''] after:absolute
+                            after:bg-white
+                            after:left-0 after:w-full after:h-[20px]"
+                        >
+                            <p class="inline text-justify bg-clip-text">
+                                _______Nalaina tamin'ny bokim-piankohonana ao {{ document.birth_certificate.fokotany.name }}, taona {{ document.birth_certificate.date_created|date:"Y" }},
+                                izao soratra manaraka izao.
+                            </p>
+                            <p class="inline">-------------------------------------------------------------------------------------------</p>
+                        </div>
+
+                        <div class="relative 
+                            after:content-[''] after:absolute
+                            after:bg-white
+                            after:left-0 after:w-full after:h-[20px]"
+                        >
+                            <p class="inline text-justify">
+                                _________Tamin'ny {{ document.birth_certificate.born.birthday|date:"d"|isa_gasy }} {{ document.birth_certificate.born.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.birth_certificate.born.birthday|date:"Y"|isa_gasy }}, tamin'ny {{ document.birth_certificate.born.birthday|date:"h"|isa_gasy }} ora {{ document.birth_certificate.born.birthday|date:"h"|ora_gasy }}, no {% if document.birth_certificate.born.is_alive %}teraka {% else %}maty teo ampiterahana {% endif %}tao amin'ny {{ document.birth_certificate.born.birth_place }}, 
+                                Commune {% if common_name|lower in document.birth_certificate.born.birth_place|lower %} io ihany{% else %} {{ common_name }}{% endif %}: 
+                                {{ document.birth_certificate.born.full_name }}, {% if document.birth_certificate.born.gender == 'M' %}zanakalahy{% else %}zanakavavy{% endif %}, zanak'i 
+                                {% if document.birth_certificate.father %}{{ document.birth_certificate.father.full_name }} teraka tamin'ny {{ document.birth_certificate.father.birthday|date:"d"|isa_gasy }} {{ document.birth_certificate.father.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.birth_certificate.father.birthday|date:"Y"|isa_gasy }}, tao {{ document.birth_certificate.father.birth_place }},{% if document.birth_certificate.father_carreer|lower != document.birth_certificate.mother_carreer|lower %} {{document.birth_certificate.father_carreer|lower}}, {% endif %}{% if document.birth_certificate.father_address != document.birth_certificate.mother_address %} monina ao {{document.birth_certificate.father_address}} {% endif %}
+                                {% if document.birth_certificate.certificate_type == 'R' %}izay nanjana'azy teo amin'ny fahaterahany {% endif %} sy {% endif %}
+                                {{ document.birth_certificate.mother.full_name }}, teraka tamin'ny {{ document.birth_certificate.mother.birthday|date:"d"|isa_gasy }} {{ document.birth_certificate.mother.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.birth_certificate.mother.birthday|date:"Y"|isa_gasy }}, tao {{ document.birth_certificate.mother.birth_place }}{% if document.birth_certificate.father_carreer|lower != document.birth_certificate.mother_carreer|lower %}, {{document.birth_certificate.mother_carreer|lower}}, {% endif %}{% if document.birth_certificate.father_address != document.birth_certificate.mother_address %} monina ao {{document.birth_certificate.mother_address}} {% endif %}
+                                {% if document.birth_certificate.father_carreer|lower == document.birth_certificate.mother_carreer|lower and document.birth_certificate.father_address == document.birth_certificate.mother_address %}, samy {{document.birth_certificate.mother_carreer|lower}} sy monina ao {{document.birth_certificate.mother_address}}{% if not '-' in document.birth_certificate.mother_address %}, Commune ao {{ document.birth_certificate.fokotany.name }}{% endif %}
+                                {% elif document.birth_certificate.father_carreer|lower|lower == document.birth_certificate.mother_carreer|lower|lower %}, samy {{document.birth_certificate.mother_carreer|lower|lower}}
+                                {% elif document.birth_certificate.father_address == document.birth_certificate.mother_address %}, samy monina ao {{document.birth_certificate.mother_address}}{% if not '-' in document.birth_certificate.mother_address %}, Commune ao {{ document.birth_certificate.fokotany.name }}{% endif %}{% endif %}.
+                            </p>
+                            <p class="inline">-------------------------------------------------------------------------------------------</p>
+                        </div>
+
+                        <div class="relative 
+                            after:content-[''] after:absolute
+                            after:bg-white
+                            after:left-0 after:w-full after:h-[20px]"
+                        >
+                            <p class="inline text-justify">
+                                _________Nosoratana androany {{ document.birth_certificate.date_created|date:"d"|isa_gasy }} {{ document.birth_certificate.date_created|date:"m"|volana_gasy|capfirst }}, taona {{ document.birth_certificate.date_created|date:"Y"|isa_gasy }},
+                                tamin'ny {{ document.birth_certificate.date_created|date:"h"|isa_gasy }} ora {{ document.birth_certificate.date_created|date:"h"|ora_gasy }}, araky ny fanambarana nataon'i
+                                {% if document.birth_certificate.declarer == document.birth_certificate.father %} rainy izay {% elif document.birth_certificate.declarer == document.birth_certificate.mother %} reniny izay {% else %}{{ document.birth_certificate.declarer.full_name }},
+                                teraka tamin'ny {{ document.birth_certificate.declarer.birthday|date:"d"|isa_gasy }} {{ document.birth_certificate.declarer.birthday|date:"F"|capfirst }}, taona {{ document.birth_certificate.declarer.birthday|date:"Y"|isa_gasy }}, 
+                                tao {{ document.birth_certificate.declarer.birth_place }}, {{ document.birth_certificate.declarer_carreer|lower }}, monina ao {{ document.birth_certificate.declarer_address }},
+                                izay nanatrika ny fahaterahany ka {% endif %} miara manao Sonia aminay:
+                                {{ document.birth_certificate.responsible_staff }} mpiandraikitra sora-piankohonana ao {{ document.birth_certificate.fokotany.name }}, rehefa novakina taminy ity soratra ity.
+                            </p>
+                            <p class="inline">-------------------------------------------------------------------------------------------</p>
+                        </div>
+                    </div>
+                    
+                    <p class="col-span-3 text-[11pt] underline mt-4 indent-4">SARANY : 1000 Ariary</p>
+
+                    <div class="col-span-7 space-y-1 leading-relaxed text-justify" style="position: relative; z-index: 1;">
+                        <p class="indent-20">= MANARAKA NY SONIA =</p>
+                        <div class="pl-32">
+                            <p class="indent-10"> = </p>
+                            <p class="indent-16"> = </p>
+                            <p class="indent-24"> = </p>
+                        </div>
+                        
+                        <div class="flex justify-between items-end mt-12">                        
+                            <div class="flex flex-col gap-8">
+                                <p class="indent-8 leading-tight">Kopia manontolo nadika tamin'ny boky androany 
+                                    {{ document.created_at|date:"d" }} {{ document.created_at|date:"m"|volana_gasy|capfirst }} {{ document.created_at|date:"Y" }}.</p>
+                                
+                                <p class="font-bold uppercase mb-2 text-center">NY MPIANDRAIKITRA SORA-PIANKOHONANA</p>
+                                
+                                {% comment %} {% if document.validated_by %}
+                                <div class="relative inline-block">
+                                    <p class="font-bold text-blue-800" style="transform: rotate(-5deg);">
+                                        {{ document.validated_by }}
+                                    </p>
+                                </div>
+                                {% else %}
+                                <div class="h-16 border-b-2 border-gray-400 w-48 ml-auto"></div>
+                                {% endif %} {% endcomment %}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
                 
-            <!-- Note en haut à droite (filigrane) -->
-            <div class="absolute top-8 right-[12mm] font-sans text-[8pt] text-gray-500 ring-1 ring-black pt-1 pr-14 pb-4 pl-2 max-w-xs bg-white">
-                Teny midina laharana faha: 788-MJ/CAB<br>
-                tamin'ny 29 desambra 1961 nataon'ny<br>
-                <span class="pl-8">Minisitry ny Fitsiavana</span><br>
-                sy Mpitahiry ny Kasem-panjakana
             </div>
-            
+            {% endfor %}
         </div>
         {% endlanguage %}
     </div>
     <!-- Pied de page -->
     <div class="absolute no-print bottom-8 left-0 right-0 text-center text-xs text-gray-500">
-        <p>{% trans "Issued on" %} {{ document.created_at|date:"d/m/Y" }} - 
-           {% trans "Document" %} #{{ document.document_number }}</p>
+        <p>{% trans "Issued on" %} {{ document_info.created_at|date:"d/m/Y" }} - 
+           {% trans "Document" %} #{{ document_info.document_number }}</p>
     </div>
     
     <script>

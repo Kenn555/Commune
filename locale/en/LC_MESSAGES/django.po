@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-20 16:07+0300\n"
+"POT-Creation-Date: 2025-10-21 10:05+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -149,13 +149,13 @@ msgstr ""
 #: .\administration\forms.py:85 .\administration\forms.py:286
 #: .\administration\templates\administration\user_register.html:5
 #: .\civil\forms.py:345 .\civil\forms_model.py:65
-#: .\civil\templates\civil\register.html:5 .\civil\views.py:361
+#: .\civil\templates\civil\register.html:5 .\civil\views.py:364
 msgid "Matricule"
 msgstr ""
 
 #: .\administration\forms.py:86 .\administration\forms.py:287
 #: .\administration\views.py:364 .\civil\forms.py:346 .\civil\forms.py:429
-#: .\civil\forms_model.py:66 .\civil\forms_model.py:92 .\civil\views.py:356
+#: .\civil\forms_model.py:66 .\civil\forms_model.py:92 .\civil\views.py:359
 msgid "Informations"
 msgstr ""
 
@@ -237,22 +237,17 @@ msgstr ""
 msgid "Role"
 msgstr ""
 
-#: .\administration\models.py:30 .\civil\models.py:10
+#: .\administration\models.py:67 .\civil\models.py:10
 msgid "Male"
 msgstr ""
 
-#: .\administration\models.py:31 .\civil\models.py:11
+#: .\administration\models.py:68 .\civil\models.py:11
 msgid "Female"
 msgstr ""
 
-#: .\administration\models.py:53 .\civil\models.py:31 .\civil\models.py:34
+#: .\administration\models.py:92
 #, python-format
-msgid "%(first_name)s %(last_name)s"
-msgstr ""
-
-#: .\administration\models.py:91
-#, python-format
-msgid "%(staff)s, %(title)s"
+msgid "%(first_name)s %(last_name)s, %(role)s,"
 msgstr ""
 
 #: .\administration\templates\administration\dashboard.html:13
@@ -315,7 +310,8 @@ msgstr ""
 msgid "age"
 msgstr ""
 
-#: .\administration\views.py:97 .\civil\views.py:167
+#: .\administration\views.py:97 .\civil\templates\civil\details.html:24
+#: .\civil\views.py:167
 msgid "birthday"
 msgstr ""
 
@@ -336,14 +332,14 @@ msgstr ""
 msgid "action"
 msgstr ""
 
-#: .\administration\views.py:107 .\civil\views.py:281 .\civil\views.py:460
+#: .\administration\views.py:107 .\civil\views.py:284 .\civil\views.py:467
 #, python-format
 msgid "%(age)d year old"
 msgid_plural "%(age)d years old"
 msgstr[0] ""
 msgstr[1] ""
 
-#: .\administration\views.py:113 .\civil\views.py:288
+#: .\administration\views.py:113 .\civil\views.py:291
 msgid "open"
 msgstr ""
 
@@ -387,7 +383,7 @@ msgstr ""
 msgid "modify"
 msgstr ""
 
-#: .\administration\views.py:297 .\civil\views.py:290
+#: .\administration\views.py:297 .\civil\views.py:293
 msgid "delete"
 msgstr ""
 
@@ -540,7 +536,7 @@ msgstr ""
 msgid "Mother"
 msgstr ""
 
-#: .\civil\forms.py:355 .\civil\templates\civil\details.html:23
+#: .\civil\forms.py:355 .\civil\templates\civil\details.html:20
 msgid "declarer"
 msgstr ""
 
@@ -576,6 +572,11 @@ msgstr ""
 msgid "Informations Mariage"
 msgstr ""
 
+#: .\civil\models.py:31 .\civil\models.py:34
+#, python-format
+msgid "%(first_name)s %(last_name)s"
+msgstr ""
+
 #: .\civil\models.py:38
 msgid "Fatherless Birth"
 msgstr ""
@@ -588,55 +589,73 @@ msgstr ""
 msgid "Birth and Recognition"
 msgstr ""
 
-#: .\civil\models.py:68
+#: .\civil\models.py:70
 #, python-format
 msgid "%(born)s born at %(birthday)s son of %(father)s%(mother)s declared by %(declarer)s at %(date_created)s"
 msgstr ""
 
-#: .\civil\models.py:70
+#: .\civil\models.py:72
 #, python-format
 msgid "%(born)s born at %(birthday)s daughter of %(father)s%(mother)s declared by %(declarer)s at %(date_created)s"
 msgstr ""
 
-#: .\civil\models.py:71
+#: .\civil\models.py:73
 msgid " and "
 msgstr ""
 
-#: .\civil\models.py:77
+#: .\civil\models.py:79
 msgid "Draft"
 msgstr ""
 
-#: .\civil\models.py:78
+#: .\civil\models.py:80
 msgid "Validated"
 msgstr ""
 
-#: .\civil\models.py:79
+#: .\civil\models.py:81
 msgid "Cancelled"
 msgstr ""
 
-#: .\civil\models.py:104
+#: .\civil\models.py:106
 msgid "Digital signature or stamp info"
 msgstr ""
 
-#: .\civil\models.py:111
+#: .\civil\models.py:113
 msgid "Certificate Document"
 msgstr ""
 
-#: .\civil\models.py:112
+#: .\civil\models.py:114
 msgid "Certificate Documents"
 msgstr ""
 
-#: .\civil\models.py:115
+#: .\civil\models.py:117
 #, python-format
 msgid "Birth Certificate - %(number)s"
 msgstr ""
 
-#: .\civil\templates\civil\details.html:19 .\civil\views.py:168
+#: .\civil\templates\civil\details.html:16 .\civil\views.py:168
 msgid "father"
 msgstr ""
 
-#: .\civil\templates\civil\details.html:21 .\civil\views.py:169
+#: .\civil\templates\civil\details.html:18 .\civil\views.py:169
 msgid "mother"
+msgstr ""
+
+#: .\civil\templates\civil\details.html:45
+msgid "Copies de Naissance"
+msgstr ""
+
+#: .\civil\templates\civil\details.html:46
+#: .\civil\templates\civil\details.html:56
+#: .\civil\templates\civil\details.html:66
+msgid "last at "
+msgstr ""
+
+#: .\civil\templates\civil\details.html:55
+msgid "Copies de Décès"
+msgstr ""
+
+#: .\civil\templates\civil\details.html:65
+msgid "Copies de Mariage"
 msgstr ""
 
 #: .\civil\templates\civil\list.html:28
@@ -708,11 +727,11 @@ msgstr ""
 msgid "birth"
 msgstr ""
 
-#: .\civil\views.py:170 .\civil\views.py:285 .\civil\views.py:461
+#: .\civil\views.py:170 .\civil\views.py:288 .\civil\views.py:468
 msgid "alive"
 msgstr ""
 
-#: .\civil\views.py:170 .\civil\views.py:285 .\civil\views.py:461
+#: .\civil\views.py:170 .\civil\views.py:288 .\civil\views.py:468
 msgid "dead"
 msgstr ""
 
@@ -724,23 +743,23 @@ msgstr ""
 msgid " per "
 msgstr ""
 
-#: .\civil\views.py:283
+#: .\civil\views.py:286
 msgid "unknown"
 msgstr ""
 
-#: .\civil\views.py:539
+#: .\civil\views.py:549
 msgid "Certificate validated successfully."
 msgstr ""
 
-#: .\civil\views.py:541
+#: .\civil\views.py:551
 msgid "This certificate cannot be validated."
 msgstr ""
 
-#: .\civil\views.py:555
+#: .\civil\views.py:565
 msgid "This certificate cannot be deleted."
 msgstr ""
 
-#: .\civil\views.py:558
+#: .\civil\views.py:568
 msgid "Certificate deleted successfully."
 msgstr ""
 

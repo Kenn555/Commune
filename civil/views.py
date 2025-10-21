@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import DetailView, DeleteView
 
 import django.db.utils
-from administration.models import Fokotany, Role
+from administration.models import Fokotany, Role, Staff
 from django.db.models import Q
 from civil import forms
 from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect, JsonResponse
@@ -19,6 +19,7 @@ from dal import autocomplete
 
 from civil.forms import BirthCertificateForm, DeathCertificateForm, MarriageCertificateForm
 from civil.models import BirthCertificate, CertificateDocument, Person
+from finances.models import ServicePrice
 
 
 CERTIFICATE = {
@@ -73,8 +74,8 @@ class PersonAutocomplete(autocomplete.Select2QuerySetView):
         return _("%(last_name)s %(first_name)s - born at %(birthday_day)s at %(birthday_hour)s.") % {
             "last_name": item.last_name, 
             "first_name": item.first_name, 
-            "birthday_day": item.birthday.strftime('%d/%m/%Y'),
-            "birthday_hour": item.birthday.strftime('%H:%M')
+            "birthday_day": item.birthday.astimezone().strftime('%d/%m/%Y'),
+            "birthday_hour": item.birthday.astimezone().strftime('%H:%M')
         }
 
 
@@ -104,7 +105,7 @@ def get_person_details(request, person_id):
             'full_name': person.full_name,
             'first_name': person.first_name,
             'last_name': person.last_name,
-            'birthday': person.birthday.strftime('%Y-%m-%dT%H:%M'),
+            'birthday': person.birthday.astimezone().strftime('%Y-%m-%dT%H:%M'),
             'birth_place': person.birth_place,
             'gender': person.gender,
         }
@@ -281,8 +282,8 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                         {"header": "number", "value": str(birth.pk).zfill(9), "style": "text-center w-12 text-nowrap", "title": str(birth.pk).zfill(9)},
                         {"header": "full name", "value": birth.born, "style": "text-start w-4 text-nowrap", "title": birth.born},
                         {"header": "gender", "value": Person.GENDER_CHOICES[birth.born.gender], "style": "text-center text-nowrap", "title": Person.GENDER_CHOICES[birth.born.gender]},
-                        {"header": "age", "value": date.today().year - birth.born.birthday.year, "style": "text-center text-nowrap", "title": ngettext("%(age)d year old", "%(age)d years old", date.today().year - birth.born.birthday.year) % {"age": date.today().year - birth.born.birthday.year}},
-                        {"header": "date", "value": birth.born.birthday, "style": "text-start w-4 text-nowrap", "title": birth.born.birthday},
+                        {"header": "age", "value": date.today().year - birth.born.birthday.astimezone().year, "style": "text-center text-nowrap", "title": ngettext("%(age)d year old", "%(age)d years old", date.today().year - birth.born.birthday.astimezone().year) % {"age": date.today().year - birth.born.birthday.astimezone().year}},
+                        {"header": "date", "value": birth.born.birthday.astimezone(), "style": "text-start w-4 text-nowrap", "title": birth.born.birthday.astimezone()},
                         {"header": "father", "value": birth.father or _("unknown"), "style": "text-start w-4 text-nowrap", "title": birth.father or _("unknown")},
                         {"header": "mother", "value": birth.mother, "style": "text-start w-4 text-nowrap", "title": birth.mother},
                         {"header": "birth", "value": _("alive") if birth.was_alive else _("dead"), "style": "text-center w-4 text-nowrap", "title": _("alive") if birth.was_alive else _("dead")},
@@ -365,8 +366,6 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
         # Table Personne
         born = Person(Person.objects.last().id + 1 if Person.objects.last() else 1, *[person_data.data for person_data in person_datas])
 
-        print(born.birthday)
-
         if "do_certificate" in request.POST:
             print(request.POST['do_certificate'])
             # Si le père existe
@@ -424,6 +423,7 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 declarer = declarer,
                 declarer_carreer = declarer_carreer,
                 declarer_address = declarer_address,
+                responsible_staff = Staff.objects.get(role=1),
                 certificate_type = certificate_type,
                 was_alive = form.cleaned_data.get('is_alive'),
             )
@@ -431,7 +431,8 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             document = CertificateDocument.objects.create(
                         birth_certificate=certificate,
                         document_number=f"BC-{fokotany.pk}-{certificate.date_created.year}-{str(certificate.pk).zfill(9)}",
-                        status='DRAFT'
+                        status='DRAFT',
+                        price=ServicePrice.objects.last().certificate_price
                     )
 
             return redirect('civil:certificate-preview', pk=document.pk)
@@ -451,6 +452,9 @@ def birth_detail(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpR
     certificate = BirthCertificate.objects.get(pk=birth_id)
     document = CertificateDocument.objects.filter(birth_certificate=certificate)
     print(document)
+
+    if 'cp_birth' in request.POST.keys():
+        return redirect('civil:certificate-creation', menu=menu_name, pk= certificate.pk, many=int(request.POST.get('many_cp', 1)))
     
     context = {
         "accessed": __package__ in request.session['app_accessed'],
@@ -463,7 +467,7 @@ def birth_detail(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpR
         "submenus": [],
         "certificate": certificate,
         "document": document,
-        "age": ngettext("%(age)d year old", "%(age)d years old", date.today().year - certificate.born.birthday.year) % {"age": date.today().year - certificate.born.birthday.year},
+        "age": ngettext("%(age)d year old", "%(age)d years old", date.today().year - certificate.born.birthday.astimezone().year) % {"age": date.today().year - certificate.born.birthday.astimezone().year},
         "status": _("alive") if certificate.born.is_alive else _("dead"),
     }
     
@@ -491,9 +495,14 @@ def birth_delete(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpR
     return redirect('civil:birth')
 
 @login_required
-def certificate_preview(request: WSGIRequest, pk) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
+def certificate_preview(request: WSGIRequest, pk_group:str) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
     menu_name = "birth"
-    document = get_object_or_404(CertificateDocument, pk=pk)
+
+    document_group = []
+    pk_group = [int(pk) for pk in pk_group.split('-')]
+
+    for id in pk_group:
+        document_group.append(get_object_or_404(CertificateDocument, pk=id))
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
@@ -508,9 +517,8 @@ def certificate_preview(request: WSGIRequest, pk) -> HttpResponseRedirect | Http
         "submenus": [],
         "action_name": "register",
         "actions": actions,
-        "document": document,
-        "certificate": document.birth_certificate,
-        "staff_reponsible": Role.objects.get(pk=1),
+        "document_group": document_group,
+        "document_info": document_group[0],
     }
 
     for service in request.session['urls']:
@@ -524,14 +532,24 @@ def certificate_preview(request: WSGIRequest, pk) -> HttpResponseRedirect | Http
 
     return render(request, "civil/preview.html", context)
 
-def certificate_print_view(request, pk):
+@login_required
+def certificate_creation(request, menu:str, pk:int, many=1):
     """Vue pour l'impression (version simplifiée sans boutons)"""
-    document = get_object_or_404(CertificateDocument, pk=pk)
-    return render(request, 'civil/print_view.html', {
-        'document': document,
-        'certificate': document.birth_certificate,
-    })
 
+    pk_group = []
+
+    if menu == 'birth':
+        certificate = get_object_or_404(BirthCertificate, pk=pk)
+        for i in range(many):
+            document = CertificateDocument.objects.create(
+                birth_certificate=certificate,
+                document_number=f"BC-{certificate.fokotany.pk}-{certificate.date_created.year}-{str(certificate.pk).zfill(9)}",
+                status='DRAFT',
+                price=ServicePrice.objects.last().certificate_price
+            )
+            pk_group.append(str(document.pk))
+
+    return redirect('civil:certificate-preview', pk_group=str("-".join(pk_group)))
 
 def certificate_validate(request, pk):
     """Valider un certificat"""

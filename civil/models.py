@@ -49,9 +49,11 @@ class BirthCertificate(models.Model):
     declarer = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name='birth_declarer')
     declarer_carreer = models.CharField(max_length=80)
     declarer_address = models.CharField(max_length=100, default="Betsiaka")
+    responsible_staff = models.ForeignKey(Staff, on_delete=models.DO_NOTHING, related_name="birth_responsible_role")
     fokotany = models.ForeignKey(Fokotany, on_delete=models.DO_NOTHING, related_name="birth_fokotany", default=0)
     certificate_type = models.CharField(max_length=1, choices=CERTIFICATE_TYPES)
     was_alive = models.BooleanField(default=True)
+    date_recognization = models.DateTimeField(null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     
@@ -69,6 +71,10 @@ class BirthCertificate(models.Model):
         else:
             text = _("%(born)s born at %(birthday)s daughter of %(father)s%(mother)s declared by %(declarer)s at %(date_created)s")
         return text % {"born": self.born, "birthday": self.born.birthday, "father": self.father.__str__() + _(" and ") if self.father else '', "mother": self.mother, "declarer": self.declarer, "date_created": self.date_created}
+
+    @property
+    def birth_type(self):
+        return self.CERTIFICATE_TYPES[self.certificate_type]
 
 class CertificateDocument(models.Model):
     """Modèle pour stocker les documents générés"""
@@ -89,7 +95,7 @@ class CertificateDocument(models.Model):
     )
     
     # Métadonnées du document
-    document_number = models.CharField(max_length=50, unique=True)
+    document_number = models.CharField(max_length=50)
     
     # Statut
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='DRAFT')
@@ -105,6 +111,9 @@ class CertificateDocument(models.Model):
     
     # Notes
     notes = models.TextField(blank=True)
+
+    # Price
+    price = models.FloatField(default=1000)
     
     class Meta:
         ordering = ['-created_at']
@@ -116,6 +125,10 @@ class CertificateDocument(models.Model):
     
     def get_absolute_url(self):
         return reverse('certificate-preview', kwargs={'pk': self.pk})
+
+    @property
+    def get_price(self):
+        return int(self.price) if self.price.is_integer() else self.price
     
     @property
     def is_validated(self):

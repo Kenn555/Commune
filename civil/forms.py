@@ -96,6 +96,7 @@ class BirthCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " text-right", 
                 "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
                 "title": _("Enter/Choose the date of birth")
             }
         )
@@ -163,6 +164,7 @@ class BirthCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " text-right", 
                 "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
                 "title": _("Wait for her/his father's date of birth")
             }
         )
@@ -243,6 +245,7 @@ class BirthCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " text-right", 
                 "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
                 "title": _("Wait for her/his mother's date of birth")
             }
         )
@@ -314,6 +317,7 @@ class BirthCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " text-right", 
                 "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
                 "title": _("Wait for the declarer's date of birth")
             }
         )
@@ -345,11 +349,11 @@ class BirthCertificateForm(forms.Form):
         _("Matricule"): ["fokotany", "number"],
         _("Informations"): ["last_name", "first_name", "gender", "birth_place", "birthday", "is_alive"],
         _("Other Informations"): {
-            _("Father"): [
+            _("father"): [
                 "use_existing_father", "existing_father",
                 "father_name", "father_place_of_birth", "father_birthday", "father_job", "father_address"
             ],
-            _("Mother"): ["use_existing_mother", "existing_mother",
+            _("mother"): ["use_existing_mother", "existing_mother",
                 "mother_name", "mother_place_of_birth", "mother_birthday", "mother_job", "mother_address"
             ],
             _("declarer"): ["existing_declarer", "declarer_name", "declarer_place_of_birth", "declarer_birthday", "declarer_job", "declarer_address"]
@@ -409,6 +413,7 @@ class DeathCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " text-right", 
                 "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
                 "title": _("Enter/Choose the date of death")
             }
         )
