@@ -2,7 +2,7 @@
 {% block action %}
 {% load humanize %}
 {% load i18n %}
-<form method="get" class="flex flex-col">
+<form method="get" class="flex flex-col gap-4">
     <div class="flex flex-wrap gap-4 justify-between items-center w-full mb-10">
         <div class="flex items-center">
             <select name="line" onchange="this.form.submit()" id="id_line_select" class="border-none focus:ring-0 text-right bg-gray-100 rounded-xl mr-2" required>
@@ -11,14 +11,6 @@
                 <option value="100" {% if table_length == '100' %}selected{%endif%}>100</option>
             </select>
             <label for="id_line_select" class="text-md font-semibold">{% translate "Lines" %}</label>
-        </div>
-        <div class="flex flex-row">
-            <button type="submit" name="paging" value="{{prev_page}}" class="py-2 px-3 rounded-md bg-gray-200 text-center font-extrabold cursor-pointer"><</button>
-            <div class="p-2 text-center">
-                <input type="text" value="{{ num_page }}" class="w-10 text-right ring-0 border-none focus:ring-0 h-4 p-0" name="num_page" id="id_num_page">
-                {{ per_page }}
-            </div>
-            <button type="submit" name="paging" value="{{next_page}}" class="py-2 px-3 rounded-md bg-gray-200 text-center font-extrabold cursor-pointer">></button>
         </div>
         <div class="flex flex-row gap-2">
             <select name="search_filter" id="id_search_filter"
@@ -43,9 +35,10 @@
     <div class="overflow-auto">
         <div class="table w-full">
             <div class="table-header-group text-md font-semibold border-b">
+                <input type="hidden" name="order" value="">
                 {% for header in table.headers %}
                     <div title="{% translate 'click for sorting' %}" class="table-cell px-4 py-2 text-center text-nowrap border-b-2 border-gray-200 cursor-pointer">
-                        <button type="submit" name="order" value="{{ header.header }}"  class="inline-block w-full">{{ header.header|title }}</button> {% if header.header != "action" %}{% if request.GET.order == header.header %}{% if not request.session.order_sense %}⬇{% else %}⬆{% endif %}{% endif %}{% endif %}
+                        <button type="button" onclick="changeOrder(this)" value="{{ header.header }}" class="inline-block w-full">{{ header.header|title }}</button> {% if header.header != "action" and request.session.order_name == header.header %}{% if not request.session.order_asc %}⬇{% else %}⬆{% endif %}{% endif %}
                     </div>
                 {% endfor %}
             </div>
@@ -88,10 +81,26 @@
             </div>
         </div>
     </div>
+    <div class="flex flex-row">
+        <button type="submit" name="paging" value="{{prev_page}}" class="py-2 px-3 rounded-md bg-gray-200 text-center font-extrabold cursor-pointer"><</button>
+        <div class="p-2 text-center">
+            <input type="text" value="{{ num_page }}" class="w-10 text-right ring-0 border-none focus:ring-0 h-4 p-0" name="num_page" id="id_num_page">
+            {{ per_page }}
+        </div>
+        <button type="submit" name="paging" value="{{next_page}}" class="py-2 px-3 rounded-md bg-gray-200 text-center font-extrabold cursor-pointer">></button>
+    </div>
 
 </form>
 
 <script>
+    function changeOrder(e) {
+        $('[name="order"]').val($(e).val() + '_touched');
+        console.log($('[name="order"]').val());
+        $('form').submit();
+    }
+
+    $('[name="order"]').val('{{ request.GET.order|safe }}'.replace('_touched', ''));
+
     const headers = {{ table.headers|safe }};
 
     $('#id_search_fields').children().each((i, e) => {
@@ -120,7 +129,7 @@
     });
     
     // Auto-changement quand une colonne à rechercher est sélectionné
-    $('#id_search_filter').on('change', function(e) {
+    $('#id_search_filter').on('select', function(e) {
         console.log(headers[this.value]);
         console.log($('#id_search_fields').children()[0].focus());
         console.log('[type=0]'.replace('0', headers[this.value].type));

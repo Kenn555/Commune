@@ -87,7 +87,7 @@ document = get_object_or_404(CertificateDocument, pk=1)
 
 father = BirthCertificate.objects.get(pk=11).father
 
-print(BirthCertificate.objects.get(born=father).born.birthday.astimezone() if BirthCertificate.objects.filter(born=father) else None)
+# print(BirthCertificate.objects.get(born=father).born.birthday.astimezone() if BirthCertificate.objects.filter(born=father) else None)
 
 # from django.utils.translation import ngettext as _n
 

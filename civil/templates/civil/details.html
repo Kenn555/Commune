@@ -3,28 +3,44 @@
 {% load i18n %}
 
 <div class="flex flex-initial flex-col">
-    <div class="flex flex-col justify-end rounded-t-3xl p-5 h-80 gap-4
+    <div class="flex flex-col justify-end rounded-t-3xl px-5 py-12 min-h-80 gap-4
     {% if certificate.born.gender == 'M' %}{% if certificate.born.is_alive %} bg-blue-200 {% else %} bg-gray-300 hover:bg-blue-200 {% endif %}{% else %}{% if certificate.born.is_alive %} bg-rose-200 {% else %} bg-gray-300 hover:bg-rose-200 {% endif %}{% endif %}
     ">
-        <div class="text-6xl font-bold">
+        <div class="text-6xl max-xl:text-5xl max-lg:text-4xl font-bold">
             {{ certificate.born.full_name }}
         </div>
         <div class="flex max-md:flex-wrap gap-4">
             <div class="flex flex-col ml-10 gap-2 w-full">
-                <div class="flex flex-row  flex-wrap gap-x-7 gap-y-2 w-full">
-                    {% if certificate.father %}
-                        <p><b>{% trans 'father'|capfirst %} :</b> {{ certificate.father.full_name }}</p>
-                    {% endif %}
-                    <p><b>{% trans 'mother'|capfirst %} :</b> {{ certificate.mother.full_name }}</p>
-                    {% if not certificate.father == certificate.declarer %}
-                    <p><b>{% trans 'declarer'|capfirst %} :</b> {{ certificate.declarer.full_name }}</p>
-                    {% endif %}
-                </div>
-                <div class="w-full">
+                <div class="flex flex-wrap gap-x-7 gap-y-2 w-full">
                     <p><b>{% trans 'birthday'|capfirst %} :</b> {{ certificate.born.birthday|date:'d-m-Y H:i' }}</p>
+                    <p><b>{% trans 'fokotany'|capfirst %} :</b> {{ certificate.fokotany.name|title }}</p>
+                </div>
+                <div class="flex flex-row  flex-wrap gap-x-10 gap-y-4 w-full">
+                    {% if certificate.father %}
+                    <div class="flex flex-col">
+                        <p {% if certificate.father == certificate.declarer %} class="text-lg underline underline-offset-2 cursor-pointer" title="{% trans 'declarer'|capfirst %}" {% else %}class="text-lg"{% endif %}><b>{% trans 'father'|capfirst %} :</b> {{ certificate.father.full_name }}</p>
+                        <p class="text-sm"><b>{% trans 'birthday'|capfirst %} :</b> {{ certificate.father.birthday|date:'d-m-Y' }}</p>
+                        <p class="text-sm"><b>{% trans 'address'|capfirst %} :</b> {{ certificate.father_address }}</p>
+                        <p class="text-sm"><b>{% trans 'carreer'|capfirst %} :</b> {{ certificate.father_carreer }}</p>
+                    </div>
+                    {% endif %}
+                    <div class="flex flex-col">
+                        <p {% if certificate.mother == certificate.declarer %} class="text-lg underline underline-offset-2 cursor-pointer" title="{% trans 'declarer'|capfirst %}" {% else %}class="text-lg"{% endif %}><b>{% trans 'mother'|capfirst %} :</b> {{ certificate.mother.full_name }}</p>
+                        <p class="text-sm"><b>{% trans 'birthday'|capfirst %} :</b> {{ certificate.mother.birthday|date:'d-m-Y' }}</p>
+                        <p class="text-sm"><b>{% trans 'address'|capfirst %} :</b> {{ certificate.mother_address }}</p>
+                        <p class="text-sm"><b>{% trans 'carreer'|capfirst %} :</b> {{ certificate.mother_carreer }}</p>
+                    </div>                    
+                    {% if certificate.father != certificate.declarer and certificate.mother != certificate.declarer %}
+                    <div class="flex flex-col">
+                        <p class="text-lg"><b>{% trans 'declarer'|capfirst %} :</b> {{ certificate.declarer.full_name }}</p>
+                        <p class="text-sm"><b>{% trans 'birthday'|capfirst %} :</b> {{ certificate.declarer.birthday|date:'d-m-Y' }}</p>
+                        <p class="text-sm"><b>{% trans 'address'|capfirst %} :</b> {{ certificate.declarer_address }}</p>
+                        <p class="text-sm"><b>{% trans 'carreer'|capfirst %} :</b> {{ certificate.declarer_carreer }}</p>
+                    </div>  
+                    {% endif %}
                 </div>
             </div>
-            <div class="flex flex-row gap-x-7 w-full justify-end self-end">
+            <div class="flex flex-row gap-x-7 justify-end self-end whitespace-nowrap">
                 <div class="flex justify-center items-center h-full">{{ age }}</div>
                 <div class="flex justify-center items-center h-full">Not married</div>
                 <div class="flex justify-center items-center h-full">{{ status|capfirst }}</div>
@@ -69,12 +85,12 @@
         </div>
 
         <!-- Liste de Copies de Naissance -->
-         <div class="flex flex-col gap-2">
+         <div class="container flex flex-col gap-2">
             {% for doc in document %}
             <a href="{% url 'civil:certificate-preview' doc.pk %}" class="w-full shadow-md rounded-lg p-4 bg-white hover:bg-blue-50">
                 <p class="contain-content text-nowrap text-ellipsis">
                 <span class="text-blue-400">{{ doc.created_at|date:"d-m-Y H:i" }} </span>
-                --- N° {{ doc.pk }} --- {{ doc.birth_certificate.birth_type }} --- {{ doc.get_price }} Ar
+                --- N° {{ doc.pk }} --- {{ doc.birth_type }} --- {{ doc.get_price }} Ar
                 </p>
             </a>
             {% endfor %}

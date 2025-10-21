@@ -213,26 +213,53 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 )
 
     # Ordre
-    if 'order' in list(request.GET) and request.GET['order'] in [header['header'] for header in headers]:
+    ordered = request.GET['order'] != ''
+    order_sense_changeable = False
+    if ordered:
+        # Si la mémoire n'existe pas encore, on la crée
         if not 'order_name' in list(request.session.keys()):
+            print("HEYYYYYYYYYYYYYYYY")
+            # Mettre en mémoire le nom de la colonne
             request.session['order_name'] = ""
-            request.session['order_sense'] = False
-        if request.GET['order'] == request.session['order_name']:
-            request.session['order_sense'] = not request.session['order_sense']
-            print("same !!!!!!!!!")
-            print(request.session['order_sense'])
-        else:
-            request.session['order_name'] = request.GET['order']
-            request.session['order_sense'] = True
-            print("other !!!!!!!!!")
-            print(request.session['order_sense'])
+        if not 'order_asc' in list(request.session.keys()):
+            # La première fois, le sens change
+            request.session['order_asc'] = True
+        # Colonne différente de la précédente
+        order_changed = request.GET['order'] != request.session['order_name']
+        # Clic sur l'une des colonnes
+        order_sense_changeable = request.GET['order'] in [header['header'] + '_touched' for header in headers]
+        if order_sense_changeable:
+            print('COLONNE CLIQUEE !!!!!!!!!!!')
+            # identification de la colonne
+            column = request.GET['order'].replace('_touched', '')
+            # Si la colonne est différente de la précedente
+            order_changed = column != request.session['order_name']
 
-        for index, column in enumerate(headers):
-            if column['db_col_name'] != "" and request.session['order_name'] == column['header']:
-                if request.session['order_sense']:
+            print(column, request.session['order_name'])
+
+            if order_changed:
+                print('Le sens est ascendente')
+                request.session['order_name'] = column
+                request.session['order_asc'] = True
+            else:
+                print('Le sens change')
+                # Change de sense
+                request.session['order_asc'] = not request.session['order_asc']
+            pass
+        else:
+            print('Clic sur autre bouton, le sens ne change pas')
+            pass
+
+        print(request.session['order_asc'])
+
+        for column in headers:
+            if request.session['order_name'] == column['header']:
+                print(column)
+                if column['db_col_name'] != "" and not request.session['order_asc']:
                     certificates_data = certificates_data.order_by(column['db_col_name'])
                 else:
                     certificates_data = certificates_data.order_by(column['db_col_name']).reverse()
+                print(certificates_data)
                 break
     else:
         certificates_data = certificates_data.order_by("pk").reverse()
@@ -264,6 +291,7 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
         "searched_domain": int(request.GET.get('search_filter', 2)),
         "q_value": request.GET.get('q', ""),
         "table_length": line_bypage,
+        # "order_changed": order_changed,
         "num_page": certificate_page.number,
         "prev_page": n_page - 1,
         "next_page": n_page + 1,
@@ -382,6 +410,7 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             else:
                 father = None
                 father_carreer = None
+                father_address = None
                 certificate_type = list(BirthCertificate.CERTIFICATE_TYPES.keys())[0]
             # Si la mère existe
             if "use_existing_mother" in request.POST:
@@ -429,13 +458,18 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             )
             
             document = CertificateDocument.objects.create(
-                        birth_certificate=certificate,
-                        document_number=f"BC-{fokotany.pk}-{certificate.date_created.year}-{str(certificate.pk).zfill(9)}",
-                        status='DRAFT',
-                        price=ServicePrice.objects.last().certificate_price
-                    )
+                birth_certificate=certificate,
+                document_number=
+                    int(CertificateDocument.objects.filter(Q(document_type="N")|Q(document_type="F")).last().document_number) + 1
+                    if certificate.certificate_type in ("N", "F")
+                    else int(CertificateDocument.objects.filter(document_type="R").last().document_number) + 1,
+                status='DRAFT',
+                document_type=certificate.certificate_type,
+                price=ServicePrice.objects.last().certificate_price
+            )
+            pk_group = [str(document.pk)]
 
-            return redirect('civil:certificate-preview', pk=document.pk)
+            return redirect('civil:certificate-preview', pk_group=str("-".join(pk_group)))
         else:
             born.save()
 
@@ -451,7 +485,6 @@ def birth_detail(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpR
 
     certificate = BirthCertificate.objects.get(pk=birth_id)
     document = CertificateDocument.objects.filter(birth_certificate=certificate)
-    print(document)
 
     if 'cp_birth' in request.POST.keys():
         return redirect('civil:certificate-creation', menu=menu_name, pk= certificate.pk, many=int(request.POST.get('many_cp', 1)))
@@ -545,6 +578,7 @@ def certificate_creation(request, menu:str, pk:int, many=1):
                 birth_certificate=certificate,
                 document_number=f"BC-{certificate.fokotany.pk}-{certificate.date_created.year}-{str(certificate.pk).zfill(9)}",
                 status='DRAFT',
+                document_type=certificate.certificate_type,
                 price=ServicePrice.objects.last().certificate_price
             )
             pk_group.append(str(document.pk))
