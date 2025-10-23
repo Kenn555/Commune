@@ -33,4 +33,5 @@ urlpatterns = [
     path('autocomplete/mother/', views.MotherAutocomplete.as_view(), name='mother-autocomplete'),
     # URL pour récupérer les détails d'une personne
     path('api/person/<int:person_id>/', views.get_person_details, name='person-details'),
+    path('api/search_person/<str:q_name>/', views.search_persons, name='search-person'),
 ]

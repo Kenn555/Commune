@@ -35,9 +35,8 @@ class Person(models.Model):
 
 class BirthCertificate(models.Model):
     CERTIFICATE_TYPES = {
-        'F': _('Fatherless'),
-        'N': _('Normal'),
-        'R': _('Recognition')
+        'N': _('Birth'),
+        'R': _('Birth and Recognition')
     }
     born = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="birth_born")
     father = models.ForeignKey(Person, on_delete=models.SET_NULL, related_name="birth_father", null=True,)
@@ -53,6 +52,7 @@ class BirthCertificate(models.Model):
     fokotany = models.ForeignKey(Fokotany, on_delete=models.DO_NOTHING, related_name="birth_fokotany", default=0)
     certificate_type = models.CharField(max_length=1, choices=CERTIFICATE_TYPES)
     was_alive = models.BooleanField(default=True)
+    date_register = models.DateTimeField()
     date_recognization = models.DateTimeField(null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -75,14 +75,20 @@ class BirthCertificate(models.Model):
     @property
     def birth_type(self):
         return self.CERTIFICATE_TYPES[self.certificate_type]
+    
+    @property
+    def numero(self):
+        return str(self.pk).zfill(9)
 
 class DeathCertificate(models.Model):
     dead_birthcertificate = models.ForeignKey(BirthCertificate, on_delete=models.DO_NOTHING, related_name="death_dead")
+    dead_day = models.DateTimeField()
     declarer = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name="death_declarer")
     declarer_carreer = models.CharField(max_length=80)
     declarer_address = models.CharField(max_length=100, default="Betsiaka")
     responsible_staff = models.ForeignKey(Staff, on_delete=models.DO_NOTHING, related_name="death_responsible_role")
     fokotany = models.ForeignKey(Fokotany, on_delete=models.DO_NOTHING, related_name="death_fokotany", default=0)
+    date_register = models.DateTimeField()
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     
@@ -101,6 +107,32 @@ class DeathCertificate(models.Model):
             text = _("%(dead)s dead at %(date_created)s daughter of %(father)s%(mother)s declared by %(declarer)s at %(date_created)s")
         return text % {"dead": self.dead_birthcertificate.born, "birthday": self.date_created, "father": self.dead_birthcertificate.father.__str__() + _(" and ") if self.dead_birthcertificate.father else '', "mother": self.dead_birthcertificate.mother, "declarer": self.declarer, "date_created": self.date_created}
 
+class MarriageCertificate(models.Model):
+    groom = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name="marriage_husband")
+    bride = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name="marriage_wife")
+    wedding_day = models.DateTimeField()
+    responsible_staff = models.ForeignKey(Staff, on_delete=models.DO_NOTHING, related_name="marriage_responsible_staff")
+    fokotany = models.ForeignKey(Fokotany, on_delete=models.DO_NOTHING, related_name="marriage_fokotany", default=0)
+    is_active = models.BooleanField(default=True)
+    date_register = models.DateTimeField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['groom', 'bride', 'wedding_day'],
+                name='unique_marriage_certificate'
+            )
+        ]
+
+    def __str__(self):
+        return _("%(groom)s and %(bride)s married at %(wedding_day)s done at %(date_created)s") % {
+            "groom": self.groom,
+            "wife": self.bride,
+            "wedding_day": self.wedding_day,
+            "date_created": self.date_created
+        }
 
 class CertificateDocument(models.Model):
     """Modèle pour stocker les documents générés"""

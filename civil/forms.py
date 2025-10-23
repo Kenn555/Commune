@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from dal import autocomplete
 
 from administration.models import Common, Fokotany, Role, Service
-from civil.models import BirthCertificate, Person
+from civil.models import BirthCertificate, DeathCertificate, Person
 
 
 CLASS_FIELD = """
@@ -33,7 +33,7 @@ class BirthCertificateForm(forms.Form):
     number = forms.CharField(
         label=_("Number"), 
         disabled=True,
-        initial="1".zfill(9) if not BirthCertificate.objects.count() else str(BirthCertificate.objects.last().id + 1).zfill(9),
+        # initial="1".zfill(9) if not BirthCertificate.objects.count() else str(BirthCertificate.objects.last().id + 1).zfill(9),
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD.replace("w-full min-w-52", "w-36 text-gray-500") + " text-center text-lg tracking-widest cursor-pointer", 
@@ -384,11 +384,40 @@ class BirthCertificateForm(forms.Form):
 
 
 class DeathCertificateForm(forms.Form):
+    # Matricule
+    fokotany = forms.ChoiceField(
+        label=_("Fokotany"), 
+        choices=Fokotany.objects.values_list("id","name").order_by('name'),
+        initial=Fokotany.objects.get(name=Common.objects.get(pk=1).name.capitalize()).pk,
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD + "text-lg cursor-pointer", 
+                "placeholder": "e.g. Betsiaka",
+                "title": "Fokotany",
+            }
+        )
+    )
+    
+    number = forms.CharField(
+        label=_("Number"), 
+        disabled=True,
+        initial="1".zfill(9) if not DeathCertificate.objects.count() else str(DeathCertificate.objects.last().id + 1).zfill(9),
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD.replace("w-full min-w-52", "w-36 text-gray-500") + " text-center text-lg tracking-widest cursor-pointer", 
+                "placeholder": "0000000001",
+                "title": "Matricule",
+            }
+        )
+    )
+    
+    
+    # Informations personnelles
     last_name = forms.CharField(
         label=_("Last Name"), 
         widget=forms.TextInput(
             attrs={
-                "class": CLASS_FIELD, 
+                "class": CLASS_FIELD + ' searched_person', 
                 "placeholder": _("Insert her/his last name"),
                 "title": _("Insert her/his last name"),
             }
@@ -397,6 +426,7 @@ class DeathCertificateForm(forms.Form):
     
     first_name = forms.CharField(
         label=_("First Name"), 
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -406,39 +436,142 @@ class DeathCertificateForm(forms.Form):
         )
     )
     
-    date_of_death = forms.DateTimeField(
-        label=_("Date of Death"), 
-        initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
+    gender = forms.ChoiceField(
+        label=_("Gender"), 
+        choices=Person.GENDER_CHOICES,
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD,
+                "title": _("Choose the gender")
+            }
+        )
+    )
+    
+    birth_place = forms.CharField(
+        label=_("Place of Birth"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert the place of birth"),
+                "title": _("Insert the place of birth"),
+            }
+        )
+    )
+    
+    birthday = forms.DateTimeField(
+        label=_("Birthday"), 
+        # initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
         widget=forms.DateTimeInput(
             attrs={
                 "class": CLASS_FIELD + " text-right", 
                 "type": "datetime-local",
                 "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
-                "title": _("Enter/Choose the date of death")
+                "title": _("Enter/Choose the date of birth")
+            }
+        )
+    )
+
+    # Déclarant    
+    existing_declarer = forms.ModelChoiceField(
+        label=_("Existing Declarer"),
+        queryset=Person.objects.filter(birthday__lte=date.today() - timedelta(days=18*365)),
+        required=False,
+        widget=autocomplete.ModelSelect2(
+            url='civil:person-autocomplete',
+            attrs={
+                "class": CLASS_FIELD,
+                "data-placeholder": _("Search for Declarer..."),
+                "data-minimum-input-length": 2,
             }
         )
     )
     
-    place_of_death = forms.CharField(
-        label=_("Place of Death"), 
+    declarer_name = forms.CharField(
+        label=_("Declarer's Full Name"), 
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert the place of death"),
-                "title": _("Insert the place of death"),
+                "placeholder": _("Wait for the declarer's full name"),
+                "title": _("Wait for the declarer's full name"),
             }
         )
     )
     
+    declarer_place_of_birth = forms.CharField(
+        label=_("Place of Birth"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Wait for the declarer's place of birth"),
+                "title": _("Wait for the declarer's place of birth"),
+            }
+        )
+    )
+    
+    declarer_birthday = forms.DateTimeField(
+        label=_("Birthday"), 
+        # initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
+                "title": _("Wait for the declarer's date of birth")
+            }
+        )
+    )
+    
+    declarer_job = forms.CharField(
+        label=_("Declarer's Job"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert the declarer's job"),
+                "title": _("Insert the declarer's job"),
+            }
+        )
+    )
+    
+    declarer_address = forms.CharField(
+        label=_("Declarer's Address"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + ' searched_person', 
+                "placeholder": _("Insert the declarer's address"),
+                "title": _("Insert the declarer's address"),
+            }
+        )
+    )
+    
+    
+
     fieldsets = {
-        _("Informations"): ["last_name", "first_name", "date_of_death", "place_of_death"],
+        _("Matricule"): ["fokotany", "number"],
+        _("Informations"): ["last_name", "first_name", "gender", "birth_place", "birthday"],
+        _("Other Informations"): {
+            _("declarer"): ["existing_declarer", "declarer_name", "declarer_place_of_birth", "declarer_birthday", "declarer_job", "declarer_address"]
+        },
     }
 
     @property
     def fieldsets_fields(self):
         fs = {}
         for title, fields in self.fieldsets.items():
-            fs[title] = [self[ch] for ch in fields]
+            # Cas 1 : la section est une simple liste de champs
+            if isinstance(fields, (list, tuple)):
+                fs[title] = [self[ch] for ch in fields]
+
+            # Cas 2 : la section contient des sous-groupes (dictionnaire imbriqué)
+            elif isinstance(fields, dict):
+                sub_fs = {}
+                for sub_title, sub_fields in fields.items():
+                    sub_fs[sub_title] = [self[ch] for ch in sub_fields]
+                fs[title] = sub_fs
+
+            # Cas 3 : si un autre type apparaît (sécurité)
+            else:
+                raise TypeError(f"Invalid type for fieldset '{title}': {type(fields).__name__}")
+
         return fs
 
 

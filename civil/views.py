@@ -1,4 +1,4 @@
-from datetime import date, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pyexpat.errors import messages
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, DeleteView
@@ -18,7 +18,7 @@ from django.utils.translation import ngettext, get_language
 from dal import autocomplete
 
 from civil.forms import BirthCertificateForm, DeathCertificateForm, MarriageCertificateForm
-from civil.models import BirthCertificate, CertificateDocument, Person
+from civil.models import BirthCertificate, CertificateDocument, MarriageCertificate, Person
 from finances.models import ServicePrice
 
 
@@ -95,6 +95,38 @@ class MotherAutocomplete(PersonAutocomplete):
         qs = super().get_queryset()
         return qs.filter(gender='F')
 
+@login_required
+def search_persons(request, q_name:str):
+    """Retourne une liste de personnes en JSON"""
+    try:
+        person_list = Person.objects.filter(
+            Q(last_name__icontains=q_name) | Q(first_name__icontains=q_name)
+        )
+
+        data = {
+            "person_list": [person.pk for person in person_list],
+        }
+
+        # data['person_name'] = {
+        #     person.pk: 
+        #     person.full_name 
+        #     + ' born at ' 
+        #     + person.birthday.astimezone().__format__('%d-%m-%Y %H:%M') 
+        #     for person in person_list
+        # }
+
+        data['person_name'] = {}
+        for person in person_list:
+            try:
+                data['person_name'][person.pk] = person.full_name + ' born at ' + person.birthday.astimezone().__format__('%d-%m-%Y %H:%M') 
+            except OSError:
+                data['person_name'][person.pk] = person.full_name + ' born at ' + (person.birthday + timedelta(hours=3)).__format__('%d-%m-%Y %H:%M') 
+        
+        return JsonResponse(data)
+    except Person.DoesNotExist:
+        return JsonResponse({'error': 'Person not found'}, status=404)
+    ...
+
 @login_required 
 def get_person_details(request, person_id):
     """Retourne les détails d'une personne en JSON"""
@@ -102,12 +134,13 @@ def get_person_details(request, person_id):
         person = Person.objects.get(id=person_id)
         
         data = {
-            'full_name': person.full_name,
-            'first_name': person.first_name,
-            'last_name': person.last_name,
-            'birthday': person.birthday.astimezone().strftime('%Y-%m-%dT%H:%M'),
-            'birth_place': person.birth_place,
-            'gender': person.gender,
+            'fields': [
+                person.last_name,
+                person.first_name,
+                person.gender,
+                person.birth_place,
+                person.birthday.astimezone().strftime('%Y-%m-%dT%H:%M'),
+            ]
         }
 
         print(data)
@@ -160,7 +193,7 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
     menu_name = "birth"
 
     headers = [
-            {"header": _("date"), "db_col_name": "date_created", "type": "date", "query": ["date_created__date"]},
+            {"header": _("date"), "db_col_name": "date_register", "type": "date", "query": ["date_register__date"]},
             {"header": _("number"), "db_col_name": "pk", "type": "number", "query": ["pk"]},
             {"header": _("full name"), "db_col_name": "born__last_name" if get_language() == 'mg' else "born__first_name", "type": "search", "query": ["born__last_name__icontains", "born__first_name__icontains"]},
             {"header": _("gender"), "db_col_name": "born__gender", "type": "select", "query": ["born__gender__icontains"], 'select': Person.GENDER_CHOICES},
@@ -213,8 +246,9 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 )
 
     # Ordre
-    ordered = request.GET['order'] != ''
+    ordered = 'order' in list(request.GET) and request.GET['order'] != ''
     order_sense_changeable = False
+    order_name = ""
     if ordered:
         # Si la mémoire n'existe pas encore, on la crée
         if not 'order_name' in list(request.session.keys()):
@@ -249,6 +283,8 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
         else:
             print('Clic sur autre bouton, le sens ne change pas')
             pass
+
+        order_name = request.session['order_name']
 
         print(request.session['order_asc'])
 
@@ -291,7 +327,7 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
         "searched_domain": int(request.GET.get('search_filter', 2)),
         "q_value": request.GET.get('q', ""),
         "table_length": line_bypage,
-        # "order_changed": order_changed,
+        "order_name": order_name,
         "num_page": certificate_page.number,
         "prev_page": n_page - 1,
         "next_page": n_page + 1,
@@ -306,12 +342,12 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                     "mother_cert_pk": BirthCertificate.objects.get(born=birth.mother).pk if BirthCertificate.objects.filter(born=birth.mother) else None,
                     "detail_url": 'civil:birth-detail',
                     "row": [
-                        {"header": "date", "value": format(birth.date_created,'%d/%m/%Y'), "style": "text-center w-4 text-nowrap", "title": birth.date_created},
+                        {"header": "date", "value": format(birth.date_register,'%d/%m/%Y'), "style": "text-center w-4 text-nowrap", "title": birth.date_register},
                         {"header": "number", "value": str(birth.pk).zfill(9), "style": "text-center w-12 text-nowrap", "title": str(birth.pk).zfill(9)},
                         {"header": "full name", "value": birth.born, "style": "text-start w-4 text-nowrap", "title": birth.born},
                         {"header": "gender", "value": Person.GENDER_CHOICES[birth.born.gender], "style": "text-center text-nowrap", "title": Person.GENDER_CHOICES[birth.born.gender]},
                         {"header": "age", "value": date.today().year - birth.born.birthday.astimezone().year, "style": "text-center text-nowrap", "title": ngettext("%(age)d year old", "%(age)d years old", date.today().year - birth.born.birthday.astimezone().year) % {"age": date.today().year - birth.born.birthday.astimezone().year}},
-                        {"header": "date", "value": birth.born.birthday.astimezone(), "style": "text-start w-4 text-nowrap", "title": birth.born.birthday.astimezone()},
+                        {"header": "birthday", "value": birth.born.birthday.astimezone(), "style": "text-start w-4 text-nowrap", "title": birth.born.birthday.astimezone()},
                         {"header": "father", "value": birth.father or _("unknown"), "style": "text-start w-4 text-nowrap", "title": birth.father or _("unknown")},
                         {"header": "mother", "value": birth.mother, "style": "text-start w-4 text-nowrap", "title": birth.mother},
                         {"header": "birth", "value": _("alive") if birth.was_alive else _("dead"), "style": "text-center w-4 text-nowrap", "title": _("alive") if birth.was_alive else _("dead")},
@@ -382,6 +418,8 @@ def birth_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponseP
 @login_required
 def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
     
+    menu_name = 'birth'
+
     print(request.POST.keys())
         
     form = BirthCertificateForm(request.POST)
@@ -403,14 +441,17 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 print(father)
                 father_carreer = request.POST['father_job']
                 father_address = request.POST['father_address']
+                # Sans mariage, Type Birth and Recognization : Fahaterahana sy Fananjahana
                 certificate_type = list(BirthCertificate.CERTIFICATE_TYPES.keys())[1]
                 if father and not father.is_parent:
                     father.is_parent = True
                     father.save(update_fields=["is_parent"])
             else:
+                # Sans père
                 father = None
                 father_carreer = None
                 father_address = None
+                # Type Birth : Fahaterahana
                 certificate_type = list(BirthCertificate.CERTIFICATE_TYPES.keys())[0]
             # Si la mère existe
             if "use_existing_mother" in request.POST:
@@ -422,6 +463,9 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 if not mother.is_parent:
                     mother.is_parent = True
                     mother.save(update_fields=["is_parent"])
+                if MarriageCertificate.objects.filter(groom=father, bride=mother, is_active=True).exists():
+                    # Les parents sont actuellement mariés, Type Birth : Fahaterahana
+                    certificate_type = list(BirthCertificate.CERTIFICATE_TYPES.keys())[0]
             # déclarant
             print(request.POST['existing_declarer'])
             declarer = Person.objects.get(pk=request.POST['existing_declarer'])
@@ -457,19 +501,8 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 was_alive = form.cleaned_data.get('is_alive'),
             )
             
-            document = CertificateDocument.objects.create(
-                birth_certificate=certificate,
-                document_number=
-                    int(CertificateDocument.objects.filter(Q(document_type="N")|Q(document_type="F")).last().document_number) + 1
-                    if certificate.certificate_type in ("N", "F")
-                    else int(CertificateDocument.objects.filter(document_type="R").last().document_number) + 1,
-                status='DRAFT',
-                document_type=certificate.certificate_type,
-                price=ServicePrice.objects.last().certificate_price
-            )
-            pk_group = [str(document.pk)]
+            certificate_creation(request, menu_name, certificate.pk, many=1)
 
-            return redirect('civil:certificate-preview', pk_group=str("-".join(pk_group)))
         else:
             born.save()
 
@@ -576,7 +609,7 @@ def certificate_creation(request, menu:str, pk:int, many=1):
         for i in range(many):
             document = CertificateDocument.objects.create(
                 birth_certificate=certificate,
-                document_number=f"BC-{certificate.fokotany.pk}-{certificate.date_created.year}-{str(certificate.pk).zfill(9)}",
+                document_number=f"BC-{certificate.fokotany.pk}-{certificate.date_register.year}-{str(certificate.pk).zfill(9)}",
                 status='DRAFT',
                 document_type=certificate.certificate_type,
                 price=ServicePrice.objects.last().certificate_price
@@ -621,8 +654,123 @@ def death(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
     """  """
 
     menu_name = "death"
-    
+
+    headers = [
+            {"header": _("date"), "db_col_name": "date_register", "type": "date", "query": ["date_register__date"]},
+            {"header": _("number"), "db_col_name": "pk", "type": "number", "query": ["pk"]},
+            {"header": _("full name"), "db_col_name": "born__last_name" if get_language() == 'mg' else "born__first_name", "type": "search", "query": ["born__last_name__icontains", "born__first_name__icontains"]},
+            {"header": _("gender"), "db_col_name": "born__gender", "type": "select", "query": ["born__gender__icontains"], 'select': Person.GENDER_CHOICES},
+            {"header": _("age"), "db_col_name": "born__birthday", "type": "number", "query": ["born__birthday__lte"]},
+            {"header": _("birthday"), "db_col_name": "born__birthday", "type": "date", "query": ["born__birthday"]},
+            {"header": _("father"), "db_col_name": "father__last_name" if get_language() == 'mg' else "father__first_name", "type": "search", "query": ["father__last_name__icontains", "father__first_name__icontains"]},
+            {"header": _("mother"), "db_col_name": "mother__last_name" if get_language() == 'mg' else "mother__first_name", "type": "search", "query": ["mother__last_name__icontains", "mother__first_name__icontains"]},
+            {"header": _("birth"), "db_col_name": "was_alive", "type": "select", "query": ["was_alive"], 'select': {'0': _('alive').capitalize(), '1': _('dead').capitalize()}},
+            {"header": _("fokotany"), "db_col_name": "fokotany", "type": "search", "query": ["fokotany__name__icontains"]},
+            {"header": _("action"), "db_col_name": "", "type": "", "query": []},
+        ]
+
     add_action_url(__package__, menu_name)
+
+    line_bypage = str(request.GET.get('line', 10))
+
+    # Tous les Certificats
+    certificates_data = BirthCertificate.objects.all()
+
+    # Recherche
+    index_search = int(request.GET.get('search_filter', 2))
+
+    if 'q' in request.GET.keys():
+        print(headers[index_search])
+        print(
+        date.today() - timedelta(days=int(request.GET['q'])*365) 
+                        if headers[index_search]['header'] == _('age') 
+                        else date(int(request.GET['q'].split('-')[0]), int(request.GET['q'].split('-')[1]), int(request.GET['q'].split('-')[2]))
+                        if headers[index_search]['header'] == _('date') 
+                        else request.GET['q']
+        )
+        certificates_data = certificates_data.filter(
+                    Q(**{f"{headers[index_search]['query'][0]}":request.GET['q']}) |
+                    Q(**{f"{headers[index_search]['query'][1]}":request.GET['q']})
+                    if len(headers[index_search]['query']) == 2
+                    else
+                    Q(
+                        **{
+                            f"{headers[index_search]['query'][0]}": 
+                            date.today() - timedelta(days=int(request.GET['q'])*365) 
+                            if headers[index_search]['header'] == _('age') 
+                            else date(int(request.GET['q'].split('-')[0]), int(request.GET['q'].split('-')[1]), int(request.GET['q'].split('-')[2]))
+                            if headers[index_search]['header'] == _('date') 
+                            else True if request.GET['q'] == '0' else False
+                            if headers[index_search]['header'] == _('birth') 
+                            else request.GET['q']
+                           }
+                        )
+
+                )
+
+    # Ordre
+    ordered = 'order' in list(request.GET) and request.GET['order'] != ''
+    order_sense_changeable = False
+    if ordered:
+        # Si la mémoire n'existe pas encore, on la crée
+        if not 'order_name' in list(request.session.keys()):
+            print("HEYYYYYYYYYYYYYYYY")
+            # Mettre en mémoire le nom de la colonne
+            request.session['order_name'] = ""
+        if not 'order_asc' in list(request.session.keys()):
+            # La première fois, le sens change
+            request.session['order_asc'] = True
+        # Colonne différente de la précédente
+        order_changed = request.GET['order'] != request.session['order_name']
+        # Clic sur l'une des colonnes
+        order_sense_changeable = request.GET['order'] in [header['header'] + '_touched' for header in headers]
+        if order_sense_changeable:
+            print('COLONNE CLIQUEE !!!!!!!!!!!')
+            # identification de la colonne
+            column = request.GET['order'].replace('_touched', '')
+            # Si la colonne est différente de la précedente
+            order_changed = column != request.session['order_name']
+
+            print(column, request.session['order_name'])
+
+            if order_changed:
+                print('Le sens est ascendente')
+                request.session['order_name'] = column
+                request.session['order_asc'] = True
+            else:
+                print('Le sens change')
+                # Change de sense
+                request.session['order_asc'] = not request.session['order_asc']
+            pass
+        else:
+            print('Clic sur autre bouton, le sens ne change pas')
+            pass
+
+        print(request.session['order_asc'])
+
+        for column in headers:
+            if request.session['order_name'] == column['header']:
+                print(column)
+                if column['db_col_name'] != "" and not request.session['order_asc']:
+                    certificates_data = certificates_data.order_by(column['db_col_name'])
+                else:
+                    certificates_data = certificates_data.order_by(column['db_col_name']).reverse()
+                print(certificates_data)
+                break
+    else:
+        certificates_data = certificates_data.order_by("pk").reverse()
+
+    # Pagination
+    certificate_bypage = Paginator(certificates_data, line_bypage)
+
+    n_page = int(request.GET.get('num_page', 1))
+
+    if "paging" in list(request.GET.keys()) and n_page in (int(request.GET['paging']) + 1, int(request.GET['paging']) - 1) and int(request.GET['paging']) in certificate_bypage.page_range:
+        n_page = int(request.GET['paging'])
+        
+    print(n_page)
+
+    certificate_page = certificate_bypage.get_page(n_page)
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
@@ -630,26 +778,52 @@ def death(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
+        "page_urls": {"list": __package__ + ":" + menu_name, "register": __package__ + ":" + menu_name + "-register"},
         "services": request.session['urls'],
         "common_name": getattr(settings, "COMMON_NAME"),
         "submenus": [],
         "action_name": "list",
         "actions": actions,
+        "searched_domain": int(request.GET.get('search_filter', 2)),
+        "q_value": request.GET.get('q', ""),
+        "table_length": line_bypage,
+        # "order_changed": order_changed,
+        "num_page": certificate_page.number,
+        "prev_page": n_page - 1,
+        "next_page": n_page + 1,
+        "per_page": _(' per ') + str(certificate_bypage.num_pages),
         "table": {
-            "headers": ["Nom", "Prénom", "Genre", "Âge"], 
-            "rows": [
-                {"datas": ["BEZARA", "Kenn Keren", "Homme", "24"]},
-                {"datas": ["BEZARA", "Kenn Keren", "Homme", "24"]},
+            "headers": headers, 
+            "datas": [
+                {                                
+                    "index" : index,
+                    "pk": birth.pk,
+                    "father_cert_pk": BirthCertificate.objects.get(born=birth.father).pk if BirthCertificate.objects.filter(born=birth.father) else None,
+                    "mother_cert_pk": BirthCertificate.objects.get(born=birth.mother).pk if BirthCertificate.objects.filter(born=birth.mother) else None,
+                    "detail_url": 'civil:birth-detail',
+                    "row": [
+                        {"header": "date", "value": format(birth.date_register,'%d/%m/%Y'), "style": "text-center w-4 text-nowrap", "title": birth.date_register},
+                        {"header": "number", "value": str(birth.pk).zfill(9), "style": "text-center w-12 text-nowrap", "title": str(birth.pk).zfill(9)},
+                        {"header": "full name", "value": birth.born, "style": "text-start w-4 text-nowrap", "title": birth.born},
+                        {"header": "gender", "value": Person.GENDER_CHOICES[birth.born.gender], "style": "text-center text-nowrap", "title": Person.GENDER_CHOICES[birth.born.gender]},
+                        {"header": "age", "value": date.today().year - birth.born.birthday.astimezone().year, "style": "text-center text-nowrap", "title": ngettext("%(age)d year old", "%(age)d years old", date.today().year - birth.born.birthday.astimezone().year) % {"age": date.today().year - birth.born.birthday.astimezone().year}},
+                        {"header": "birthday", "value": birth.born.birthday.astimezone(), "style": "text-start w-4 text-nowrap", "title": birth.born.birthday.astimezone()},
+                        {"header": "father", "value": birth.father or _("unknown"), "style": "text-start w-4 text-nowrap", "title": birth.father or _("unknown")},
+                        {"header": "mother", "value": birth.mother, "style": "text-start w-4 text-nowrap", "title": birth.mother},
+                        {"header": "birth", "value": _("alive") if birth.was_alive else _("dead"), "style": "text-center w-4 text-nowrap", "title": _("alive") if birth.was_alive else _("dead")},
+                        {"header": "fokotany", "value": birth.fokotany.name, "style": "text-start w-4 text-nowrap", "title": birth.fokotany},
+                        {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
+                            {"name": _("open"), "url": "civil:birth-detail", "style": "green"},
+                            # {"name": _("print"), "url": "civil:certificate-preview", "style": "blue"},
+                            {"name": _("delete"), "url": "civil:birth-delete", "style": "red"},
+                        ]},
+                    ],
+                } for index, birth in enumerate(certificate_page)
             ],
-        },
-        "table_length": "50",
+        }
     }
 
-    # Requêtes GET
-    if request.method == "GET":
-        # Nombre de lignes du tableau
-        if "line" in request.GET.keys():
-            context['table_length'] = request.GET.get("line")
+    print("text", context['searched_domain'])
 
     for service in request.session['urls']:
         if service['name'] == __package__:
@@ -660,7 +834,7 @@ def death(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
                     if submenu['name'] == menu_name:
                         context['menu_title'] = _(submenu['title'])
 
-    print(context['menu_title'])
+    print(context['menu_title'], context['action_name'])
 
     return render(request, "civil/list.html", context)
 
@@ -683,6 +857,7 @@ def death_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponseP
         "menu_name": menu_name,
         "form": CERTIFICATE[menu_name](),
         "register_manager": __package__ + ":register_manager",
+        "page_urls": {"list": __package__ + ":" + menu_name, "register": __package__ + ":" + menu_name + "-register"},
         "services": request.session['urls'],
         "common_name": getattr(settings, "COMMON_NAME"),
         "submenus": [],
@@ -690,9 +865,6 @@ def death_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponseP
         "actions": actions
     }
 
-    if context['form'].is_valid():
-        print(context["form"].clear_data)
-    
     for service in request.session['urls']:
         if service['name'] == __package__:
             context['title'] = _(service['title'])

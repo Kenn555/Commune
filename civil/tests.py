@@ -48,21 +48,21 @@ def add_cert_birth():
 # add_person()
 # add_cert_birth()
 
-table = {
-            "headers": ["Nom", "Prénom", "Genre", "Âge"], 
-            "rows": [
-                {
-                    "index" : index,
-                    "id": certificate.pk,
-                    "row": [
-                        {"last_name": certificate.birth_certificate.born.last_name, "style": ""},
-                        {"first_name": certificate.birth_certificate.born.first_name, "style": ""},
-                        {"gender": Person.GENDER_CHOICES[certificate.birth_certificate.born.gender], "style": ""},
-                        {"age": datetime.today().year - certificate.birth_certificate.born.birthday.year, "style": ""},
-                    ],
-                } for index, certificate in enumerate(CertificateDocument.objects.all())
-            ],
-        }
+# table = {
+#             "headers": ["Nom", "Prénom", "Genre", "Âge"], 
+#             "rows": [
+#                 {
+#                     "index" : index,
+#                     "id": certificate.pk,
+#                     "row": [
+#                         {"last_name": certificate.birth_certificate.born.last_name, "style": ""},
+#                         {"first_name": certificate.birth_certificate.born.first_name, "style": ""},
+#                         {"gender": Person.GENDER_CHOICES[certificate.birth_certificate.born.gender], "style": ""},
+#                         {"age": datetime.today().year - certificate.birth_certificate.born.birthday.year, "style": ""},
+#                     ],
+#                 } for index, certificate in enumerate(CertificateDocument.objects.all())
+#             ],
+#         }
 
 
 
@@ -85,7 +85,12 @@ document = get_object_or_404(CertificateDocument, pk=1)
 
 # print(_(views.actions[0]['title']))
 
-father = BirthCertificate.objects.get(pk=11).father
+certificate = BirthCertificate.objects.get(pk=11)
+print((certificate.date_register + timedelta(hours=3)).__format__('%d'))
+father = certificate.father
+mother = certificate.mother
+born = certificate.born
+
 
 # print(BirthCertificate.objects.get(born=father).born.birthday.astimezone() if BirthCertificate.objects.filter(born=father) else None)
 
@@ -98,3 +103,6 @@ father = BirthCertificate.objects.get(pk=11).father
 # for certificate in BirthCertificate.objects.all():
 #     print(_n("%(age)d year old", "%(age)d years old", datetime.today().year - certificate.born.birthday.year) % {"age": datetime.today().year - certificate.born.birthday.year})
 #     print(certificate)
+filter = BirthCertificate.objects.filter(father=1, mother=mother)
+print(filter.exists())
+print(filter.count())

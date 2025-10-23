@@ -13,10 +13,6 @@
   </style>
    <style>
         /* Styles personnalisés pour Select2 */
-        script ~ span.select2-container.select2-container--default.select2-container--open {
-          position: fixed !important;
-        }
-
         .select2-container--default .select2-selection--single {
             background-color: transparent;
             border: none;
@@ -127,7 +123,7 @@
       {% else %}
         <fieldset class="grid grid-cols-5 max-2xl:grid-cols-4 
                           max-xl:grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1 
-                          justify-evenly gap-x-8 gap-y-10 items-start">
+                          justify-evenly gap-x-8 gap-y-10 items-start search_person">
           <legend class="text-xl font-semibold text-gray-600 mb-4">{{ title|capfirst }}</legend>
           
           {% for field in fields %}
@@ -139,7 +135,6 @@
       {% endif %}
     {% endif %}
   {% endfor %}
-  
   <div class="flex justify-end gap-8 text-white">
     <input type="submit" value="{% trans 'Submit' %}" class="bg-primary px-4 py-3 rounded-lg w-32 cursor-pointer hover:bg-blue-500">
     <input type="reset" value="{% trans 'Reset' %}" class="bg-secondary px-4 py-3 rounded-lg w-32 cursor-pointer hover:bg-gray-500">
@@ -153,7 +148,121 @@
             width: '100%',
         });
 
-        $('').on('click', (e)=>{console.log('Saluttttttt')});
+        function searchPerson(e){
+          var search_container = $(e.target).next().children('[data-id="id-results-container"]');
+          console.log(search_container);
+          search_container.empty();
+
+          if(String($(e.target).val()).length >= 2){
+            console.log(String($(e.target)).length);
+
+            // Requête AJAX pour faire une recherche
+            $.ajax({
+                url: "{% url 'civil:search-person' 0 %}".replace('0', $(e.target).val()),  // Ajustez l'URL selon votre configuration
+                method: 'GET',
+                success: function(data) {
+                    // Remplir les champs du père
+                    data.person_list.forEach(person_id => {
+                      console.log(person_id);
+                      search_container.append('<button type="button" name="result-btn" data-value="'+ person_id +'" title="'+ data.person_name[person_id] +'" class="contain-content p-4 shadow-sm rounded-md cursor-pointer w-full text-nowrap text-ellipsis text-left hover:bg-blue-100">'+ data.person_name[person_id] +'<button>')
+                        
+                    });
+
+                    var val_actu = $(e.target).val();
+
+                    search_container.children('button').on('mouseenter', (i)=>{
+                      $(e.target).val('');
+                      $(e.target).val($(i.target).text());
+                    });
+
+                    search_container.on('mouseleave', (i)=>{
+                      console.log('OUTTTTTTTTTTTTT');
+                      $(e.target).val(val_actu);
+                    });
+
+                    search_container.children('button').on('click', (i)=>{
+                        console.log($(i.target))
+                        console.log($(i.target).attr('data-value'))
+                        // $(e.target).val($(i.target).text());
+            
+                        // Requête AJAX pour récupérer les détails du père
+                        $.ajax({
+                            url: "{% url 'civil:person-details' 0 %}".replace('0', $(i.target).attr('data-value')),  // Ajustez l'URL selon votre configuration
+                            method: 'GET',
+                            success: function(data) {
+
+                                $(e.target).parents('fieldset').children('div').each((index, element)=>{
+                                  console.log($(element).children("input, select"));
+                                  console.log(data.fields[index]);
+                                  if($(element).children().is("input, select")){
+                                    $(element).children("input, select").val(data.fields[index]);
+
+                                  }
+                                });
+                                
+                                console.log('✅ Informations du père chargées avec succès');
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('❌ Erreur lors du chargement des informations du père:', error);
+                                alert('Erreur lors du chargement des informations du père');
+                            }
+                        });
+                        
+                        search_container.parent().remove();
+                      });
+                    
+                    console.log('✅ Informations du père chargées avec succès');
+                },
+                error: function(xhr, status, error) {
+                    console.error('❌ Erreur lors du chargement des informations du père:', error);
+                    // alert('Erreur lors du chargement des informations du père');
+                      $('[data-id="id-results-container"]').append('<p>Aucune personne trouvée</p>');
+                }
+            });
+          } else {
+            search_container.append(
+                "<p>En attente d\'au moins 2 caractères...</p>"
+            );
+          }
+        }
+
+        $('.searched_person').on('focus', (e)=>{
+          // $('main').scroll((i)=>{
+          //   e.target.scrollIntoView(true);
+
+          // });
+          
+          if($(e.target).next().length === 0) {
+            $(e.target.parentElement).append(
+              '<div data-id="id-results" class="w-full max-h-0">\
+                <div data-id="id-results-container" class="sticky max-h-48 w-full overflow-y-auto bg-white shadow-md rounded-b-lg p-2">\
+                  <div><p>En attente d\'au moins 2 caractères...</p></div>\
+                </div>\
+              </div>'
+            );
+          }
+          searchPerson(e);
+        });
+
+        $('.searched_person').on('input', (e)=>{
+          searchPerson(e);
+            // var select = $(e.target.parentElement).children('#id-select-field');
+            // select.append("<option>Kenn</option>");
+            // select.click();
+            // if(select.on('click', (e)=>console.log('CLICKCC')));
+        });
+        
+        $('.searched_person').on('focusout', (e)=>{
+        //   $('main').scroll((i)=>{
+        //     e.target.scrollIntoView(0);
+
+        //   });
+
+          console.log($(e.target).parent());
+          if (String($('.searched_person').val()).length < 2 || $(e.target).next().children('[data-id="id-results-container"]').children().length === 0){
+            $(e.target).next().remove();
+          }
+        });
 
         // Gestion de l'affichage conditionnel pour les informations des parents
         function toggleFamilyFields(){

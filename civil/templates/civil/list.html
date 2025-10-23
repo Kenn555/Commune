@@ -38,7 +38,7 @@
                 <input type="hidden" name="order" value="">
                 {% for header in table.headers %}
                     <div title="{% translate 'click for sorting' %}" class="table-cell px-4 py-2 text-center text-nowrap border-b-2 border-gray-200 cursor-pointer">
-                        <button type="button" onclick="changeOrder(this)" value="{{ header.header }}" class="inline-block w-full">{{ header.header|title }}</button> {% if header.header != "action" and request.session.order_name == header.header %}{% if not request.session.order_asc %}⬇{% else %}⬆{% endif %}{% endif %}
+                        <button type="button" onclick="changeOrder(this)" value="{{ header.header }}" class="inline-block w-full">{{ header.header|title }}</button> {% if header.header != "action" and order_name == header.header %}{% if not request.session.order_asc %}⬇{% else %}⬆{% endif %}{% endif %}
                     </div>
                 {% endfor %}
             </div>
@@ -129,7 +129,7 @@
     });
     
     // Auto-changement quand une colonne à rechercher est sélectionné
-    $('#id_search_filter').on('select', function(e) {
+    $('#id_search_filter').on('change', function(e) {
         console.log(headers[this.value]);
         console.log($('#id_search_fields').children()[0].focus());
         console.log('[type=0]'.replace('0', headers[this.value].type));

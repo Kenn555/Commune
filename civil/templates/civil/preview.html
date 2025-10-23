@@ -177,7 +177,7 @@
                     <!-- Informations administratives -->
                     <div class="flex text-[11pt] col-span-3 flex-col items-start mt-[138px] gap-y-2 leading-tight">
                         <p class="indent-8 underline">N° {{ document.pk }}/</p>
-                        <p class="indent-3">{{ document.birth_certificate.date_created|date:"d" }} {{ document.birth_certificate.date_created|date:"m"|volana_gasy|capfirst }} {{ document.birth_certificate.date_created|date:"Y" }}</p>
+                        <p class="indent-3">{{ document.birth_certificate.date_register|date:"d" }} {{ document.birth_certificate.date_register|date:"m"|volana_gasy|capfirst }} {{ document.birth_certificate.date_register|date:"Y" }}</p>
                         <p class="indent-1 uppercase">
                             {% if document.birth_certificate.certificate_type == "R" %}
                                 FAHATERAHANA SY<br>FANJANAHANA
@@ -209,7 +209,7 @@
                             after:left-0 after:w-full after:h-[20px]"
                         >
                             <p class="inline text-justify bg-clip-text">
-                                _______Nalaina tamin'ny bokim-piankohonana ao {{ document.birth_certificate.fokotany.name }}, taona {{ document.birth_certificate.date_created|date:"Y" }},
+                                _______Nalaina tamin'ny bokim-piankohonana ao {{ document.birth_certificate.fokotany.name }}, taona {{ document.birth_certificate.date_register|date:"Y" }},
                                 izao soratra manaraka izao.
                             </p>
                             <p class="inline">-------------------------------------------------------------------------------------------</p>
@@ -240,8 +240,8 @@
                             after:left-0 after:w-full after:h-[20px]"
                         >
                             <p class="inline text-justify">
-                                _________Nosoratana androany {{ document.birth_certificate.date_created|date:"d"|isa_gasy }} {{ document.birth_certificate.date_created|date:"m"|volana_gasy|capfirst }}, taona {{ document.birth_certificate.date_created|date:"Y"|isa_gasy }},
-                                tamin'ny {{ document.birth_certificate.date_created|date:"h"|isa_gasy }} ora {{ document.birth_certificate.date_created|date:"h"|ora_gasy }}, araky ny fanambarana nataon'i
+                                _________Nosoratana androany {{ document.birth_certificate.date_register|date:"d"|isa_gasy }} {{ document.birth_certificate.date_register|date:"m"|volana_gasy|capfirst }}, taona {{ document.birth_certificate.date_register|date:"Y"|isa_gasy }},
+                                tamin'ny {{ document.birth_certificate.date_register|date:"h"|isa_gasy }} ora {{ document.birth_certificate.date_register|date:"h"|ora_gasy }}, araky ny fanambarana nataon'i
                                 {% if document.birth_certificate.declarer == document.birth_certificate.father %} rainy izay {% elif document.birth_certificate.declarer == document.birth_certificate.mother %} reniny izay {% else %}{{ document.birth_certificate.declarer.full_name }},
                                 teraka tamin'ny {{ document.birth_certificate.declarer.birthday|date:"d"|isa_gasy }} {{ document.birth_certificate.declarer.birthday|date:"F"|capfirst }}, taona {{ document.birth_certificate.declarer.birthday|date:"Y"|isa_gasy }}, 
                                 tao {{ document.birth_certificate.declarer.birth_place }}, {{ document.birth_certificate.declarer_carreer|lower }}, monina ao {{ document.birth_certificate.declarer_address }},
