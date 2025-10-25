@@ -46,7 +46,7 @@
         <div class="flex flex-col gap-4 justify-between whitespace-nowrap">
             <div class="">
                 <p><b>N°</b> {{ certificate.numero }}</p>
-                <p><b>{% trans 'register date'|capfirst %} :</b> {{ certificate.date_register|date:'d-m-Y H:i' }}</p>
+                <p><b>{% trans 'declaration date'|capfirst %} :</b> {{ certificate.date_declaration|date:'d-m-Y H:i' }}</p>
             </div>
             <div class="flex gap-x-7 justify-end self-end whitespace-nowrap">
                 <div class="flex justify-center items-center h-full">{{ age }}</div>
@@ -63,7 +63,7 @@
         <div class="flex flex-wrap justify-center gap-7">
             <a href="" class="flex items-center p-4 gap-4 rounded-xl shadow-md w-80">
                 <div class="flex rounded-full min-w-16 min-h-16 items-center justify-center border-4 border-blue-500 text-xl font-semibold">
-                    {{ document.count }}
+                    {{ document.count|default:0 }}
                 </div>
                 <div class="flex flex-col">
                     <p class="text-md font-semibold">{% trans "Copies de Naissance"|upper %}</p>
@@ -97,7 +97,7 @@
             {% for doc in document %}
             <a href="{% url 'civil:certificate-preview' doc.pk %}" class="w-full shadow-md rounded-lg p-4 bg-white hover:bg-blue-50">
                 <p class="contain-content text-nowrap text-ellipsis">
-                <span class="text-blue-400">{{ doc.created_at|date:"d-m-Y H:i" }} </span>
+                <span class="text-blue-400">{{ doc.date_created|date:"d-m-Y H:i" }} </span>
                 --- N° {{ doc.pk }} --- {{ doc.birth_type }} --- {{ doc.get_price }} Ar
                 </p>
             </a>
@@ -146,7 +146,7 @@
                 Reconnaitre
             </a>
             {% endif %}
-            <a href="{% url 'civil:birth-delete' certificate.pk %}" class="px-4 py-2 border border-white text-white shadow-md bg-rose-600 hover:bg-rose-500 rounded-lg w-full text-center cursor-pointer"
+            <a href="{% url 'civil:birth-delete' certificate.pk %}" class="px-4 py-2 border border-white text-white shadow-md {% if certificate %}bg-rose-600 hover:bg-rose-500{% else %}{% endif %} rounded-lg w-full text-center cursor-pointer"
             title="Supprimer"
             >
                 Supprimer

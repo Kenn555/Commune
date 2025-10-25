@@ -73,7 +73,7 @@ def add_cert_birth():
 activate('mg')
 
 
-document = get_object_or_404(CertificateDocument, pk=1)
+# document = get_object_or_404(CertificateDocument, pk=1)
 
 # print(BirthCertificate.objects.all().filter(
 #     Q(**{"born__birthday__lte": datetime.today() - timedelta(days=18*365)})
@@ -85,13 +85,19 @@ document = get_object_or_404(CertificateDocument, pk=1)
 
 # print(_(views.actions[0]['title']))
 
-certificate = BirthCertificate.objects.get(pk=11)
-print((certificate.date_register + timedelta(hours=3)).__format__('%d'))
-father = certificate.father
-mother = certificate.mother
-born = certificate.born
+# certificate = BirthCertificate.objects.get(pk=11)
+# print((certificate.date_register + timedelta(hours=3)).__format__('%d'))
+# father = certificate.father
+# mother = certificate.mother
+# born = certificate.born
 
-
+print(
+    BirthCertificate.objects.get(born=BirthCertificate.objects.get(born=20).father).pk 
+    if BirthCertificate.objects.filter(born=BirthCertificate.objects.get(born=20).father)
+    else None
+    if BirthCertificate.objects.filter(born=20) 
+    else None
+)
 # print(BirthCertificate.objects.get(born=father).born.birthday.astimezone() if BirthCertificate.objects.filter(born=father) else None)
 
 # from django.utils.translation import ngettext as _n
@@ -103,6 +109,8 @@ born = certificate.born
 # for certificate in BirthCertificate.objects.all():
 #     print(_n("%(age)d year old", "%(age)d years old", datetime.today().year - certificate.born.birthday.year) % {"age": datetime.today().year - certificate.born.birthday.year})
 #     print(certificate)
-filter = BirthCertificate.objects.filter(father=1, mother=mother)
-print(filter.exists())
-print(filter.count())
+# filter = BirthCertificate.objects.filter(father=1, mother=mother)
+# print(filter.exists())
+# print(filter.count())
+
+# print("Kenn Keren ".strip() + "Keren ".strip())

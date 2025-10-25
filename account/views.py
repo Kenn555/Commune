@@ -20,7 +20,7 @@ User = get_user_model()
 def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
     """  """
     if 'urls' in list(request.session.keys()):
-        return redirect(request.session['urls'][0]['url'])
+        return redirect(request.session['urls'][0]['url'].strip())
     else:
         return redirect("account:login")
 

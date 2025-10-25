@@ -76,8 +76,8 @@
         }
         
         /* Styles pour les checkboxes */
-        #id_use_existing_father,
-        #id_use_existing_mother,
+        #id_father_exist,
+        #id_mother_exist,
         #id_have_parents {
             width: 1.25rem;
             height: 1.25rem;
@@ -85,7 +85,13 @@
         }
     </style>
 
-  <form action="{% url 'civil:birth-save' %}" method="post" class="flex flex-col gap-y-8">
+  <form action="
+  {% if menu_name == 'birth' %}
+    {% url 'civil:birth-save' %}
+  {% elif menu_name == 'death' %}
+    {% url 'civil:death-save' %}
+  {% endif %}" 
+  method="post" class="flex flex-col gap-y-8">
   {% csrf_token %}
   
   {% for title, fields in form.fieldsets_fields.items %}
@@ -95,6 +101,12 @@
         {% for field in fields %}
           <div>{{ field }}</div>
         {% endfor %}
+        <div class="">
+          <input type="text" class="w-36 text-gray-500 bg-transparent border-0 border-b-2 border-b-gray-300
+          outline-none font-medium
+          focus:outline-none focus:border-b-blue-400
+          focus:ring-0 focus:ring-offset-0 text-center text-lg tracking-widest cursor-pointe cursor-pointer" value="{{ number_initial|default:'000000001' }}" disabled>
+        </div>
       </fieldset>
 
     {% else %}
@@ -111,7 +123,7 @@
             <legend class="text-lg font-semibold text-gray-500 mb-2">{{ sub_title|capfirst }}</legend>
                 
               {% for field in sub_fields %}
-                <div class="min-w-20 w-full {% if title == parents_information and sub_title != declarer %} parents_information{% if forloop.first %} col-span-full{% endif %}{% endif %}">
+                <div class="min-w-20 w-full {% if title == parents_information %} parents_information{% if forloop.first %} col-span-full{% endif %}{% endif %}">
                   {{ field.label_tag }} {{ field }}
                 </div>
               {% endfor %}
@@ -143,10 +155,9 @@
 
   <script>
     $(document).ready(function() {
-        // Configuration de base des selects Select2
-        $('.select2').select2({
-            width: '100%',
-        });
+        
+        var is_out = true;
+        const menu_name = '{{ menu_name|safe }}';
 
         function searchPerson(e){
           var search_container = $(e.target).next().children('[data-id="id-results-container"]');
@@ -155,10 +166,11 @@
 
           if(String($(e.target).val()).length >= 2){
             console.log(String($(e.target)).length);
+            console.log($(e.target).attr('data-gender'));
 
             // Requête AJAX pour faire une recherche
             $.ajax({
-                url: "{% url 'civil:search-person' 0 %}".replace('0', $(e.target).val()),  // Ajustez l'URL selon votre configuration
+                url: "{% url 'civil:search-person' 0 1 %}".replace('0', $(e.target).attr('data-gender')).replace('1', $(e.target).val()),  // Ajustez l'URL selon votre configuration
                 method: 'GET',
                 success: function(data) {
                     // Remplir les champs du père
@@ -171,52 +183,75 @@
                     var val_actu = $(e.target).val();
 
                     search_container.children('button').on('mouseenter', (i)=>{
+                      is_out = false;
+                      console.log('HOVER')
                       $(e.target).val('');
                       $(e.target).val($(i.target).text());
                     });
 
                     search_container.on('mouseleave', (i)=>{
                       console.log('OUTTTTTTTTTTTTT');
+                      is_out = true;
                       $(e.target).val(val_actu);
                     });
 
                     search_container.children('button').on('click', (i)=>{
-                        console.log($(i.target))
-                        console.log($(i.target).attr('data-value'))
-                        // $(e.target).val($(i.target).text());
-            
-                        // Requête AJAX pour récupérer les détails du père
-                        $.ajax({
-                            url: "{% url 'civil:person-details' 0 %}".replace('0', $(i.target).attr('data-value')),  // Ajustez l'URL selon votre configuration
-                            method: 'GET',
-                            success: function(data) {
+                      console.log($(i.target))
+                      console.log($(i.target).attr('data-value'))
+          
+                      // Requête AJAX pour récupérer les détails du père
+                      $.ajax({
+                          url: "{% url 'civil:person-details' 0 %}".replace('0', $(i.target).attr('data-value')),  // Ajustez l'URL selon votre configuration
+                          method: 'GET',
+                          success: function(data) {
+                            console.log(data);
+                            
+                            $(e.target).parents('fieldset').children('div').each((index, element)=>{
+                              var autocomplete_field = $(element);
+                              if (!autocomplete_field.children().is("input, select")){
+                                autocomplete_field = $(element).children('div');
+                              }
 
-                                $(e.target).parents('fieldset').children('div').each((index, element)=>{
-                                  console.log($(element).children("input, select"));
-                                  console.log(data.fields[index]);
-                                  if($(element).children().is("input, select")){
-                                    $(element).children("input, select").val(data.fields[index]);
+                              console.log(autocomplete_field);
 
-                                  }
-                                });
-                                
-                                console.log('✅ Informations du père chargées avec succès');
-                            },
-                            error: function(xhr, status, error) {
-                                console.error('❌ Erreur lors du chargement des informations du père:', error);
-                                alert('Erreur lors du chargement des informations du père');
-                            }
-                        });
-                        
-                        search_container.parent().remove();
+                              if (autocomplete_field.children("input, select").attr('id').search("last_name") != -1){
+                                autocomplete_field.children("input, select").val(data.last_name);
+                              }
+                              else if (autocomplete_field.children("input, select").attr('id').search("first_name") != -1){
+                                autocomplete_field.children("input, select").val(data.first_name);
+                              }
+                              else if (autocomplete_field.children("input, select").attr('id').search("gender") != -1){
+                                autocomplete_field.children("input, select").val(data.gender);
+                              }
+                              else if (autocomplete_field.children("input, select").attr('id').search("birth_place") != -1){
+                                autocomplete_field.children("input, select").val(data.birth_place);
+                              }
+                              else if (autocomplete_field.children("input, select").attr('id').search("birthday") != -1){
+                                autocomplete_field.children("input, select").val(data.birthday);
+                              } else {
+                                console.log('Cette donnée n\'a pas de champ !!!');
+                              }
+                            });
+                            
+                            console.log('✅ Informations du père chargées avec succès');
+                          },
+                          error: function(xhr, status, error) {
+                              console.error('❌ Erreur lors du chargement des informations du père:', error);
+                              alert('Erreur lors du chargement des informations du père');
+                          }
                       });
+                      
+                      search_container.parent().remove();
+                      searched_person = $('.searched_person');
+                      is_out = true;
+                    });
                     
                     console.log('✅ Informations du père chargées avec succès');
                 },
                 error: function(xhr, status, error) {
                     console.error('❌ Erreur lors du chargement des informations du père:', error);
                     // alert('Erreur lors du chargement des informations du père');
-                      $('[data-id="id-results-container"]').append('<p>Aucune personne trouvée</p>');
+                      $('[data-id="id-results-container"]').replaceAll('<p>Aucune personne trouvée</p>');
                 }
             });
           } else {
@@ -226,7 +261,10 @@
           }
         }
 
-        $('.searched_person').on('focus', (e)=>{
+        var searched_person = $('.searched_person');
+
+        searched_person.on('focus', (e)=>{
+          searched_person = $(e.target);
           // $('main').scroll((i)=>{
           //   e.target.scrollIntoView(true);
 
@@ -243,216 +281,72 @@
           }
           searchPerson(e);
         });
-
-        $('.searched_person').on('input', (e)=>{
-          searchPerson(e);
-            // var select = $(e.target.parentElement).children('#id-select-field');
-            // select.append("<option>Kenn</option>");
-            // select.click();
-            // if(select.on('click', (e)=>console.log('CLICKCC')));
-        });
         
-        $('.searched_person').on('focusout', (e)=>{
-        //   $('main').scroll((i)=>{
-        //     e.target.scrollIntoView(0);
+        searched_person.on('input', (e)=>{
+          searchPerson(e);
+        });
 
-        //   });
-
-          console.log($(e.target).parent());
-          if (String($('.searched_person').val()).length < 2 || $(e.target).next().children('[data-id="id-results-container"]').children().length === 0){
+        searched_person.on('focusout', (e)=>{
+          if (is_out){
             $(e.target).next().remove();
+            searched_person = $('.searched_person');
           }
         });
+
+        // Configuration de base des selects Select2
+        // $('.select2').select2({
+        //     width: '100%',
+        // });
 
         // Gestion de l'affichage conditionnel pour les informations des parents
-        function toggleFamilyFields(){
-          if($('#id_have_parents').is(':checked')){
-            $('#id_use_existing_father').prop('checked', true);
-            $('#id_use_existing_mother').prop('checked', true);
-          } else {
-            $('#id_use_existing_father').prop('checked', false);
-            $('#id_use_existing_mother').prop('checked', false).prop('required', false);
-          }
-          toggleFatherFields();
-          toggleMotherFields();
-          toggleDeclarerFields();
+        function toggleFamilyFields(e){
+          $(e).parents('fieldset').children('fieldset').each((index, element)=>{
+            if($(e).is(':checked')){
+              $(element).find('input:checkbox').prop('checked', true);
+              if(index === 1 & menu_name === 'birth'){
+                $(element).find('input:checkbox').prop('required', true);
+              }
+            } else {
+              $(element).find('input:checkbox').prop('checked', false);
+              if(index === 1 & menu_name === 'birth'){
+                $(element).find('input:checkbox').prop('required', false);
+              }
+            }
+            console.log($(element).find('input:checkbox'));
+            toggleFields($(element).find('input:checkbox'));
+          });
         }
         
-        // Gestion de l'affichage conditionnel pour le père
-        function toggleFatherFields() {
+        // Gestion de l'affichage conditionnel des champs du groupe
+        function toggleFields(e) {
+          const fieldset = $(e).parents('fieldset').first();
 
-          const isChecked = $('#id_use_existing_father').is(':checked');
-
-          if (isChecked) {
-              // Afficher l'autocomplete
-              $('[aria-controls="select2-id_existing_father-results"], [name="existing_father"], [name="father_name"], [name="father_place_of_birth"], [name="father_birthday"], [name="father_job"], [name="father_address"]').closest('.parents_information').show();
-              // Mettre les autres champs en lecture seule
-              $('[name="father_name"], [name="father_place_of_birth"], [name="father_birthday"]')
-                  .prop('readonly', true)
-                  .addClass('bg-gray-100 cursor-not-allowed');
-              $('[name="father_job"], [name="father_address"]').prop("required", true);
+          if ($(e).is(':checked')) {
+            fieldset.children('div').each((index, element)=>{
+              if(index > 0){
+                $(element).show();
+                $(element).children('input').prop('required', true);
+              }
+            });
           } else {
-              // Cacher l'autocomplete
-              $('[aria-controls="select2-id_existing_father-results"], [name="existing_father"], [name="father_name"], [name="father_place_of_birth"], [name="father_birthday"], [name="father_job"], [name="father_address"]').closest('.parents_information').hide();
-              // Tous les champs deviennent éditables
-              $('[name="father_name"], [name="father_place_of_birth"], [name="father_birthday"], [name="father_job"], [name="father_address"]')
-                  .prop('readonly', false)
-                  .removeClass('bg-gray-100 cursor-not-allowed')
-                  .prop("required", false);
+            fieldset.children('div').each((index, element)=>{
+              if(index > 0){
+                $(element).hide();
+                $(element).children('input').prop('required', false);
+              }
+            });
           }
-        }
-        
-        // Gestion de l'affichage conditionnel pour la mère
-        function toggleMotherFields() {
-
-          const isChecked = $('#id_use_existing_mother').is(':checked');
-            
-            if (isChecked) {
-                // Afficher l'autocomplete
-                $('[aria-controls="select2-id_existing_mother-results"], [name="existing_mother"], [name="mother_name"], [name="mother_place_of_birth"], [name="mother_birthday"], [name="mother_job"], [name="mother_address"]').closest('.parents_information').show();
-                // Garder les autres champs visibles mais en lecture seule
-                $('[name="mother_name"], [name="mother_place_of_birth"], [name="mother_birthday"]')
-                    .prop('readonly', true)
-                    .addClass('bg-gray-100 cursor-not-allowed');
-                $('[name="mother_job"], [name="mother_address"]').prop("required", true);
-            } else {
-                // Cacher l'autocomplete
-                $('[aria-controls="select2-id_existing_mother-results"],[name="existing_mother"], [name="mother_name"], [name="mother_place_of_birth"], [name="mother_birthday"], [name="mother_job"], [name="mother_address"]').closest('.parents_information').hide();
-                // Tous les champs deviennent éditables
-                $('[name="mother_name"], [name="mother_place_of_birth"], [name="mother_birthday"], [name="mother_job"], [name="mother_address"]')
-                    .prop('readonly', false)
-                    .removeClass('bg-gray-100 cursor-not-allowed')
-                    .prop("required", false);
-            }
-        }
-
-        // Gestion de l'affichage conditionnel pour le déclarant
-        function toggleDeclarerFields() {
-
-          const isChecked = $('#id_have_parents').is(':checked');
-            
-            if (isChecked) {
-                // Afficher l'autocomplete
-                $('[aria-controls="select2-id_existing_declarer-results"], [name="existing_declarer"], [name="declarer_name"], [name="declarer_place_of_birth"], [name="declarer_birthday"], [name="declarer_job"], [name="declarer_address"]').closest('.parents_information').show();
-                // Garder les autres champs visibles mais en lecture seule
-                $('[name="declarer_name"], [name="declarer_place_of_birth"], [name="declarer_birthday"]')
-                    .prop('readonly', true)
-                    .addClass('bg-gray-100 cursor-not-allowed');
-                $('[name="declarer_job"], [name="declarer_address"]').prop("required", true);
-            } else {
-                // Cacher l'autocomplete
-                $('[aria-controls="select2-id_existing_declarer-results"], [name="existing_declarer"], [name="declarer_name"], [name="declarer_place_of_birth"], [name="declarer_birthday"], [name="declarer_job"], [name="declarer_address"]').closest('.parents_information').hide();
-                // Tous les champs deviennent éditables
-                $('[name="declarer_name"], [name="declarer_place_of_birth"], [name="declarer_birthday"], [name="declarer_job"], [name="declarer_address"]')
-                    .prop('readonly', false)
-                    .removeClass('bg-gray-100 cursor-not-allowed')
-                    .prop("required", false);
-            }
         }
         
         // Écouter les changements sur les checkboxes
-        $('#id_have_parents').on('change', toggleFamilyFields);
-        $('#id_use_existing_father').on('change', toggleFatherFields);
-        $('#id_use_existing_mother').on('change', toggleMotherFields);
+        $('#id_have_parents').change((e)=>toggleFamilyFields(e.target));
+        $('#id_father_exist').change((e)=>toggleFields(e.target));
+        $('#id_mother_exist').change((e)=>toggleFields(e.target));
         
         // Initialiser l'état au chargement
-        toggleFatherFields();
-        toggleMotherFields();
-        toggleDeclarerFields();
-        
-        // Auto-remplissage quand un père existant est sélectionné
-        $('#id_existing_father').on('select2:select', function(e) {
-            const personId = e.params.data.id;
-            
-            // Requête AJAX pour récupérer les détails du père
-            $.ajax({
-                url: "{% url 'civil:person-details' 0 %}".replace('0', personId),  // Ajustez l'URL selon votre configuration
-                method: 'GET',
-                success: function(data) {
-                    // Remplir les champs du père
-                    $('[name="father_name"]').val(data.full_name);
-                    $('[name="father_place_of_birth"]').val(data.birth_place);
-                    $('[name="father_birthday"]').val(data.birthday);
-                    
-                    console.log('✅ Informations du père chargées avec succès');
-                },
-                error: function(xhr, status, error) {
-                    console.error('❌ Erreur lors du chargement des informations du père:', error);
-                    alert('Erreur lors du chargement des informations du père');
-                }
-            });
-        });
-        
-        // Auto-remplissage quand une mère existante est sélectionnée
-        $('#id_existing_mother').on('select2:select', function(e) {
-            const personId = e.params.data.id;
-            
-            // Requête AJAX pour récupérer les détails de la mère
-            $.ajax({
-                url: "{% url 'civil:person-details' 0 %}".replace('0', personId),  // Ajustez l'URL selon votre configuration
-                method: 'GET',
-                success: function(data) {
-                    // Remplir les champs de la mère
-                    $('[name="mother_name"]').val(data.full_name);
-                    $('[name="mother_place_of_birth"]').val(data.birth_place);
-                    $('[name="mother_birthday"]').val(data.birthday);
-                    
-                    console.log('✅ Informations de la mère chargées avec succès');
-                },
-                error: function(xhr, status, error) {
-                    console.error('❌ Erreur lors du chargement des informations de la mère:', error);
-                    alert('Erreur lors du chargement des informations de la mère');
-                }
-            });
-        });
-
-        // Auto-remplissage quand un déclarant existant est sélectionné
-        $('[name="existing_declarer"]').on('select2:select', function(e) {
-            const personId = e.params.data.id;
-            
-            // Requête AJAX pour récupérer les détails de la mère
-            $.ajax({
-                url: "{% url 'civil:person-details' 0 %}".replace('0', personId),  // Ajustez l'URL selon votre configuration
-                method: 'GET',
-                success: function(data) {
-                    // Remplir les champs de la mère
-                    $('[name="declarer_name"]').val(data.full_name);
-                    $('[name="declarer_place_of_birth"]').val(data.birth_place);
-                    $('[name="declarer_birthday"]').val(data.birthday);
-                    
-                    console.log('✅ Informations du déclarant chargées avec succès');
-                },
-                error: function(xhr, status, error) {
-                    console.error('❌ Erreur lors du chargement des informations du déclarant:', error);
-                    alert('Erreur lors du chargement des informations du déclarant');
-                }
-            });
-        });
-        
-        // Réinitialiser les champs quand on déselectionne
-        $('#id_existing_father').on('select2:unselect', function(e) {
-            $('[name="father_name"], [name="father_place_of_birth"], [name="father_birthday"], [name="father_job"], [name="father_address"]').val('');
-        });
-        
-        $('#id_existing_mother').on('select2:unselect', function(e) {
-            $('[name="mother_name"], [name="mother_place_of_birth"], [name="mother_birthday"], [name="mother_job"], [name="mother_address"]').val('');
-        });
-
-        $('[name="existing_declarer"]').on('select2:unselect', function(e) {
-            $('[name="declarer_name"], [name="declarer_place_of_birth"], [name="declarer_birthday"], [name="declarer_job"], [name="declarer_address"]').val('');
-        });
-        
-        // Gestion du bouton Reset
-        $('input[type="reset"]').on('click', function() {
-            setTimeout(function() {
-                // Réinitialiser les Select2
-                $('.select2').val(null).trigger('change');
-                // Réinitialiser l'état des checkboxes et des champs
-                toggleFatherFields();
-                toggleMotherFields();
-                toggleDeclarerFields();
-            }, 10);
-        });
+        toggleFamilyFields($('#id_have_parents'));
+        toggleFields($('#id_father_exist'));
+        toggleFields($('#id_mother_exist'));
     });
     </script>
 

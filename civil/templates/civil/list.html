@@ -50,7 +50,11 @@
                     <div class="peer table-cell sticky py-1 px-4 right-0 invisible peer-hover:visible hover:visible">
                         <div class="flex flex-row flex-nowrap justify-center gap-3">  
                             {% for button in cell.buttons %}                 
-                            <a href="{% url button.url data.pk %}" class="px-3 py-1 text-white rounded-md ring-2 ring-white 
+                            <a 
+                            {% if data.pk %}
+                            href="{% url button.url data.pk %}"
+                            {% endif %} 
+                            class="px-3 py-1 text-white rounded-md ring-2 ring-white 
                             {% if button.style == 'green' %}
                             bg-green-600
                             {% elif button.style == 'blue' %}
@@ -64,14 +68,22 @@
                     </div>
                     {% else %}
                     <a 
-                    {% if cell.header == "full name" %}
+                    {% if cell.header == "full name" and data.pk %}
                     href="{% url data.detail_url data.pk %}"
                     {% elif data.father_cert_pk and cell.header == "father" %}
                     href="{% url data.detail_url data.father_cert_pk %}"
                     {% elif data.mother_cert_pk and cell.header == "mother" %}
                     href="{% url data.detail_url data.mother_cert_pk %}"
                     {% endif %}
-                    class="peer table-cell px-4 py-2 hover:bg-blue-500 {{ cell.style }}" title="{{ cell.title }}">
+                    class="peer table-cell px-4 py-2 
+                    {% if cell.header == 'full name' and data.pk %}
+                    hover:bg-blue-500 
+                    {% elif cell.header == 'father' and data.father_cert_pk %}
+                    hover:bg-blue-500 
+                    {% elif cell.header == 'mother' and data.mother_cert_pk %}
+                    hover:bg-blue-500 
+                    {% endif %}
+                    {{ cell.style }}" title="{{ cell.title }}">
                         {{ cell.value }}
                     </a>
                     {% endif %}

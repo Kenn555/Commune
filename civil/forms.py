@@ -30,25 +30,13 @@ class BirthCertificateForm(forms.Form):
         )
     )
     
-    number = forms.CharField(
-        label=_("Number"), 
-        disabled=True,
-        # initial="1".zfill(9) if not BirthCertificate.objects.count() else str(BirthCertificate.objects.last().id + 1).zfill(9),
-        widget=forms.TextInput(
-            attrs={
-                "class": CLASS_FIELD.replace("w-full min-w-52", "w-36 text-gray-500") + " text-center text-lg tracking-widest cursor-pointer", 
-                "placeholder": "0000000001",
-                "title": "Matricule",
-            }
-        )
-    )
-    
     # Informations personnelles
     last_name = forms.CharField(
         label=_("Last Name"), 
         widget=forms.TextInput(
             attrs={
-                "class": CLASS_FIELD, 
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
                 "placeholder": _("Insert her/his last name"),
                 "title": _("Insert her/his last name"),
             }
@@ -60,7 +48,8 @@ class BirthCertificateForm(forms.Form):
         required=False,
         widget=forms.TextInput(
             attrs={
-                "class": CLASS_FIELD, 
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
                 "placeholder": _("Insert her/his first name"),
                 "title": _("Insert her/his first name"),
             }
@@ -111,40 +100,42 @@ class BirthCertificateForm(forms.Form):
     )
 
     # Informations sur les parents avec autocomplete
-    use_existing_father = forms.BooleanField(
-        label=_("Search for a existing Mother"),
+    father_exist = forms.BooleanField(
+        label=_("Have a Father"),
         required=False,
         initial=True,
         widget=forms.CheckboxInput(attrs={"class": "mr-2"})
     )
     
-    existing_father = forms.ModelChoiceField(
-        label=_("Existing Father"),
-        queryset=Person.objects.filter(gender='M', birthday__lte=date.today() - timedelta(days=18*365)),
-        required=False,
-        widget=autocomplete.ModelSelect2(
-            url='civil:father-autocomplete',
-            attrs={
-                "class": CLASS_FIELD,
-                "data-placeholder": _("Search for Father..."),
-                "data-minimum-input-length": 2,
-            }
-        )
-    )
-    
-    father_name = forms.CharField(
-        label=_("Father's Full Name"), 
+    father_last_name = forms.CharField(
+        label=_("Father's Last Name"), 
         required=False,
         widget=forms.TextInput(
             attrs={
-                "class": CLASS_FIELD, 
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-gender": "M",
                 "placeholder": _("Wait for her/his father's full name"),
                 "title": _("Wait for her/his father's full name"),
             }
         )
     )
     
-    father_place_of_birth = forms.CharField(
+    father_first_name = forms.CharField(
+        label=_("Father's First Name"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-gender": "M",
+                "placeholder": _("Wait for her/his father's full name"),
+                "title": _("Wait for her/his father's full name"),
+            }
+        )
+    )
+    
+    father_birth_place = forms.CharField(
         label=_("Place of Birth"), 
         required=False,
         widget=forms.TextInput(
@@ -195,39 +186,40 @@ class BirthCertificateForm(forms.Form):
     )
 
     # Mère
-    use_existing_mother = forms.BooleanField(
-        label=_("Search for a existing Mother"),
+    mother_exist = forms.BooleanField(
+        label=_("Have a Mother"),
         required=True,
         initial=True,
         widget=forms.CheckboxInput(attrs={"class": "mr-2"})
     )
     
-    existing_mother = forms.ModelChoiceField(
-        label=_("Existing Mother"),
-        queryset=Person.objects.filter(gender='F', birthday__lte=date.today() - timedelta(days=18*365)),
-        required=False,
-        widget=autocomplete.ModelSelect2(
-            url='civil:mother-autocomplete',
-            attrs={
-                "class": CLASS_FIELD,
-                "data-placeholder": _("Search for Mother..."),
-                "data-minimum-input-length": 2,
-            }
-        )
-    )
-    
-    mother_name = forms.CharField(
-        label=_("Mother's Full Name"), 
+    mother_last_name = forms.CharField(
+        label=_("Mother's Last Name"), 
         widget=forms.TextInput(
             attrs={
-                "class": CLASS_FIELD, 
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-gender": "F",
                 "placeholder": _("Wait for her/his mother's full name"),
                 "title": _("Wait for her/his mother's full name"),
             }
         )
     )
     
-    mother_place_of_birth = forms.CharField(
+    mother_first_name = forms.CharField(
+        label=_("Mother's First Name"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-gender": "F",
+                "placeholder": _("Wait for her/his mother's full name"),
+                "title": _("Wait for her/his mother's full name"),
+            }
+        )
+    )
+    
+    mother_birth_place = forms.CharField(
         label=_("Place of Birth"), 
         widget=forms.TextInput(
             attrs={
@@ -273,33 +265,50 @@ class BirthCertificateForm(forms.Form):
         )
     )
 
-    # Déclarant    
-    existing_declarer = forms.ModelChoiceField(
-        label=_("Existing Declarer"),
-        queryset=Person.objects.filter(birthday__lte=date.today() - timedelta(days=18*365)),
+    # Déclarant  
+    declarer_present = forms.BooleanField(
+        label=_("Was Present"),
         required=False,
-        widget=autocomplete.ModelSelect2(
-            url='civil:person-autocomplete',
-            attrs={
-                "class": CLASS_FIELD,
-                "data-placeholder": _("Search for Declarer..."),
-                "data-minimum-input-length": 2,
-            }
-        )
+        initial=True,
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
     )
-    
-    declarer_name = forms.CharField(
-        label=_("Declarer's Full Name"), 
+
+    declarer_last_name = forms.CharField(
+        label=_("Declarer's Last Name"), 
         widget=forms.TextInput(
             attrs={
-                "class": CLASS_FIELD, 
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
                 "placeholder": _("Wait for the declarer's full name"),
                 "title": _("Wait for the declarer's full name"),
             }
         )
     )
     
-    declarer_place_of_birth = forms.CharField(
+    declarer_first_name = forms.CharField(
+        label=_("Declarer's First Name"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "placeholder": _("Wait for the declarer's full name"),
+                "title": _("Wait for the declarer's full name"),
+            }
+        )
+    )
+    
+    declarer_gender = forms.ChoiceField(
+        label=_("Declarer's Gender"), 
+        choices=Person.GENDER_CHOICES,
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD,
+                "title": _("Choose the gender of declarer")
+            }
+        )
+    )
+    
+    declarer_birth_place = forms.CharField(
         label=_("Place of Birth"), 
         widget=forms.TextInput(
             attrs={
@@ -319,6 +328,30 @@ class BirthCertificateForm(forms.Form):
                 "type": "datetime-local",
                 "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
                 "title": _("Wait for the declarer's date of birth")
+            }
+        )
+    )
+    
+    declaration_date = forms.DateTimeField(
+        label=_("Date of Declaration"), 
+        initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
+                "title": _("Wait for the date of declaration")
+            }
+        )
+    )
+    
+    declarer_relation = forms.CharField(
+        label=_("Relationship"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Wait for the declarer's place of birth"),
+                "title": _("Wait for the relationship with declarer"),
             }
         )
     )
@@ -346,17 +379,17 @@ class BirthCertificateForm(forms.Form):
     )
 
     fieldsets = {
-        _("Matricule"): ["fokotany", "number"],
+        _("Matricule"): ["fokotany"],
         _("Informations"): ["last_name", "first_name", "gender", "birth_place", "birthday", "is_alive"],
         _("Other Informations"): {
             _("father"): [
-                "use_existing_father", "existing_father",
-                "father_name", "father_place_of_birth", "father_birthday", "father_job", "father_address"
+                "father_exist", "father_last_name",
+                "father_first_name", "father_birth_place", "father_birthday", "father_job", "father_address"
             ],
-            _("mother"): ["use_existing_mother", "existing_mother",
-                "mother_name", "mother_place_of_birth", "mother_birthday", "mother_job", "mother_address"
+            _("mother"): ["mother_exist", "mother_last_name",
+                "mother_first_name", "mother_birth_place", "mother_birthday", "mother_job", "mother_address"
             ],
-            _("declarer"): ["existing_declarer", "declarer_name", "declarer_place_of_birth", "declarer_birthday", "declarer_job", "declarer_address"]
+            _("declarer"): ["declarer_present", "declarer_last_name", "declarer_first_name", "declarer_gender", "declarer_birth_place", "declarer_birthday", "declarer_relation", "declarer_job", "declarer_address", "declaration_date"]
         },
     }
 
@@ -398,20 +431,6 @@ class DeathCertificateForm(forms.Form):
         )
     )
     
-    number = forms.CharField(
-        label=_("Number"), 
-        disabled=True,
-        initial="1".zfill(9) if not DeathCertificate.objects.count() else str(DeathCertificate.objects.last().id + 1).zfill(9),
-        widget=forms.TextInput(
-            attrs={
-                "class": CLASS_FIELD.replace("w-full min-w-52", "w-36 text-gray-500") + " text-center text-lg tracking-widest cursor-pointer", 
-                "placeholder": "0000000001",
-                "title": "Matricule",
-            }
-        )
-    )
-    
-    
     # Informations personnelles
     last_name = forms.CharField(
         label=_("Last Name"), 
@@ -429,7 +448,8 @@ class DeathCertificateForm(forms.Form):
         required=False,
         widget=forms.TextInput(
             attrs={
-                "class": CLASS_FIELD, 
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
                 "placeholder": _("Insert her/his first name"),
                 "title": _("Insert her/his first name"),
             }
@@ -470,34 +490,185 @@ class DeathCertificateForm(forms.Form):
             }
         )
     )
-
-    # Déclarant    
-    existing_declarer = forms.ModelChoiceField(
-        label=_("Existing Declarer"),
-        queryset=Person.objects.filter(birthday__lte=date.today() - timedelta(days=18*365)),
-        required=False,
-        widget=autocomplete.ModelSelect2(
-            url='civil:person-autocomplete',
-            attrs={
-                "class": CLASS_FIELD,
-                "data-placeholder": _("Search for Declarer..."),
-                "data-minimum-input-length": 2,
-            }
-        )
-    )
     
-    declarer_name = forms.CharField(
-        label=_("Declarer's Full Name"), 
+    death_place = forms.CharField(
+        label=_("Place of Death"), 
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Wait for the declarer's full name"),
-                "title": _("Wait for the declarer's full name"),
+                "placeholder": _("Insert the place of birth"),
+                "title": _("Insert the place of birth"),
             }
         )
     )
     
-    declarer_place_of_birth = forms.CharField(
+    death_day = forms.DateTimeField(
+        label=_("Day of Death"), 
+        # initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
+                "title": _("Enter/Choose the date of birth")
+            }
+        )
+    )
+    
+    dead_job = forms.CharField(
+        label=_("Job"),
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert the dead's job"),
+                "title": _("Insert the dead's job"),
+            }
+        )
+    )
+    
+    dead_address = forms.CharField(
+        label=_("Address"),
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Insert the dead's address"),
+                "title": _("Insert the dead's address"),
+            }
+        )
+    )
+
+    # Informations sur les parents avec autocomplete
+    father_exist = forms.BooleanField(
+        label=_("Have a Father"),
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+    )
+    
+    father_last_name = forms.CharField(
+        label=_("Father's Last Name"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-gender": "M",
+                "placeholder": _("Wait for her/his father's last name"),
+                "title": _("Wait for her/his father's last name"),
+            }
+        )
+    )
+
+    father_first_name = forms.CharField(
+        label=_("Father's first Name"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-gender": "M",
+                "placeholder": _("Wait for her/his father's first name"),
+                "title": _("Wait for her/his father's first name"),
+            }
+        )
+    )
+
+    father_was_alive = forms.BooleanField(
+        label=_("He is alive"),
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+    )
+
+    # Mère
+    mother_exist = forms.BooleanField(
+        label=_("Have a Mother"),
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+    )
+    
+    mother_last_name = forms.CharField(
+        label=_("Mother's Last Name"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-gender": "F",
+                "placeholder": _("Wait for her/his mother's last name"),
+                "title": _("Wait for her/his mother's last name"),
+            }
+        )
+    )
+    
+    mother_first_name = forms.CharField(
+        label=_("Mother's First Name"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-gender": "F",
+                "placeholder": _("Wait for her/his mother's first name"),
+                "title": _("Wait for her/his mother's first name"),
+            }
+        )
+    )
+
+    mother_was_alive = forms.BooleanField(
+        label=_("She is alive"),
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+    )
+
+    # Déclareur
+    declarer_present = forms.BooleanField(
+        label=_("Was Present"),
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+    )
+
+    declarer_last_name = forms.CharField(
+        label=_("Declarer's Last Name"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "placeholder": _("Wait for the declarer's last name"),
+                "title": _("Wait for the declarer's last name"),
+            }
+        )
+    )
+    
+    declarer_first_name = forms.CharField(
+        label=_("Declarer's First Name"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "placeholder": _("Wait for the declarer's first name"),
+                "title": _("Wait for the declarer's first name"),
+            }
+        )
+    )
+    
+    declarer_gender = forms.ChoiceField(
+        label=_("Declarer's Gender"), 
+        choices=Person.GENDER_CHOICES,
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD,
+                "title": _("Choose the gender of declarer")
+            }
+        )
+    )
+    
+    declarer_birth_place = forms.CharField(
         label=_("Place of Birth"), 
         widget=forms.TextInput(
             attrs={
@@ -521,6 +692,30 @@ class DeathCertificateForm(forms.Form):
         )
     )
     
+    declaration_date = forms.DateTimeField(
+        label=_("Date of Declaration"), 
+        initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
+                "title": _("Wait for the date of declaration")
+            }
+        )
+    )
+    
+    declarer_relation = forms.CharField(
+        label=_("Relationship"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "placeholder": _("Wait for the declarer's place of birth"),
+                "title": _("Wait for the relationship with declarer"),
+            }
+        )
+    )
+    
     declarer_job = forms.CharField(
         label=_("Declarer's Job"), 
         widget=forms.TextInput(
@@ -536,22 +731,23 @@ class DeathCertificateForm(forms.Form):
         label=_("Declarer's Address"), 
         widget=forms.TextInput(
             attrs={
-                "class": CLASS_FIELD + ' searched_person', 
+                "class": CLASS_FIELD, 
                 "placeholder": _("Insert the declarer's address"),
                 "title": _("Insert the declarer's address"),
             }
         )
     )
-    
-    
 
     fieldsets = {
-        _("Matricule"): ["fokotany", "number"],
-        _("Informations"): ["last_name", "first_name", "gender", "birth_place", "birthday"],
+        _("Matricule"): ["fokotany"],
+        _("Informations"): ["last_name", "first_name", "gender", "birth_place", "birthday", "death_place", "death_day", "dead_job", "dead_address"],
         _("Other Informations"): {
-            _("declarer"): ["existing_declarer", "declarer_name", "declarer_place_of_birth", "declarer_birthday", "declarer_job", "declarer_address"]
+            _("father"): [ "father_exist", "father_last_name", "father_first_name", "father_was_alive"],
+            _("mother"): ["mother_exist", "mother_last_name","mother_first_name", "mother_was_alive"],
+            _("declarer"): ["declarer_present", "declarer_last_name", "declarer_first_name", "declarer_gender", "declarer_birth_place", "declarer_birthday", "declarer_relation", "declarer_job", "declarer_address", "declaration_date"]
         },
     }
+
 
     @property
     def fieldsets_fields(self):

@@ -93,12 +93,12 @@
                         {% trans "Certificate Preview" %}
                     </h1>
                     <p class="text-sm text-gray-600">
-                        {{ document_info.get_document_type_display }} - {{ document_info.document_number }}
+                        {{ document.get_document_type_display }} - {{ document.document_number }}
                         <span class="ml-2 px-2 py-1 text-xs rounded-full
-                            {% if document_info.status == 'VALIDATED' %}bg-green-100 text-green-800
-                            {% elif document_info.status == 'DRAFT' %}bg-yellow-100 text-yellow-800
+                            {% if document.status == 'VALIDATED' %}bg-green-100 text-green-800
+                            {% elif document.status == 'DRAFT' %}bg-yellow-100 text-yellow-800
                             {% else %}bg-red-100 text-red-800{% endif %}">
-                            {{ document_info.get_status_display }}
+                            {{ document.get_status_display }}
                         </span>
                     </p>
                 </div>
@@ -120,7 +120,7 @@
                     </button>
                     
                     <!-- Bouton Modifier -->
-                    {% if document_info.can_edit %}
+                    {% if document.can_edit %}
                     <a href="" 
                         class="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,9 +131,9 @@
                     {% endif %}
                     
                     <!-- Bouton Supprimer -->
-                    {% if document_info.can_delete %}
+                    {% if document.can_delete %}
                     <button onclick="confirmDelete()" 
-                        class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition">
+                        class="flex items-center gap-2 bg-red-600 hover:bg-rose-700 text-white px-6 py-2 rounded-lg transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                         </svg>
@@ -158,7 +158,7 @@
    <div class="zoom-container">
         {% language 'mg' %}
         <div class="flex flex-col" id="print-area">
-            {% for document in document_group %}
+            {% for index in many_document %}
             <div class="a4-page flex flex-col items-end text-[12pt] font-['Times_New_Roman']">
                 {% comment %} <!-- Watermark -->
                 {% if document.status == 'DRAFT' %}
@@ -254,7 +254,7 @@
                     
                     <p class="col-span-3 text-[11pt] underline mt-4 indent-4">SARANY : 1000 Ariary</p>
 
-                    <div class="col-span-7 space-y-1 leading-relaxed text-justify" style="position: relative; z-index: 1;">
+                    <div class="col-span-7 space-y-1 leading-relaxed text-justify">
                         <p class="indent-20">= MANARAKA NY SONIA =</p>
                         <div class="pl-32">
                             <p class="indent-10"> = </p>
@@ -262,8 +262,8 @@
                             <p class="indent-24"> = </p>
                         </div>
                         
-                        <div class="flex justify-between items-end mt-12">                        
-                            <div class="flex flex-col gap-8">
+                        <div class="flex items-end mt-12">                        
+                            <div class="flex w-full flex-col gap-y-8">
                                 <p class="indent-8 leading-tight">Kopia manontolo nadika tamin'ny boky androany 
                                     {{ document.created_at|date:"d" }} {{ document.created_at|date:"m"|volana_gasy|capfirst }} {{ document.created_at|date:"Y" }}.</p>
                                 
@@ -290,8 +290,8 @@
     </div>
     <!-- Pied de page -->
     <div class="absolute no-print bottom-8 left-0 right-0 text-center text-xs text-gray-500">
-        <p>{% trans "Issued on" %} {{ document_info.created_at|date:"d/m/Y" }} - 
-           {% trans "Document" %} #{{ document_info.document_number }}</p>
+        <p>{% trans "Issued on" %} {{ document.created_at|date:"d/m/Y" }} - 
+           {% trans "Document" %} #{{ document.document_number }}</p>
     </div>
     
     <script>
