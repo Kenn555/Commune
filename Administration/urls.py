@@ -12,6 +12,7 @@ urlpatterns = [
     path("staff/", views.staff_list, name="staff"),
     path("staff/register/", views.staff_register, name="staff-register"),
     path("staff/save/", views.staff_save, name="staff-save"),
+    path("staff/stop/<int:pk>", views.staff_stop, name="staff-stop"),
     # Utilisateurs
     path("user/", views.user_list, name="user"),
     path("user/register/", views.user_register, name="user-register"),
@@ -21,4 +22,7 @@ urlpatterns = [
     # Paramètrages
     path("settings/", views.staff_list, name="settings"),
 
+    # URL pour récupérer les détails d'un personnel
+    path('api/staff/<int:staff_id>/', views.get_staff_details, name='staff-details'),
+    path('api/search_staff/<str:q_name>/', views.search_staffs, name='search-staff'),
 ]

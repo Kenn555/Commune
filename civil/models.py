@@ -38,6 +38,7 @@ class BirthCertificate(models.Model):
         'N': _('Birth'),
         'R': _('Birth and Recognition')
     }
+    number = models.IntegerField(default=0)
     born = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="birth_born")
     father = models.ForeignKey(Person, on_delete=models.SET_NULL, related_name="birth_father", null=True,)
     father_carreer = models.CharField(max_length=80, null=True)
@@ -51,7 +52,9 @@ class BirthCertificate(models.Model):
     declarer_address = models.CharField(max_length=100, default="Betsiaka")
     declarer_was_present = models.BooleanField()
     responsible_staff = models.ForeignKey(Staff, on_delete=models.DO_NOTHING, related_name="birth_responsible_role")
-    fokotany = models.ForeignKey(Fokotany, on_delete=models.DO_NOTHING, related_name="birth_fokotany", default=0)
+    responsible_staff_name = models.CharField(max_length=100, default="TEXNAS Marie Edonisse Henri")
+    responsible_staff_role = models.CharField(max_length=100, default="Ben'ny Tanàna")
+    fokotany = models.ForeignKey(Fokotany, on_delete=models.DO_NOTHING, related_name="birth_fokotany", default=3)
     certificate_type = models.CharField(max_length=1, choices=CERTIFICATE_TYPES)
     was_alive = models.BooleanField(default=True)
     date_declaration = models.DateTimeField()
@@ -130,6 +133,10 @@ class BirthCertificateDocument(models.Model):
     @property
     def get_price(self):
         return int(self.price) if self.price.is_integer() else self.price
+        
+    @property
+    def get_total_price(self):
+        return int(self.price) * int(self.num_copy) if self.price.is_integer() else self.price * self.num_copy
     
     @property
     def birth_type(self):

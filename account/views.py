@@ -19,6 +19,8 @@ User = get_user_model()
 @login_required
 def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
     """  """
+    for service in getattr(settings, "SERVICES_APP"):
+        print(service['name'])
     if 'urls' in list(request.session.keys()):
         return redirect(request.session['urls'][0]['url'].strip())
     else:
@@ -53,11 +55,10 @@ def login_page(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             if not 'urls' in list(request.session.keys()):
                 request.session['urls'] = []
                 for service in getattr(settings, "SERVICES_APP"):
-                    if validated_user.is_superuser and service["name"] in ("dashboard", "civil", "mines", "events", "administration"):
+                    if validated_user.is_superuser:
                         request.session['urls'].append(service)
                     elif service["name"] == Role.objects.get(access=validated_user).app.name:
                         request.session['urls'].append(service)
-                        settings
 
             for app in request.session['urls']:
                 request.session['app_accessed'].append(app['name'])

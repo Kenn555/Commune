@@ -1,7 +1,16 @@
 {% extends "base.html" %} {% block article %}
+{% load iterator %}
 {% load i18n %}
 
 <!-- Container -->
+  <form method="get" class="fixed right-10 top-36 max-md:right-5 max-md:top-32 z-10">
+    <select name="year" onchange="this.form.submit()" id="" class="rounded-lg border-none shadow-md focus:ring-0 px-10">
+      {% for year in years %}
+      <option value="{{ year }}" {% if year_selected == year %}selected{% endif %} >{{ year }}</option>
+      {% endfor %}
+    </select>
+  </form>
+
   <div class="flex flex-row flex-wrap gap-x-10 gap-y-5 w-full justify-evenly max-w-6xl mx-auto">
     <a 
     href="{% url 'civil:birth' %}"
@@ -11,157 +20,145 @@
     max-sm:w-full
     ">
       <p class="font-semibold">{% trans "birth certificate"|capfirst %}</p>
-      <span class="text-right text-2xl">{{ birth_count }}</span>
+      <span class="text-right text-2xl font-semibold text-blue-500">{{ birth_count }}</span>
+    </a>
+    <a href="{% url 'civil:death' %}" class="
+    flex flex-col bg-white shadow-md rounded-lg 
+    h-20 px-4 py-2 w-60
+    max-sm:w-full
+    ">
+      <p class="font-semibold">{% trans "death certificate"|capfirst %}</p>
+      <span class="text-right text-2xl font-semibold text-gray-500">{{ death_count }}</span>
     </a>
     <div class="
     flex flex-col bg-white shadow-md rounded-lg 
     h-20 px-4 py-2 w-60
     max-sm:w-full
     ">
-      <p class="font-semibold">{% trans "death certificate"|capfirst %}</p>
-      <span class="text-right text-2xl">145</span>
-    </div>
-    <div class="
-    flex flex-col bg-white shadow-md rounded-lg 
-    h-20 px-4 py-2 w-60
-    max-sm:w-full
-    ">
       <p class="font-semibold">{% trans "marriage certificate"|capfirst %}</p>
-      <span class="text-right text-2xl">145</span>
+      <span class="text-right text-2xl font-semibold text-pink-500">145</span>
     </div>
   </div>
   
-  <div class="flex h-[400px] px-4 py-8 bg-white rounded-lg shadow-md">
-    <span class="w-full contain-content text-nowrap text-ellipsis font-medium">
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-    </span>
+  <div class="hidden flex-col h-[400px] p-4 gap-y-2 bg-white rounded-lg shadow-md">
+    <h3 class="contain-content text-nowrap text-ellipsis text-xl font-semibold font-sans">
+      Titre du tableau
+    </h3>
+    <div class="overflow-x-auto">
+      <div class="table w-full">
+        <div class="table-header-group ">
+          <div class="table-cell bg-sky-900 hover:bg-sky-800 px-4 py-2 text-center text-nowrap border-b-2 border-gray-200 cursor-pointer">
+
+          </div>
+        </div>
+        <div class="table-row-group">
+          <div class="table-row">
+            <div class="table-cell">
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="flex flex-col h-[400px] p-4 gap-y-2 bg-white rounded-lg shadow-md">
+    <h3 class="flex justify-between contain-content text-nowrap text-ellipsis text-xl font-semibold font-sans">
+      <span>Titre du graphique</span> <span class="text-sky-500">{{ certificates_year__count }}</span>
+    </h3>
+    <div class="overflow-x-auto">
+      <div class="h-full max-md:w-[1000px]">
+        <canvas id="sumChart" class="h-full w-full"></canvas>
+      </div>
+    </div>
   </div>
   
   <div class="grid 2xl:grid-cols-3 max-2xl:grid-cols-2 max-md:grid-cols-1 gap-y-10 gap-x-5">
-    <div class="mx-auto flex w-full h-[300px] px-4 py-8 bg-white rounded-lg shadow-md transform ease-linear duration-300">
-      <span class="w-full contain-content text-nowrap text-ellipsis font-medium">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      </span>
+    {% for fkt in cetificates_year_fkt__data %}
+    <div class="flex flex-col w-full h-[300px] p-4 bg-white rounded-lg shadow-md transform ease-linear duration-300">
+      <h5 class="contain-content text-nowrap text-ellipsis text-md font-semibold font-sans">
+        Titre de graphique - {{ fkt }}
+      </h5>
+      <div class="overflow-x-auto">
+        <div class="h-full max-md:w-[500px]">
+          <canvas id="fktChart-{{ forloop.counter }}" class="h-full w-full"></canvas>
+        </div>
+      </div>
     </div>
-    <div class="mx-auto flex w-full h-[300px] px-4 py-8 bg-white rounded-lg shadow-md transform ease-linear duration-300">
-      <span class="w-full contain-content text-nowrap text-ellipsis font-medium">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      </span>
-    </div>
-    <div class="mx-auto flex w-full h-[300px] px-4 py-8 bg-white rounded-lg shadow-md transform ease-linear duration-300">
-      <span class="w-full contain-content text-nowrap text-ellipsis font-medium">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      </span>
-    </div>
-    <div class="mx-auto flex w-full h-[300px] px-4 py-8 bg-white rounded-lg shadow-md transform ease-linear duration-300">
-      <span class="w-full contain-content text-nowrap text-ellipsis font-medium">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      </span>
-    </div>
-    <div class="mx-auto flex w-full h-[300px] px-4 py-8 bg-white rounded-lg shadow-md transform ease-linear duration-300">
-      <span class="w-full contain-content text-nowrap text-ellipsis font-medium">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      </span>
-    </div>
-    <div class="mx-auto flex w-full h-[300px] px-4 py-8 bg-white rounded-lg shadow-md transform ease-linear duration-300">
-      <span class="w-full contain-content text-nowrap text-ellipsis font-medium">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      </span>
-    </div>
-    <div class="mx-auto flex w-full h-[300px] px-4 py-8 bg-white rounded-lg shadow-md transform ease-linear duration-300">
-      <span class="w-full contain-content text-nowrap text-ellipsis font-medium">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      </span>
-    </div>
-    <div class="mx-auto flex w-full h-[300px] px-4 py-8 bg-white rounded-lg shadow-md transform ease-linear duration-300">
-      <span class="w-full contain-content text-nowrap text-ellipsis font-medium">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      </span>
-    </div>
-    <div class="mx-auto flex w-full h-[300px] px-4 py-8 bg-white rounded-lg shadow-md transform ease-linear duration-300">
-      <span class="w-full contain-content text-nowrap text-ellipsis font-medium">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      </span>
-    </div>
-    <div class="mx-auto flex w-full h-[300px] px-4 py-8 bg-white rounded-lg shadow-md transform ease-linear duration-300">
-      <span class="w-full contain-content text-nowrap text-ellipsis font-medium">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      </span>
-    </div>
-    <div class="mx-auto flex w-full h-[300px] px-4 py-8 bg-white rounded-lg shadow-md transform ease-linear duration-300">
-      <span class="w-full contain-content text-nowrap text-ellipsis font-medium">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      </span>
-    </div>
-    <div class="mx-auto flex w-full h-[300px] px-4 py-8 bg-white rounded-lg shadow-md transform ease-linear duration-300">
-      <span class="w-full contain-content text-nowrap text-ellipsis font-medium">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit porro similique autem mollitia, quae accusantium expedita omnis veniam ea doloremque amet. Ea dolor alias autem mollitia. Fugit tempora maiores dolorum!
-      </span>
-    </div>
-  </div>
+
+    <script>
+      new Chart (document.getElementById('fktChart-{{ forloop.counter }}'), {
+        type:'bar',
+        data: JSON.parse('{{ cetificates_year_fkt__data|values:fkt|safe }}'),
+        options: {
+          scales: {
+            yAxes: [{
+              type: 'linear',
+              display: true, 
+              position: 'left',
+              offset: true,
+              gridLines: {
+                display: true,
+		            lineWidth: 1,
+              },
+              ticks: {
+                beginAtZero: true,
+		            mirror: false,
+              }
+            }],
+            xAxes: [{
+              type: 'category',
+              position: 'bottom',
+              offset: true,
+              gridLines: {
+                display: true,
+		            color: 'rgba(0,0,0,0.3)',
+              }
+            }],
+          },
+          responsive: true,
+          maintainAspectRatio: false,
+        },
+      });
+    </script>
+    {% endfor %}
+
+  <script>    
+    var ctx = document.getElementById('sumChart');
+    // Données
+    const birthDocumentByFokotany = JSON.parse('{{ cetificates_year__data|safe }}');
+    
+    new Chart(ctx, {
+      type: 'bar',
+      data: birthDocumentByFokotany,
+      options:  {
+	      spanGaps: true,
+        scales: {
+          yAxes: [{
+            type: 'linear',
+            display: true, 
+            position: 'left',
+            offset: true,
+            gridLines: {
+              display: true,
+            },
+            ticks: {
+              beginAtZero: true,
+            }
+          }],
+          xAxes: [{
+            type: 'category',
+            position: 'bottom',
+            offset: true,
+            gridLines: {
+              display: false
+            }
+          }],
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+      });
+
+  </script>
 {% endblock article %}

@@ -43,8 +43,8 @@ class Service(models.Model):
         return self.title.title()
 
 class Role(models.Model):
-    name = models.CharField(max_length=50)
-    title = models.CharField(max_length=100)
+    name = models.CharField(max_length=50, unique=True)
+    title = models.CharField(max_length=100, unique=True)
     description = models.TextField()
     app = models.ForeignKey(Application, on_delete=models.SET_NULL, null=True)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
@@ -54,7 +54,7 @@ class Role(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['name', 'service'],
+                fields=['name', 'access', 'service'],
                 name='unique_role'
             )
         ]
@@ -73,10 +73,14 @@ class Staff(models.Model):
     birthday = models.DateTimeField()
     contact_1 = models.CharField(max_length=10)
     contact_2 = models.CharField(max_length=10, null=True)
-    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
+    email = models.EmailField(max_length=254, null=True)
+    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, related_name="staff_role")
+    last_role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, related_name="staff_last_role")
+    date_joined_last_role = models.DateField(null=True,)
+    date_stoped_last_role = models.DateField(null=True)
     date_joined = models.DateField(auto_now_add=True,)
-    date_modificated = models.DateField(auto_now=True,)
     date_fired = models.DateField(null=True)
+    date_modificated = models.DateField(auto_now=True,)
     is_active = models.BooleanField(default=True)
     is_fired = models.BooleanField(default=False)
 
@@ -89,7 +93,11 @@ class Staff(models.Model):
         ]
 
     def __str__(self):
-        return _("%(first_name)s %(last_name)s, %(role)s,") % {"first_name": self.first_name, "last_name": self.last_name, "role": self.role}
+        return _("%(first_name)s %(last_name)s, %(role)s,") % {"first_name": self.first_name, "last_name": self.last_name, "role": self.role or self.last_role}
+
+    @property
+    def full_name(self):
+        return _("%(first_name)s %(last_name)s").strip() % {"first_name": self.first_name, "last_name": self.last_name}
 
 class Common(models.Model):
     name = models.CharField(max_length=50)

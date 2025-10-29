@@ -1,7 +1,7 @@
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 from functools import wraps
 from django.conf import settings
-from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
+from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect, JsonResponse
 from CommonAdmin.settings import COMMON_NAME
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
@@ -11,6 +11,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.contrib.auth.hashers import make_password
 
 from account.models import User
 from administration.forms import StaffForm, UserForm
@@ -19,6 +20,59 @@ from civil.models import BirthCertificate
 from civil.views import add_action_url, actions
 
 
+TIMEZONE_MGA = timezone(timedelta(hours=3))
+TIMEZONE_UTC = timezone(timedelta(hours=0))
+
+@login_required
+def search_staffs(request, q_name:str):
+    """Retourne une liste de personnes en JSON"""
+    try:
+        staff_list = Staff.objects.filter(
+            Q(last_name__icontains=q_name) | Q(first_name__icontains=q_name),
+        )
+
+        data = {
+            "staff_list": [staff.pk for staff in staff_list],
+        }
+
+        data['staff_name'] = {}
+
+        for staff in staff_list:
+            data['staff_name'][staff.pk] = staff.full_name + ' born at ' + staff.birthday.astimezone(TIMEZONE_MGA).__format__('%d-%m-%Y %H:%M') 
+        
+        return JsonResponse(data)
+    except Staff.DoesNotExist:
+        return JsonResponse({'error': 'Person not found'}, status=404)
+    ...
+
+@login_required 
+def get_staff_details(request, staff_id):
+    """Retourne les détails d'une personne en JSON"""
+    try:
+        staff = Staff.objects.get(id=staff_id)
+        
+        data = {
+            'fields': [
+                staff.last_name,
+                staff.first_name,
+                staff.gender,
+            ]
+        }
+
+        data = {
+            "last_name": staff.last_name,
+            "first_name": staff.first_name,
+            "gender": staff.gender,
+        }
+
+        data["birthday"] = staff.birthday.astimezone(TIMEZONE_MGA).strftime('%Y-%m-%dT%H:%M')
+
+        print(data)
+        
+        return JsonResponse(data)
+    except Staff.DoesNotExist:
+        return JsonResponse({'error': 'Person not found'}, status=404)
+    
 # Create your views here.
 @login_required
 def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
@@ -65,20 +119,20 @@ def staff_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
     line_bypage = str(request.GET.get('line', 10))
 
     # Tous les Certificats
-    role_data = Role.objects.all()
+    staff = Staff.objects.all()
 
     # Recherche
     if 'q' in request.GET.keys():
-        role_data = role_data.filter(
-                    Q(staff__first_name__icontains=request.GET['q']) |
-                    Q(staff__last_name__icontains=request.GET['q'])
+        staff = staff.filter(
+                    Q(first_name__icontains=request.GET['q']) |
+                    Q(last_name__icontains=request.GET['q'])
                 )
 
     # Ordre
-    role_data = role_data.order_by("pk").reverse()
+    staff = staff.order_by("role_id", "is_active").reverse()
 
     # Pagination
-    staff_bypage = Paginator(role_data, line_bypage)
+    staff_bypage = Paginator(staff, line_bypage)
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
@@ -98,23 +152,23 @@ def staff_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             "datas": [
                 {                                
                     "index" : index,
-                    "pk": role.pk,
+                    "pk": staff.pk,
                     "row": [
-                        {"header": "number", "value": str(role.pk).zfill(9), "style": "text-center w-12 text-nowrap", "title": str(role.pk).zfill(9)},
-                        {"header": "full name", "value": role.staff, "style": "text-start w-4 text-nowrap", "title": role.staff},
-                        {"header": "title", "value": role.title, "style": "text-start w-4 text-nowrap", "title": role.title},
-                        {"header": "gender", "value": Staff.GENDER_CHOICES[role.staff.gender], "style": "text-center text-nowrap", "title": Staff.GENDER_CHOICES[role.staff.gender]},
-                        {"header": "age", "value": date.today().year - role.staff.birthday.year, "style": "text-center text-nowrap", "title": ngettext("%(age)d year old", "%(age)d years old", date.today().year - role.staff.birthday.year) % {"age": date.today().year - role.staff.birthday.year}},
-                        {"header": "date", "value": role.staff.birthday, "style": "text-start w-4 text-nowrap", "title": role.staff.birthday},
-                        {"header": "contact", "value": role.staff.contact_1 + '/' + role.staff.contact_2 if role.staff.contact_2 else role.staff.contact_1, "style": "text-start w-4 text-nowrap", "title": role.staff.contact_1 + '/' + role.staff.contact_2 if role.staff.contact_2 else role.staff.contact_1},
-                        {"header": "service", "value": role.service.title.title(), "style": "text-start w-4 text-nowrap", "title": role.service.title.title()},
-                        {"header": "status", "value": "✅" if role.access.is_active else "❌", "style": "text-center w-4 text-nowrap", "title": "Is active" if role.access.is_active else "Is not active"},
+                        {"header": "number", "value": str(staff.pk).zfill(9), "style": "text-center w-12 text-nowrap", "title": str(staff.pk).zfill(9)},
+                        {"header": "full name", "value": staff.full_name, "style": "text-start w-4 text-nowrap", "title": staff.full_name},
+                        {"header": "title", "value": staff.role or staff.last_role.__str__() + _("(before)"), "style": "text-start w-4 text-nowrap", "title": staff.role or staff.last_role.__str__() + _("(before)")},
+                        {"header": "gender", "value": Staff.GENDER_CHOICES[staff.gender], "style": "text-center text-nowrap", "title": Staff.GENDER_CHOICES[staff.gender]},
+                        {"header": "age", "value": date.today().year - staff.birthday.year, "style": "text-center text-nowrap", "title": ngettext("%(age)d year old", "%(age)d years old", date.today().year - staff.birthday.year) % {"age": date.today().year - staff.birthday.year}},
+                        {"header": "date", "value": staff.birthday, "style": "text-start w-4 text-nowrap", "title": staff.birthday},
+                        {"header": "contact", "value": staff.contact_1 + '/' + staff.contact_2 if staff.contact_2 else staff.contact_1, "style": "text-start w-4 text-nowrap", "title": staff.contact_1 + '/' + staff.contact_2 if staff.contact_2 else staff.contact_1},
+                        {"header": "service", "value": staff.role.service.title.title() if staff.role else staff.last_role.service.title.title(), "style": "text-start w-4 text-nowrap", "title": staff.role.service.title.title() if staff.role else staff.last_role.service.title.title()},
+                        {"header": "status", "value": "✅" if staff.role else "❌", "style": "text-center w-4 text-nowrap", "title": "Is active" if staff.role else "Is not active"},
                         {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
-                            {"name": _("open"), "url": "civil:certificate-print", "style": "green"},
-                            {"name": _("stop"), "url": "civil:birth-delete", "style": "red"},
+                            {"name": _("open"), "url": "civil:certificate-preview", "style": "green"},
+                            {"name": _("stop"), "url": __package__+":staff-stop", "style": "red"},
                         ]},
                     ],
-                } for index, role in enumerate(staff_bypage.get_page(1))
+                } for index, staff in enumerate(staff_bypage.get_page(1))
             ],
         }
     }
@@ -186,56 +240,70 @@ def staff_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
 
         # Table BirthCertificate
         if form.is_valid():
-            try:
-                user = User.objects.create_user(
-                    first_name = form['first_name'].data,
-                    last_name = form['last_name'].data,
-                    email = form['email'].data,
-                    username = form['username'].data,
-                    password = form['password'].data,
-                    is_staff = True
-                )
-            except django.db.utils.IntegrityError:
-                user = User.objects.get(
-                    first_name = form['first_name'].data,
-                    last_name = form['last_name'].data,
-                    email = form['email'].data,
-                    username = form['username'].data,
-                )
-            try:
-                staff = Staff.objects.create(
-                    first_name = form['first_name'].data,
-                    last_name = form['last_name'].data,
-                    gender = form['gender'].data,
-                    birthday = form['birthday'].data,
-                    contact_1 = form['contact_1'].data,
-                    contact_2 = form['contact_2'].data,
-                )
-            except django.db.utils.IntegrityError:
-                staff = Staff.objects.filter(
-                    first_name = form['first_name'].data,
-                    last_name = form['last_name'].data,
-                    gender = form['gender'].data,
-                    birthday = form['birthday'].data,
-                    contact_1 = form['contact_1'].data,
-                    contact_2 = form['contact_2'].data,
-                )
+            role = Role.objects.get(pk=form.data['title'])
 
-            Role.objects.create(
-                name = form['title'].data.lower(),
-                title = form['title'].data,
-                description = form['description'].data,
-                app = Application.objects.get(pk=form['application'].data),
-                service = Service.objects.get(pk=form['service'].data),
-                staff = staff,
-                access = user,
-                is_boss = form['is_boss'].data,
-            )
+            print(role)
+            print(form['last_name'].data)
+
+            if Staff.objects.filter(role=role).count() < 1:
+                user = role.access
+
+                if user:
+                    user.last_name = form['last_name'].data
+                    user.first_name = form['first_name'].data
+                    user.username = form['username'].data
+                    user.password = make_password(form['password'].data)
+                else:
+                    user = User(
+                        last_name = form['last_name'].data,
+                        first_name = form['first_name'].data,
+                        username = form['username'].data,
+                        password = make_password(form['password'].data),
+                    )
+                    role.access = user
+
+                user.email = form['email'].data
+                user.is_staff = True
+
+                staff, staff_exists = Staff.objects.get_or_create(
+                    first_name = form['first_name'].data,
+                    last_name = form['last_name'].data,
+                    gender = form['gender'].data,
+                    birthday = form['birthday'].data,
+                )
+                staff.email = form['email'].data
+                staff.contact_1 = form['contact_1'].data
+                staff.contact_2 = form['contact_2'].data
+                staff.role = role
+
+                user.save()
+                role.save()
+                staff.save()
+            else:
+                print("Un personnel est déjà affilié à ce poste. Trouvez-en un autre !!!!")
 
             return redirect(__package__+':'+menu_name)
         else:
             return redirect(__package__+':'+menu_name+'-register')
             
+@login_required
+def staff_stop(request: WSGIRequest, pk:int) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
+    """  """
+
+    menu_name = "staff"
+
+    staff = Staff.objects.get(pk=pk)
+    # Changement de valeurs
+    staff.is_active = False
+    staff.last_role = staff.role
+    staff.date_joined_last_role = staff.date_joined
+    staff.date_stoped_last_role = datetime.now()
+    # Mise à null de l'ancien role
+    staff.role = None
+
+    staff.save(update_fields=["is_active", "last_role", "date_joined_last_role", "date_stoped_last_role", "role"])
+
+    return redirect(__package__+':staff')
 
 @login_required
 def user_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentRedirect:

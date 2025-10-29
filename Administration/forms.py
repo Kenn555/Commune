@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from account.models import User
-from administration.models import Application, Service, Staff
+from administration.models import Application, Role, Service, Staff
 
 
 CLASS_FIELD = """
@@ -125,9 +125,10 @@ class StaffForm(forms.Form):
 
     first_name = forms.CharField(
         label=_("First Name"), 
+        required=False,
         widget=forms.TextInput(
             attrs={
-                "class": CLASS_FIELD, 
+                "class": CLASS_FIELD + " searched_staff", 
                 "placeholder": _("Insert her/his first name"),
                 "title": _("Insert her/his first name"),
             }
@@ -138,7 +139,7 @@ class StaffForm(forms.Form):
         label=_("Last Name"), 
         widget=forms.TextInput(
             attrs={
-                "class": CLASS_FIELD, 
+                "class": CLASS_FIELD + " searched_staff", 
                 "placeholder": _("Insert her/his last name"),
                 "title": _("Insert her/his last name"),
             }
@@ -195,11 +196,23 @@ class StaffForm(forms.Form):
 
     email = forms.EmailField(
         label=_("Email"), 
+        required=False,
         widget=forms.EmailInput(
             attrs={
                 "class": CLASS_FIELD, 
                 "placeholder": _("Insert her/his email"),
                 "title": _("Insert her/his email"),
+            }
+        )
+    )
+
+    title = forms.ModelChoiceField(
+        label=_("Title"),
+        queryset=Role.objects.all(),
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD,
+                "placeholder": _("Select a Application..."),
             }
         )
     )
@@ -226,66 +239,66 @@ class StaffForm(forms.Form):
         )
     )
 
-    title = forms.CharField(
-        label=_("Title"), 
-        widget=forms.TextInput(
-            attrs={
-                "class": CLASS_FIELD, 
-                "placeholder": _("Insert her/his role"),
-                "title": _("Insert her/his role"),
-            }
-        )
-    )
+    # title = forms.CharField(
+    #     label=_("Title"), 
+    #     widget=forms.TextInput(
+    #         attrs={
+    #             "class": CLASS_FIELD, 
+    #             "placeholder": _("Insert her/his role"),
+    #             "title": _("Insert her/his role"),
+    #         }
+    #     )
+    # )
 
-    description = forms.CharField(
-        label=_("Description"), 
-        widget=forms.TextInput(
-            attrs={
-                "class": CLASS_FIELD, 
-                "placeholder": _("Insert her/his title"),
-                "title": _("Insert her/his title"),
-            }
-        )
-    )
+    # description = forms.CharField(
+    #     label=_("Description"), 
+    #     widget=forms.TextInput(
+    #         attrs={
+    #             "class": CLASS_FIELD, 
+    #             "placeholder": _("Insert her/his title"),
+    #             "title": _("Insert her/his title"),
+    #         }
+    #     )
+    # )
 
-    application = forms.ModelChoiceField(
-        label=_("Application"),
-        queryset=Application.objects.all(),
-        widget=forms.Select(
-            attrs={
-                "class": CLASS_FIELD,
-                "placeholder": _("Select a Application..."),
-            }
-        )
-    )
+    # application = forms.ModelChoiceField(
+    #     label=_("Application"),
+    #     queryset=Application.objects.all(),
+    #     widget=forms.Select(
+    #         attrs={
+    #             "class": CLASS_FIELD,
+    #             "placeholder": _("Select a Application..."),
+    #         }
+    #     )
+    # )
 
-    service = forms.ModelChoiceField(
-        label=_("Service"),
-        queryset=Service.objects.all(),
-        widget=forms.Select(
-            attrs={
-                "class": CLASS_FIELD,
-                "placeholder": _("Select a Service..."),
-            }
-        )
-    )
+    # service = forms.ModelChoiceField(
+    #     label=_("Service"),
+    #     queryset=Service.objects.all(),
+    #     widget=forms.Select(
+    #         attrs={
+    #             "class": CLASS_FIELD,
+    #             "placeholder": _("Select a Service..."),
+    #         }
+    #     )
+    # )
 
-    is_boss = forms.BooleanField(
-        label=_("Manager"),
-        required=False,
-        label_suffix="",
-        widget=forms.CheckboxInput(
-            attrs={
+    # is_boss = forms.BooleanField(
+    #     label=_("Manager"),
+    #     required=False,
+    #     label_suffix="",
+    #     widget=forms.CheckboxInput(
+    #         attrs={
                 
-            }
-        )
-    )
-
+    #         }
+    #     )
+    # )
 
     fieldsets = {
         _("Matricule"): ["number"],
         _("Informations"): ["last_name","first_name","email","gender","birthday","contact_1","contact_2",],
-        _("Role"): ["title", "description", "application", "service", "is_boss"],
+        _("Role"): ["title"],
+        # _("Role"): ["title", "description", "application", "service", "is_boss"],
         _("Logins"): ["username", "password",],
     }
 

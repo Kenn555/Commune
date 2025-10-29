@@ -2,8 +2,8 @@
 {% block action %}
 {% load humanize %}
 {% load i18n %}
-<form method="get" class="flex flex-col gap-4">
-    <div class="flex flex-wrap gap-4 justify-between items-center w-full mb-10">
+<form method="get" class="flex flex-col gap-y-8">
+    <div class="flex flex-wrap gap-4 justify-between items-center w-full">
         <div class="flex items-center">
             <select name="line" onchange="this.form.submit()" id="id_line_select" class="border-none focus:ring-0 text-right bg-gray-100 rounded-xl mr-2" required>
                 <option value="10" {% if table_length == '10' %}selected{%endif%}>10</option>
@@ -19,7 +19,9 @@
             <optgroup>
                 <legend>{% translate 'Column' %}</legend>
                     {% for header in table.headers %}
+                        {% if header.name != "status" %}
                         <option value="{{ forloop.counter0 }}" {% if searched_domain == forloop.counter0 %}selected{% endif %}>{{ header.header|title }}</option>
+                        {% endif %}
                     {% endfor %}
                 </optgroup>
             </select>
@@ -34,17 +36,17 @@
     </div>
     <div class="overflow-auto">
         <div class="table w-full">
-            <div class="table-header-group text-md font-semibold border-b">
+            <div class="table-header-group text-md text-white font-semibold border-b">
                 <input type="hidden" name="order" value="">
                 {% for header in table.headers %}
-                    <div title="{% translate 'click for sorting' %}" class="table-cell px-4 py-2 text-center text-nowrap border-b-2 border-gray-200 cursor-pointer">
-                        <button type="button" onclick="changeOrder(this)" value="{{ header.header }}" class="inline-block w-full">{{ header.header|title }}</button> {% if header.header != "action" and order_name == header.header %}{% if not request.session.order_asc %}⬇{% else %}⬆{% endif %}{% endif %}
+                    <div title="{% translate 'click for sorting' %}" class="table-cell bg-sky-900 hover:bg-sky-800 px-4 py-2 text-center text-nowrap border-b-2 border-gray-200 cursor-pointer">
+                        <button type="button" onclick="changeOrder(this)" value="{{ header.name }}" class="inline-block w-full">{% if header.name != "status" %} {{ header.header|title }} {% endif %}</button> {% if header.name != "action" and order_name == header.name %}{% if not request.session.order_asc %}⬇{% else %}⬆{% endif %}{% endif %}
                     </div>
                 {% endfor %}
             </div>
             <div class="table-row-group">
                 {% for data in table.datas %}
-                <div class="table-row {% cycle 'bg-white' 'bg-gray-200' %} cursor-pointer border-b border-white hover:bg-blue-400 hover:text-white items-center">
+                <div class="table-row {% cycle 'bg-white' 'bg-gray-200' %} cursor-pointer border-b border-white hover:bg-sky-600 hover:text-white items-center">
                     {% for cell in data.row %}
                     {% if cell.header == "action" %}
                     <div class="peer table-cell sticky py-1 px-4 right-0 invisible peer-hover:visible hover:visible">
@@ -77,14 +79,26 @@
                     {% endif %}
                     class="peer table-cell px-4 py-2 
                     {% if cell.header == 'full name' and data.pk %}
-                    hover:bg-blue-500 
+                    hover:bg-sky-500 
                     {% elif cell.header == 'father' and data.father_cert_pk %}
-                    hover:bg-blue-500 
+                    hover:bg-sky-500 
                     {% elif cell.header == 'mother' and data.mother_cert_pk %}
-                    hover:bg-blue-500 
+                    hover:bg-sky-500 
                     {% endif %}
                     {{ cell.style }}" title="{{ cell.title }}">
+                    {% if cell.header == "status" %}
+                    <p class="w-5 h-5 ring-2 rounded-full
+                        {%  if not data.is_alive %}
+                        bg-gray-400 ring-gray-300
+                        {%  elif cell.value %}
+                        bg-sky-500 ring-sky-400
+                        {% else %}
+                        bg-red ring-orange-400
+                        {% endif %}
+                        "></p>
+                    {% else %}
                         {{ cell.value }}
+                    {% endif %}
                     </a>
                     {% endif %}
                     {% endfor %}
@@ -94,12 +108,12 @@
         </div>
     </div>
     <div class="flex flex-row">
-        <button type="submit" name="paging" value="{{prev_page}}" class="py-2 px-3 rounded-md bg-gray-200 text-center font-extrabold cursor-pointer"><</button>
+        <button type="submit" name="paging" value="{{prev_page}}" class="w-10 h-10 rounded-full text-gray-500 bg-gray-100 hover:text-gray-700 hover:bg-gray-200 text-center font-extrabold cursor-pointer"><</button>
         <div class="p-2 text-center">
             <input type="text" value="{{ num_page }}" class="w-10 text-right ring-0 border-none focus:ring-0 h-4 p-0" name="num_page" id="id_num_page">
             {{ per_page }}
         </div>
-        <button type="submit" name="paging" value="{{next_page}}" class="py-2 px-3 rounded-md bg-gray-200 text-center font-extrabold cursor-pointer">></button>
+        <button type="submit" name="paging" value="{{next_page}}" class="w-10 h-10 rounded-full text-gray-500 bg-gray-100 hover:text-gray-700 hover:bg-gray-200 text-center font-extrabold cursor-pointer">></button>
     </div>
 
 </form>

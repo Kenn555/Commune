@@ -11,83 +11,6 @@
       font-family: sans-serif;
     }
   </style>
-   <style>
-        /* Styles personnalisés pour Select2 */
-        .select2-container {
-            min-width: 100% !important;
-        }
-        
-        .select2-container--default .select2-selection--single {
-            background-color: transparent;
-            border: none;
-            border-bottom: 2px solid #d1d5db;
-            border-radius: 0;
-            height: auto;
-            min-height: 38px;
-            padding: 0.5rem 0;
-        }
-        
-        .select2-container--default .select2-selection--single:focus,
-        .select2-container--default.select2-container--focus .select2-selection--single,
-        .select2-container--default.select2-container--open .select2-selection--single {
-            border-bottom-color: #60a5fa;
-            outline: none;
-            box-shadow: none;
-        }
-        
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            color: #6b7280;
-            padding-left: 0;
-            padding-right: 20px;
-            font-size: 1rem;
-            letter-spacing: 0.05em;
-            line-height: 1.5;
-        }
-        
-        .select2-container--default .select2-selection--single .select2-selection__placeholder {
-            color: #9ca3af;
-        }
-        
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 100%;
-            right: 0;
-        }
-        
-        .select2-container--default .select2-selection--single .select2-selection__clear {
-            margin-right: 20px;
-            font-size: 1.2em;
-        }
-        
-        .select2-dropdown {
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        
-        .select2-container--default .select2-results__option--highlighted[aria-selected] {
-            background-color: #60a5fa;
-        }
-        
-        .select2-search--dropdown .select2-search__field {
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            padding: 0.5rem;
-        }
-        
-        .select2-search--dropdown .select2-search__field:focus {
-            border-color: #60a5fa;
-            outline: none;
-        }
-        
-        /* Styles pour les checkboxes */
-        #id_use_existing_father,
-        #id_use_existing_mother,
-        #id_have_parents {
-            width: 1.25rem;
-            height: 1.25rem;
-            cursor: pointer;
-        }
-    </style>
 
   <form action="{% url save_url %}" method="post" class="flex flex-col gap-y-8">
   {% csrf_token %}
@@ -148,5 +71,144 @@
     <input type="reset" value="{% trans 'Reset' %}" class="bg-secondary px-4 py-3 rounded-lg w-32 cursor-pointer hover:bg-gray-500">
   </div>
 </form>
+
+<script>
+  $(document).ready(function() {
+        
+        var is_out = true;
+        const menu_name = '{{ menu_name|safe }}';
+
+        function searchPerson(e){
+          var search_container = $(e.target).next().children('[data-id="id-results-container"]');
+          console.log(search_container);
+          search_container.empty();
+
+          if(String($(e.target).val()).length >= 2){
+            console.log(String($(e.target)).length);
+            console.log($(e.target).attr('data-gender'));
+
+            // Requête AJAX pour faire une recherche
+            $.ajax({
+                url: "{% url 'administration:search-staff' 0 %}".replace('0', $(e.target).val()),  // Ajustez l'URL selon votre configuration
+                method: 'GET',
+                success: function(data) {
+                    // Remplir les champs du père
+                    data.staff_list.forEach(staff_id => {
+                      console.log(staff_id);
+                      search_container.append('<button type="button" name="result-btn" data-value="'+ staff_id +'" title="'+ data.staff_name[staff_id] +'" class="contain-content p-4 shadow-sm rounded-md cursor-pointer w-full text-nowrap text-ellipsis text-left hover:bg-blue-100">'+ data.staff_name[staff_id] +'<button>')
+                        
+                    });
+
+                    var val_actu = $(e.target).val();
+
+                    search_container.children('button').on('mouseenter', (i)=>{
+                      is_out = false;
+                      console.log('HOVER')
+                      $(e.target).val('');
+                      $(e.target).val($(i.target).text());
+                    });
+
+                    search_container.on('mouseleave', (i)=>{
+                      console.log('OUTTTTTTTTTTTTT');
+                      is_out = true;
+                      $(e.target).val(val_actu);
+                    });
+
+                    search_container.children('button').on('click', (i)=>{
+                      console.log($(i.target))
+                      console.log($(i.target).attr('data-value'))
+          
+                      // Requête AJAX pour récupérer les détails du père
+                      $.ajax({
+                          url: "{% url 'administration:staff-details' 0 %}".replace('0', $(i.target).attr('data-value')),  // Ajustez l'URL selon votre configuration
+                          method: 'GET',
+                          success: function(data) {
+                            console.log(data);
+                            
+                            $(e.target).parents('fieldset').children('div').each((index, element)=>{
+                              var autocomplete_field = $(element);
+                              if (!autocomplete_field.children().is("input, select")){
+                                autocomplete_field = $(element).children('div');
+                              }
+
+                              console.log(autocomplete_field);
+
+                              if (autocomplete_field.children("input, select").attr('id').search("last_name") != -1){
+                                autocomplete_field.children("input, select").val(data.last_name);
+                              }
+                              else if (autocomplete_field.children("input, select").attr('id').search("first_name") != -1){
+                                autocomplete_field.children("input, select").val(data.first_name);
+                              }
+                              else if (autocomplete_field.children("input, select").attr('id').search("gender") != -1){
+                                autocomplete_field.children("input, select").val(data.gender);
+                              }
+                              else if (autocomplete_field.children("input, select").attr('id').search("birthday") != -1){
+                                autocomplete_field.children("input, select").val(data.birthday);
+                              } else {
+                                console.log('Cette donnée n\'a pas de champ !!!');
+                              }
+                            });
+                            
+                            console.log('✅ Informations du père chargées avec succès');
+                          },
+                          error: function(xhr, status, error) {
+                              console.error('❌ Erreur lors du chargement des informations du père:', error);
+                              alert('Erreur lors du chargement des informations du père');
+                          }
+                      });
+                      
+                      search_container.parent().remove();
+                      searched_staff = $('.searched_staff');
+                      is_out = true;
+                    });
+                    
+                    console.log('✅ Informations du père chargées avec succès');
+                },
+                error: function(xhr, status, error) {
+                    console.error('❌ Erreur lors du chargement des informations du père:', error);
+                    // alert('Erreur lors du chargement des informations du père');
+                      $('[data-id="id-results-container"]').replaceAll('<p>Aucune personne trouvée</p>');
+                }
+            });
+          } else {
+            search_container.append(
+                "<p>En attente d\'au moins 2 caractères...</p>"
+            );
+          }
+        }
+
+        var searched_staff = $('.searched_staff');
+
+        searched_staff.on('focus', (e)=>{
+          searched_staff = $(e.target);
+          // $('main').scroll((i)=>{
+          //   e.target.scrollIntoView(true);
+
+          // });
+          
+          if($(e.target).next().length === 0) {
+            $(e.target.parentElement).append(
+              '<div data-id="id-results" class="w-full max-h-0">\
+                <div data-id="id-results-container" class="sticky max-h-48 w-full overflow-y-auto bg-white shadow-md rounded-b-lg p-2">\
+                  <div><p>En attente d\'au moins 2 caractères...</p></div>\
+                </div>\
+              </div>'
+            );
+          }
+          searchPerson(e);
+        });
+        
+        searched_staff.on('input', (e)=>{
+          searchPerson(e);
+        });
+
+        searched_staff.on('focusout', (e)=>{
+          if (is_out){
+            $(e.target).next().remove();
+            searched_staff = $('.searched_staff');
+          }
+        });
+});
+</script>
 
 {% endblock action %}

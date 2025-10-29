@@ -2,6 +2,7 @@
 {% block article %}
 {% load isa_gasy %}
 {% load static %}
+{% load humanize %}
 {% load i18n %}
     
     <style>
@@ -93,12 +94,9 @@
                         {% trans "Certificate Preview" %}
                     </h1>
                     <p class="text-sm text-gray-600">
-                        {{ document.get_document_type_display }} - {{ document.document_number }}
-                        <span class="ml-2 px-2 py-1 text-xs rounded-full
-                            {% if document.status == 'VALIDATED' %}bg-green-100 text-green-800
-                            {% elif document.status == 'DRAFT' %}bg-yellow-100 text-yellow-800
-                            {% else %}bg-red-100 text-red-800{% endif %}">
-                            {{ document.get_status_display }}
+                        {{ document.birth_type }} - N° {{ document.birth_certificate.numero }}
+                        <span class="ml-2 px-2 py-1 text-xs rounded-full bg-orange-400 text-white">
+                            {{ document.get_total_price|intcomma }} Ar
                         </span>
                     </p>
                 </div>
@@ -176,7 +174,7 @@
                 <div class="grid  grid-cols-10 mt-[8px] gap-y-8 gap-x-4">
                     <!-- Informations administratives -->
                     <div class="flex text-[11pt] col-span-3 flex-col items-start mt-[138px] gap-y-2 leading-tight">
-                        <p class="indent-8 underline">N° {{ document.pk }}/</p>
+                        <p class="indent-8 underline">N° {{ document.birth_certificate.number }}/</p>
                         <p class="indent-3">{{ document.birth_certificate.date_register|date:"d" }} {{ document.birth_certificate.date_register|date:"m"|volana_gasy|capfirst }} {{ document.birth_certificate.date_register|date:"Y" }}</p>
                         <p class="indent-1 uppercase">
                             {% if document.birth_certificate.certificate_type == "R" %}
@@ -185,7 +183,7 @@
                                 FAHATERAHANA
                             {% endif %}
                         </p>
-                        <p class="">{{ document.birth_certificate.born.full_name }}</p>
+                        <p class="pr-2">{{ document.birth_certificate.born.full_name }}</p>
                         <p class="indent-8">{{ document.birth_certificate.born.birthday|date:"d-m-y" }}</p>
                         <p class="font-semibold indent-7 tracking-widest">---------------</p>
                     </div>
@@ -221,15 +219,15 @@
                             after:left-0 after:w-full after:h-[20px]"
                         >
                             <p class="inline text-justify">
-                                _________Tamin'ny {{ document.birth_certificate.born.birthday|date:"d"|isa_gasy }} {{ document.birth_certificate.born.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.birth_certificate.born.birthday|date:"Y"|isa_gasy }}, tamin'ny {{ document.birth_certificate.born.birthday|date:"h"|isa_gasy }} ora {{ document.birth_certificate.born.birthday|date:"h"|ora_gasy }}, no {% if document.birth_certificate.born.is_alive %}teraka {% else %}maty teo ampiterahana {% endif %}tao amin'ny {{ document.birth_certificate.born.birth_place }}, 
-                                Commune {% if common_name|lower in document.birth_certificate.born.birth_place|lower %} io ihany{% else %} {{ common_name }}{% endif %}: 
-                                {{ document.birth_certificate.born.full_name }}, {% if document.birth_certificate.born.gender == 'M' %}zanakalahy{% else %}zanakavavy{% endif %}, zanak'i 
+                                _________Tamin'ny {{ document.birth_certificate.born.birthday|date:"d"|isa_gasy }} {{ document.birth_certificate.born.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.birth_certificate.born.birthday|date:"Y"|isa_gasy }}, tamin'ny {{ document.birth_certificate.born.birthday|date:"h"|isa_gasy }} ora {{ document.birth_certificate.born.birthday|date:"h"|ora_gasy }}, no {% if document.birth_certificate.born.is_alive %}teraka {% else %}maty teo ampiterahana {% endif %}tao {{ document.birth_certificate.born.birth_place }}, 
+                                Commune {% if common_name|lower in document.birth_certificate.born.birth_place|lower %} io ihany{% else %} {{ common_name }}{% endif %}: {{ document.birth_certificate.born.full_name }}, 
+                                {% if document.birth_certificate.born.gender == 'M' %}zanakalahy{% else %}zanakavavy{% endif %}, zanak'i 
                                 {% if document.birth_certificate.father %}{{ document.birth_certificate.father.full_name }} teraka tamin'ny {{ document.birth_certificate.father.birthday|date:"d"|isa_gasy }} {{ document.birth_certificate.father.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.birth_certificate.father.birthday|date:"Y"|isa_gasy }}, tao {{ document.birth_certificate.father.birth_place }},{% if document.birth_certificate.father_carreer|lower != document.birth_certificate.mother_carreer|lower %} {{document.birth_certificate.father_carreer|lower}}, {% endif %}{% if document.birth_certificate.father_address != document.birth_certificate.mother_address %} monina ao {{document.birth_certificate.father_address}} {% endif %}
-                                {% if document.birth_certificate.certificate_type == 'R' %}izay nanjana'azy teo amin'ny fahaterahany {% endif %} sy {% endif %}
+                                {% if document.birth_certificate.certificate_type == 'R' %}izay nanjanak'azy teo amin'ny fahaterahany {% endif %} sy {% endif %}
                                 {{ document.birth_certificate.mother.full_name }}, teraka tamin'ny {{ document.birth_certificate.mother.birthday|date:"d"|isa_gasy }} {{ document.birth_certificate.mother.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.birth_certificate.mother.birthday|date:"Y"|isa_gasy }}, tao {{ document.birth_certificate.mother.birth_place }}{% if document.birth_certificate.father_carreer|lower != document.birth_certificate.mother_carreer|lower %}, {{document.birth_certificate.mother_carreer|lower}}, {% endif %}{% if document.birth_certificate.father_address != document.birth_certificate.mother_address %} monina ao {{document.birth_certificate.mother_address}} {% endif %}
-                                {% if document.birth_certificate.father_carreer|lower == document.birth_certificate.mother_carreer|lower and document.birth_certificate.father_address == document.birth_certificate.mother_address %}, samy {{document.birth_certificate.mother_carreer|lower}} sy monina ao {{document.birth_certificate.mother_address}}{% if not '-' in document.birth_certificate.mother_address %}, Commune ao {{ document.birth_certificate.fokotany.name }}{% endif %}
+                                {% if document.birth_certificate.father_carreer|lower == document.birth_certificate.mother_carreer|lower and document.birth_certificate.father_address == document.birth_certificate.mother_address %}, samy {{document.birth_certificate.mother_carreer|lower}} sy monina ao {{document.birth_certificate.mother_address}}{% if not '-' in document.birth_certificate.mother_address %}, Commune ao {{ common_name }}{% endif %}
                                 {% elif document.birth_certificate.father_carreer|lower|lower == document.birth_certificate.mother_carreer|lower|lower %}, samy {{document.birth_certificate.mother_carreer|lower|lower}}
-                                {% elif document.birth_certificate.father_address == document.birth_certificate.mother_address %}, samy monina ao {{document.birth_certificate.mother_address}}{% if not '-' in document.birth_certificate.mother_address %}, Commune ao {{ document.birth_certificate.fokotany.name }}{% endif %}{% endif %}.
+                                {% elif document.birth_certificate.father_address == document.birth_certificate.mother_address %}, samy monina ao {{document.birth_certificate.mother_address}}{% if not '-' in document.birth_certificate.mother_address %}, Commune ao {{ common_name }}{% endif %}{% endif %}.
                             </p>
                             <p class="inline">-------------------------------------------------------------------------------------------</p>
                         </div>
@@ -265,7 +263,7 @@
                         <div class="flex items-end mt-12">                        
                             <div class="flex w-full flex-col gap-y-8">
                                 <p class="indent-8 leading-tight">Kopia manontolo nadika tamin'ny boky androany 
-                                    {{ document.created_at|date:"d" }} {{ document.created_at|date:"m"|volana_gasy|capfirst }} {{ document.created_at|date:"Y" }}.</p>
+                                    {{ document.date_created|date:"d" }} {{ document.date_created|date:"m"|volana_gasy|capfirst }} {{ document.date_created|date:"Y" }}.</p>
                                 
                                 <p class="font-bold uppercase mb-2 text-center">NY MPIANDRAIKITRA SORA-PIANKOHONANA</p>
                                 

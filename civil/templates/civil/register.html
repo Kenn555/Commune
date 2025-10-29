@@ -102,10 +102,11 @@
           <div>{{ field }}</div>
         {% endfor %}
         <div class="">
-          <input type="text" class="w-36 text-gray-500 bg-transparent border-0 border-b-2 border-b-gray-300
+          <input type="number" name="number" min=1 required
+          class="w-36 text-gray-500 bg-transparent border-0 border-b-2 border-b-gray-300
           outline-none font-medium
           focus:outline-none focus:border-b-blue-400
-          focus:ring-0 focus:ring-offset-0 text-center text-lg tracking-widest cursor-pointe cursor-pointer" value="{{ number_initial|default:'000000001' }}" disabled>
+          focus:ring-0 focus:ring-offset-0 text-center text-lg tracking-widest cursor-pointe cursor-pointer" placeholder="{{ number_initial|default:'000000001' }}">
         </div>
       </fieldset>
 
@@ -304,16 +305,16 @@
             if($(e).is(':checked')){
               $(element).find('input:checkbox').prop('checked', true);
               if(index === 1 & menu_name === 'birth'){
-                $(element).find('input:checkbox').prop('required', true);
+                $(element).find('input:checkbox').first().prop('required', true);
               }
             } else {
               $(element).find('input:checkbox').prop('checked', false);
               if(index === 1 & menu_name === 'birth'){
-                $(element).find('input:checkbox').prop('required', false);
+                $(element).find('input:checkbox').first().prop('required', false);
               }
             }
-            console.log($(element).find('input:checkbox'));
-            toggleFields($(element).find('input:checkbox'));
+            console.log($(element).find('input:checkbox').first());
+            toggleFields($(element).find('input:checkbox').first());
           });
         }
         
@@ -325,14 +326,15 @@
             fieldset.children('div').each((index, element)=>{
               if(index > 0){
                 $(element).show();
-                $(element).children('input').prop('required', true);
+                $(element).children('[type="search"], [type="text"], [type="datetime-local"]').prop('required', true);
+                console.log($(element).children('[type="search"], [type="text"], [type="datetime-local"]'));
               }
             });
           } else {
             fieldset.children('div').each((index, element)=>{
               if(index > 0){
                 $(element).hide();
-                $(element).children('input').prop('required', false);
+                $(element).children('[type="search"], [type="text"], [type="datetime-local"]').prop('required', false);
               }
             });
           }
@@ -342,12 +344,7 @@
         $('#id_have_parents').change((e)=>toggleFamilyFields(e.target));
         $('#id_father_exist').change((e)=>toggleFields(e.target));
         $('#id_mother_exist').change((e)=>toggleFields(e.target));
-        
-        // Initialiser l'état au chargement
-        toggleFamilyFields($('#id_have_parents'));
-        toggleFields($('#id_father_exist'));
-        toggleFields($('#id_mother_exist'));
-    });
+});
     </script>
 
 {% endblock action %}

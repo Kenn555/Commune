@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from administration.models import Fokotany, Sector
+from administration.models import Fokotany, Sector, Staff
 from civil.models import BirthCertificate
 
 # Create your tests here.
@@ -33,4 +33,4 @@ def initial_values():
 
 # print(ftk)
 
-print(BirthCertificate.objects.last().mother)
+# print(BirthCertificate.objects.last().mother)

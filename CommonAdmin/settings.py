@@ -118,6 +118,7 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     # Fonctions template personnalisées
     "civil.templatetags.isa_gasy",
+    "civil.templatetags.iterator",
     # Applications
     "account.apps.AccountConfig",
     *[service['name'] for service in SERVICES_APP],
@@ -125,7 +126,7 @@ INSTALLED_APPS = [
     # "civil.apps.CivilConfig",
     "theme.apps.ThemeConfig",
     # Tools
-    "django_browser_reload",
+    # "django_browser_reload",
     "django_filters",
     "tailwind"
 ]
@@ -139,7 +140,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django_browser_reload.middleware.BrowserReloadMiddleware",
+    # "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = "CommonAdmin.urls"
