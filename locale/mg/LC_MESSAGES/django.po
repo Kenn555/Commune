@@ -725,11 +725,11 @@ msgstr "Andro hanambadiany"
 
 #: .\civil\models.py:38
 msgid "Birth"
-msgstr "teraka"
+msgstr "Fahaterahana"
 
 #: .\civil\models.py:39
 msgid "Birth and Recognition"
-msgstr ""
+msgstr "Fahaterahana sy Fanjanahana"
 
 #: .\civil\models.py:76
 #, python-format

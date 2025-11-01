@@ -124,13 +124,12 @@ certificate = BirthCertificate.objects.get(pk=5)
 # print("Kenn Keren ".strip() + "Keren ".strip())
 
 
-# combined = sorted(
-#     chain(BirthCertificate.objects.all(), DeathCertificate.objects.all()),
-#     key=attrgetter('date_declaration'),
-#     reverse=True
-# )
-
-# print(combined)
+combined = sorted(
+    chain(BirthCertificate.objects.all(), DeathCertificate.objects.all()),
+    key=attrgetter('date_register'),
+    reverse=True
+)
+print(combined)
 
 # births = BirthCertificate.objects.annotate(cert_type=models.Value('birth', output_field=models.CharField())).values('id', 'date_declaration')
 # deaths = DeathCertificate.objects.annotate(cert_type=models.Value('death', output_field=models.CharField())).values('id', 'date_declaration')
@@ -190,82 +189,82 @@ pour être enregisté. """
 # print(waiting_room)
 # 
 
-fokotany = Fokotany.objects.all()
-births = BirthCertificate.objects.all()
-deaths = DeathCertificate.objects.all()
-marriages = MarriageCertificate.objects.all()
+# fokotany = Fokotany.objects.all()
+# births = BirthCertificate.objects.all()
+# deaths = DeathCertificate.objects.all()
+# marriages = MarriageCertificate.objects.all()
 
-year_selected = datetime.now().year
+# year_selected = datetime.now().year
 
-year__first_day = datetime(year_selected, 1, 1, tzinfo=timezone(timedelta(hours=0)))
-year__last_day = datetime(year_selected, 12, 31, tzinfo=timezone(timedelta(hours=0)))
+# year__first_day = datetime(year_selected, 1, 1, tzinfo=timezone(timedelta(hours=0)))
+# year__last_day = datetime(year_selected, 12, 31, tzinfo=timezone(timedelta(hours=0)))
 
-births_this_year_fkt = {
-    fkt.pk: [births.filter(
-        date_register__gte=year__first_day,
-        date_register__lte=year__last_day,
-        fokotany=fkt
-    ).annotate(gender=models.F('born__gender'))
-    .values('gender').annotate(
-        count=Count('gender')
-    )] for fkt in fokotany
-}
+# births_this_year_fkt = {
+#     fkt.pk: [births.filter(
+#         date_register__gte=year__first_day,
+#         date_register__lte=year__last_day,
+#         fokotany=fkt
+#     ).annotate(gender=models.F('born__gender'))
+#     .values('gender').annotate(
+#         count=Count('gender')
+#     )] for fkt in fokotany
+# }
 
-deaths_this_year_fkt = {
-    fkt.pk: [deaths.filter(
-        date_created__gte=year__first_day,
-        date_created__lte=year__last_day,
-        fokotany=fkt
-    ).annotate(gender=models.F('dead__gender'))
-    .values('gender').annotate(
-        count=Count('gender', distinct=True)
-    )] for fkt in fokotany
-}
+# deaths_this_year_fkt = {
+#     fkt.pk: [deaths.filter(
+#         date_created__gte=year__first_day,
+#         date_created__lte=year__last_day,
+#         fokotany=fkt
+#     ).annotate(gender=models.F('dead__gender'))
+#     .values('gender').annotate(
+#         count=Count('gender', distinct=True)
+#     )] for fkt in fokotany
+# }
 
-print(births_this_year_fkt)
+# print(births_this_year_fkt)
 
-formated_gender = {}
+# formated_gender = {}
 
 # formated_births = {}
 # formated_death = {}
 
-GENDER_CHOICES = {
-        'M': _("Male"),
-        'F': _("Female")
-    }
-for fkt in fokotany:
-    formated_gender[fkt.pk] = []
-    for gender in GENDER_CHOICES:
-        gender_fkt = {
-            'gender': GENDER_CHOICES[gender], 
-            'count': []
-        }
-        for birth in births_this_year_fkt[fkt.pk][0]:
-            if gender == birth['gender']:
-                print(birth)
-                gender_fkt['count'].append(birth['count'])
-        for death in deaths_this_year_fkt[fkt.pk][0]:
-            if gender == death['gender']:
-                print(death)
-                gender_fkt['count'].append(death['count'])
-        formated_gender[fkt.pk].append(gender_fkt)
+# GENDER_CHOICES = {
+#         'M': _("Male"),
+#         'F': _("Female")
+#     }
+# for fkt in fokotany:
+#     formated_gender[fkt.pk] = []
+#     for gender in GENDER_CHOICES:
+#         gender_fkt = {
+#             'gender': GENDER_CHOICES[gender], 
+#             'count': []
+#         }
+#         for birth in births_this_year_fkt[fkt.pk][0]:
+#             if gender == birth['gender']:
+#                 print(birth)
+#                 gender_fkt['count'].append(birth['count'])
+#         for death in deaths_this_year_fkt[fkt.pk][0]:
+#             if gender == death['gender']:
+#                 print(death)
+#                 gender_fkt['count'].append(death['count'])
+#         formated_gender[fkt.pk].append(gender_fkt)
 
 
-certificates_year = {
-        fkt.name: json.dumps({
-            "labels": ['Acte de Naissance', 'Acte de Décès'],
-            "datasets": [
-                {
-                    'label': gender['gender'],
-                    'data': gender['count'],
-                    'backgroundColor': "#5697ff",
-                    'borderColor': '#5697ff',
-                    'borderRadius': 50,
-                } for gender in formated_gender[fkt.pk]
-            ]
-        }) for fkt in fokotany
-    }
-print(certificates_year)
+# certificates_year = {
+#         fkt.name: json.dumps({
+#             "labels": ['Acte de Naissance', 'Acte de Décès'],
+#             "datasets": [
+#                 {
+#                     'label': gender['gender'],
+#                     'data': gender['count'],
+#                     'backgroundColor': "#5697ff",
+#                     'borderColor': '#5697ff',
+#                     'borderRadius': 50,
+#                 } for gender in formated_gender[fkt.pk]
+#             ]
+#         }) for fkt in fokotany
+#     }
+# print(certificates_year)
 
 # for fkt in fokotany:
 #     formated_births[fkt.pk] = {}
@@ -349,6 +348,6 @@ print(certificates_year)
 # print(context)
 
 
-activate('en')
+# activate('en')
 
-print(EXEMPLE % {'example': 'Kenn'})
+# print(EXEMPLE % {'example': 'Kenn'})

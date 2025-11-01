@@ -1,3 +1,4 @@
+from datetime import timedelta, timezone
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as  _
@@ -73,10 +74,10 @@ class BirthCertificate(models.Model):
 
     def __str__(self):
         if self.born.gender == "M":
-            text = _("%(born)s born at %(birthday)s son of %(father)s%(mother)s declared by %(declarer)s, %(relationship)s, at %(date_declaration)s") 
+            text = _("%(born)s born at %(birthday)s son of %(father)s%(mother)s declared by %(declarer)s, %(relationship)s, at %(date_register)s") 
         else:
-            text = _("%(born)s born at %(birthday)s daughter of %(father)s%(mother)s declared by %(declarer)s, %(relationship)s, at %(date_declaration)s")
-        return text % {"born": self.born, "birthday": self.born.birthday, "father": self.father.__str__() + _(" and ") if self.father else '', "mother": self.mother, "declarer": self.declarer, "relationship": self.declarer_relationship, "date_declaration": self.date_declaration}
+            text = _("%(born)s born at %(birthday)s daughter of %(father)s%(mother)s declared by %(declarer)s, %(relationship)s, at %(date_register)s")
+        return text % {"born": self.born.full_name, "birthday": self.born.birthday, "father": self.father.__str__() + _(" and ") if self.father else '', "mother": self.mother, "declarer": self.declarer, "relationship": self.declarer_relationship, "date_register": self.date_register}
 
     @property
     def birth_type(self):
@@ -163,6 +164,7 @@ class DeathCertificate(models.Model):
     dead = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name="death_dead")
     death_day = models.DateTimeField()
     death_place = models.CharField(max_length=100)
+    was_born = models.BooleanField(default=True)
     dead_carreer = models.CharField(max_length=80, null=True)
     dead_address = models.CharField(max_length=100, null=True)
     father_full_name = models.CharField(max_length=120, null=True)
@@ -198,6 +200,60 @@ class DeathCertificate(models.Model):
         else:
             text = _("%(dead)s dead at %(death_day)s daughter of %(father)s%(mother)s declared by %(declarer)s at %(date_declaration)s")
         return text % {"dead": self.dead, "death_day": self.death_day, "father": self.father_full_name or '', "mother": self.mother_full_name or '', "declarer": self.declarer, "date_declaration": self.date_declaration}
+
+
+class DeathCertificateDocument(models.Model):
+    """Modèle pour stocker les documents générés"""
+    
+    STATUS_CHOICES = {
+        'D': _('Draft'),
+        'V': _('Validated'),
+        'C': _('Cancelled'),
+    }
+    
+    # Relation avec le certificat
+    death_certificate = models.ForeignKey(
+        DeathCertificate, 
+        on_delete=models.CASCADE, 
+        related_name="document_death",
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='DRAFT')
+    # Notes
+    notes = models.TextField(blank=True)
+    # Price
+    price = models.FloatField(default=1000)
+    # Many of documents
+    num_copy = models.IntegerField(default=1)
+    
+    def __str__(self):
+        return _("Birth Certificate - %(number)s") % {"number": self.document_number}   
+    
+    def get_absolute_url(self):
+        return reverse('certificate-preview', kwargs={'pk': self.pk})
+
+    @property
+    def get_price(self):
+        return int(self.price) if self.price.is_integer() else self.price
+        
+    @property
+    def get_total_price(self):
+        return int(self.price) * int(self.num_copy) if self.price.is_integer() else self.price * self.num_copy
+    
+    @property
+    def birth_type(self):
+        return self.birth_certificate.birth_type
+    
+    @property
+    def is_validated(self):
+        return self.status == 'VALIDATED'
+    
+    @property
+    def can_edit(self):
+        return self.status == 'DRAFT'
+    
+    @property
+    def can_delete(self):
+        return self.status in ['DRAFT', 'CANCELLED']
 
 class MarriageCertificate(models.Model):
     groom = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name="marriage_husband")

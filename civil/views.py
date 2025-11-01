@@ -2,6 +2,7 @@ from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
 from itertools import chain
 import json
+from operator import attrgetter
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, DeleteView
@@ -25,7 +26,7 @@ from dal import autocomplete
 from babel.dates import format_date
 
 from civil.forms import BirthCertificateForm, DeathCertificateForm, MarriageCertificateForm
-from civil.models import BirthCertificate, BirthCertificateDocument, DeathCertificate, MarriageCertificate, Person
+from civil.models import BirthCertificate, BirthCertificateDocument, DeathCertificate, DeathCertificateDocument, MarriageCertificate, Person
 from civil.templatetags.isa_gasy import VolanaGasy
 from finances.models import ServicePrice
 
@@ -237,27 +238,38 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
         "fokotany": [fkt for fkt in fokotany],
         "years": years,
         "year_selected": year_selected,
-        "certificates_year__count": births_this_year.count() + deaths_this_year.count(),
+        "certificates_year__count": sum([
+            births_this_year.count(), 
+            deaths_this_year.count(),
+            marriages_this_year.count(),
+        ]),
     }
 
     # print(year__first_day)
 
     births_by_month = births_this_year.annotate(
-        mois=TruncMonth('born__birthday', tzinfo=TIMEZONE_UTC)
-    ).values('mois').annotate(
-        count=Count('mois')
-    ).order_by('mois')
+        month=TruncMonth('born__birthday', tzinfo=TIMEZONE_UTC)
+    ).values('month').annotate(
+        count=Count('month')
+    ).order_by('month')
 
     deaths_by_month = deaths_this_year.annotate(
-        mois=TruncMonth('death_day', tzinfo=TIMEZONE_UTC)
-    ).values('mois').annotate(
-        count=Count('mois')
-    ).order_by('mois')
+        month=TruncMonth('death_day', tzinfo=TIMEZONE_UTC)
+    ).values('month').annotate(
+        count=Count('month')
+    ).order_by('month')
 
-    birth_dict = {birth['mois'].astimezone(TIMEZONE_MGA).strftime('%Y-%m'): birth['count'] for birth in births_by_month}
-    death_dict = {death['mois'].astimezone(TIMEZONE_MGA).strftime('%Y-%m'): death['count'] for death in deaths_by_month}
+    marriages_by_month = marriages_this_year.annotate(
+        month=TruncMonth('wedding_day', tzinfo=TIMEZONE_UTC)
+    ).values('month').annotate(
+        count=Count('month')
+    ).order_by('month')
 
-    all_months = sorted(set(birth_dict.keys()) | set(death_dict.keys()))
+    birth_dict = {birth['month'].astimezone(TIMEZONE_MGA).strftime('%Y-%m'): birth['count'] for birth in births_by_month}
+    death_dict = {death['month'].astimezone(TIMEZONE_MGA).strftime('%Y-%m'): death['count'] for death in deaths_by_month}
+    marriage_dict = {marriage['month'].astimezone(TIMEZONE_MGA).strftime('%Y-%m'): marriage['count'] for marriage in marriages_by_month}
+
+    all_months = sorted(set(birth_dict.keys()) | set(death_dict.keys()) | set(marriage_dict.keys()))
 
     # print(birth_dict)
     # print(death_dict)
@@ -265,28 +277,34 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
 
     formatted_births = []
     formatted_deaths = []
+    formatted_marriages = []
 
-    for mois_str in all_months:
-        birth_mois = birth_dict.get(mois_str, Decimal('0'))
-        death_mois = death_dict.get(mois_str, Decimal('0'))
+    for month_str in all_months:
+        birth_month = birth_dict.get(month_str, Decimal('0'))
+        death_month = death_dict.get(month_str, Decimal('0'))
+        marriage_month = marriage_dict.get(month_str, Decimal('0'))
         
         # Convertir la chaîne de date en objet datetime pour le formatage
-        mois_date = datetime.strptime(mois_str, '%Y-%m')
+        month_date = datetime.strptime(month_str, '%Y-%m')
 
         formatted_births.append({
-            'mois': mois_date,
-            'total': float(birth_mois)  # Convertir en float pour JSON
+            'month': month_date,
+            'total': float(birth_month)  # Convertir en float pour JSON
         })
         formatted_deaths.append({
-            'mois':  mois_date,
-            'total': float(death_mois)  # Convertir en float pour JSON
+            'month':  month_date,
+            'total': float(death_month)  # Convertir en float pour JSON
+        })
+        formatted_marriages.append({
+            'month':  month_date,
+            'total': float(marriage_month)  # Convertir en float pour JSON
         })
 
     # print(formatted_births)
     # print(formatted_deaths)
 
     certificates_year = {
-        "labels": [ date_translate(birth['mois']) for birth in formatted_births],
+        "labels": [ date_translate(birth['month']) for birth in formatted_births],
         "datasets": [
             {
                 'label': _("birth certificate").capitalize() + '~' + str(births_this_year.count()),
@@ -302,6 +320,13 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
                 'borderColor': '#6b7280',
                 'borderRadius': 50,
             },
+            {
+                'label': _("marriage certificate").capitalize() + '~' + str(marriages_this_year.count()),
+                'data': [marriage['total'] for marriage in formatted_marriages],
+                'backgroundColor': "#ff53f6",
+                'borderColor': '#ff53f6',
+                'borderRadius': 50,
+            },
         ]
     }
 
@@ -315,11 +340,18 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
             count=Count('gender')
         )] for fkt in fokotany
     }
-
     deaths_this_year_fkt = {
         fkt.pk: [deaths_this_year.filter(
             fokotany=fkt
         ).annotate(gender=models.F('dead__gender'))
+        .values('gender').annotate(
+            count=Count('gender')
+        )] for fkt in fokotany
+    }
+    marriages_this_year_fkt = {
+        fkt.pk: [marriages_this_year.filter(
+            fokotany=fkt
+        ).annotate(gender=models.F('groom__gender'))
         .values('gender').annotate(
             count=Count('gender')
         )] for fkt in fokotany
@@ -339,7 +371,7 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
         for gender in GENDER_CHOICES:
             gender_fkt = {
                 'gender': GENDER_CHOICES[gender], 
-                'count': [0, 0]
+                'count': [0, 0, 0]
             }
             for birth in births_this_year_fkt[fkt.pk][0]:
                 if gender == birth['gender']:
@@ -347,18 +379,23 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
             for death in deaths_this_year_fkt[fkt.pk][0]:
                 if gender == death['gender']:
                     gender_fkt['count'][1] = int(death['count'])
+            for marriage in marriages_this_year_fkt[fkt.pk][0]:
+                gender_fkt['count'][2] = int(marriage['count'])
+
             if gender == 'F':
                 gender_fkt['color'] = "#78B7FF"
             else:
                 gender_fkt['color'] = "#1F4B7E"
             formated_gender[fkt.pk].append(gender_fkt)
 
+    print(formated_gender)
 
     certificates_year = {
             fkt.name: json.dumps({
                 "labels": [
-                    'Acte de Naissance~' + str(births_this_year.filter(fokotany=fkt).count()), 
-                    'Acte de Décès~' + str(deaths_this_year.filter(fokotany=fkt).count())
+                     _("birth certificate").capitalize() + '~' + str(births_this_year.filter(fokotany=fkt).count()), 
+                    _("death certificate").capitalize() + '~' + str(deaths_this_year.filter(fokotany=fkt).count()),
+                    _("marriage certificate").capitalize() + '~' + str(deaths_this_year.filter(fokotany=fkt).count()),
                 ],
                 "datasets": [
                     {
@@ -811,7 +848,14 @@ def birth_detail(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpR
         "mother_certificated": False,
     }
     certificate = BirthCertificate.objects.get(pk=birth_id)
-    document = BirthCertificateDocument.objects.filter(birth_certificate=certificate).order_by('date_created').reverse()
+    document = sorted(
+        chain(
+            BirthCertificateDocument.objects.filter(birth_certificate=certificate), 
+            DeathCertificateDocument.objects.filter(death_certificate__dead=certificate.born)
+        ),
+        key=attrgetter('date_register'),
+        reverse=True
+    )
 
     print(certificate.date_declaration)
     context["certificate"] = certificate
@@ -833,7 +877,7 @@ def birth_detail(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpR
         ...
 
     if 'cp_birth' in request.POST:
-        return redirect('civil:certificate-creation', menu=menu_name, pk= certificate.pk, many=int(request.POST.get('many_cp', 1)))
+        return redirect('civil:certificate-preview', type_cert=menu_name, pk= certificate.pk, many=int(request.POST.get('many_cp', 1)))
     
     
     for service in request.session['urls']:
@@ -860,10 +904,22 @@ def birth_delete(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpR
     return redirect('civil:birth')
 
 @login_required
-def certificate_preview(request: WSGIRequest, pk:int) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
-    menu_name = "birth"
+def certificate_preview(request: WSGIRequest, pk:int, type_cert='birth', many=1) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
 
-    document = get_object_or_404(BirthCertificateDocument, pk=pk)
+    is_doc = False
+
+    if '_doc' in type_cert:
+        type_cert = type_cert.replace('_doc', "")
+        is_doc = True
+
+    menu_name = type_cert
+
+    if is_doc:
+        if type_cert == 'birth':
+            document = get_object_or_404(BirthCertificateDocument, pk=pk).birth_certificate
+    else:
+        if type_cert == 'birth':
+            document = get_object_or_404(BirthCertificate, pk=pk)
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
@@ -875,7 +931,9 @@ def certificate_preview(request: WSGIRequest, pk:int) -> HttpResponseRedirect | 
         "common_name": getattr(settings, "COMMON_NAME"),
         "submenus": [],
         "document": document,
-        "many_document": [num for num in range(document.num_copy)],
+        "type_cert": type_cert,
+        "many": many,
+        "many_document": range(many),
     }
 
     for service in request.session['urls']:
@@ -890,30 +948,41 @@ def certificate_preview(request: WSGIRequest, pk:int) -> HttpResponseRedirect | 
     return render(request, "civil/preview.html", context)
 
 @login_required
-def certificate_creation(request, menu:str, pk:int, many=1):
+def certificate_creation(request, menu:str, type_cert:str, pk:int, many=1):
     """Vue pour l'impression (version simplifiée sans boutons)"""
 
-    pk_group = []
-
-    if menu == 'birth':
+    try:
         certificate = get_object_or_404(BirthCertificate, pk=pk)
-        print(certificate)
-        document = BirthCertificateDocument.objects.create(
-            birth_certificate=certificate,
-            father=certificate.father,
-            father_carreer=certificate.father_carreer,
-            father_address=certificate.father_address,
-            mother_carreer=certificate.mother_carreer,
-            mother_address=certificate.mother_address,
-            declarer_carreer=certificate.declarer_carreer,
-            declarer_address=certificate.declarer_address,
-            was_alive=certificate.was_alive,
-            status="D",
-            price=ServicePrice.objects.last().certificate_price,
-            num_copy=many,
-        )
 
-    return redirect('civil:certificate-preview', pk=document.pk)
+        if type_cert == 'birth':
+            print(certificate)
+            document = BirthCertificateDocument(
+                birth_certificate=certificate,
+                father=certificate.father,
+                father_carreer=certificate.father_carreer,
+                father_address=certificate.father_address,
+                mother_carreer=certificate.mother_carreer,
+                mother_address=certificate.mother_address,
+                declarer_carreer=certificate.declarer_carreer,
+                declarer_address=certificate.declarer_address,
+                was_alive=certificate.was_alive,
+                status="D",
+                price=ServicePrice.objects.last().certificate_price,
+                num_copy=many,
+            )
+        elif type_cert == 'death':
+            certificate = get_object_or_404(DeathCertificate, dead=certificate.born)
+            print(certificate)
+            document = DeathCertificateDocument(
+                death_certificate=certificate,
+                status="D",
+                price=ServicePrice.objects.last().certificate_price,
+                num_copy=many,
+            )
+        # document.save()
+        return JsonResponse({"price": document.get_total_price})
+    except:
+        return JsonResponse({'error': 'Birth not found'}, status=404)
 
 def certificate_validate(request, pk):
     """Valider un certificat"""

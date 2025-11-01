@@ -86,67 +86,69 @@
     </style>
     
     <!-- Barre d'actions (non imprimable) -->
-    <div class="no-print bg-white border-b shadow-sm sticky top-0 z-10">
+    <div class="no-print bg-white border-b shadow-md sticky top-0 z-10">
         <div class="max-w-7xl mx-auto px-4 py-4">
-            <div class="flex justify-between items-center">
+            <div class="flex flex-wrap flex-1 gap-4 justify-between items-center">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-800">
                         {% trans "Certificate Preview" %}
                     </h1>
                     <p class="text-sm text-gray-600">
-                        {{ document.birth_type }} - N° {{ document.birth_certificate.numero }}
+                        {{ document.birth_type }} - N° {{ document.numero }}
                         <span class="ml-2 px-2 py-1 text-xs rounded-full bg-orange-400 text-white">
                             {{ document.get_total_price|intcomma }} Ar
                         </span>
                     </p>
                 </div>
                 
-                <div class="flex gap-3">
+                <div class="flex max-md:w-full justify-evenly gap-3">
                     <!-- Bouton Zoom -->
                     <div class="flex items-center gap-2 no-print">
                         <button onclick="zoomOut()" class="bg-gray-200 px-3 py-1 rounded">−</button>
                         <span onclick="zoomAjust()" id="zoom-level" class="text-sm font-semibold w-10 text-center cursor-pointer">100%</span>
                         <button onclick="zoomIn()" class="bg-gray-200 px-3 py-1 rounded">+</button>
                     </div>
+                    <div class="flex gap-x-2">
                     <!-- Bouton Imprimer -->
-                    <button onclick="window.print()" 
-                        class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
-                        </svg>
-                        {% trans "Print" %}
-                    </button>
-                    
-                    <!-- Bouton Modifier -->
-                    {% if document.can_edit %}
-                    <a href="" 
-                        class="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                        </svg>
-                        {% trans "Edit" %}
-                    </a>
-                    {% endif %}
-                    
-                    <!-- Bouton Supprimer -->
-                    {% if document.can_delete %}
-                    <button onclick="confirmDelete()" 
-                        class="flex items-center gap-2 bg-red-600 hover:bg-rose-700 text-white px-6 py-2 rounded-lg transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                        </svg>
-                        {% trans "Delete" %}
-                    </button>
-                    {% endif %}
-                    
-                    <!-- Bouton Retour -->
-                    <button onclick="back_or_list()"
-                        class="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                        {% trans "Back" %}
-                    </button>
+                        <button onclick="print_documents(this)" 
+                            class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                            </svg>
+                            <span class="max-lg:hidden">{% trans "Print" %}</span>
+                        </button>
+                        
+                        <!-- Bouton Modifier -->
+                        {% if document.can_edit %}
+                        <a href="" 
+                            class="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            <span class="max-lg:hidden">{% trans "Edit" %}</span>
+                        </a>
+                        {% endif %}
+                        
+                        <!-- Bouton Supprimer -->
+                        {% if document.can_delete %}
+                        <button onclick="confirmDelete()" 
+                            class="flex items-center gap-2 bg-red-600 hover:bg-rose-700 text-white px-6 py-2 rounded-lg transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                            <span class="max-lg:hidden">{% trans "Delete" %}</span>
+                        </button>
+                        {% endif %}
+                        
+                        <!-- Bouton Retour -->
+                        <button onclick="back_or_list()"
+                            class="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            <span class="max-lg:hidden">{% trans "Back" %}</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -174,17 +176,17 @@
                 <div class="grid  grid-cols-10 mt-[8px] gap-y-8 gap-x-4">
                     <!-- Informations administratives -->
                     <div class="flex text-[11pt] col-span-3 flex-col items-start mt-[138px] gap-y-2.5 leading-tight">
-                        <p class="indent-8 underline">N° {{ document.birth_certificate.number }}/</p>
-                        <p class="indent-3">{{ document.birth_certificate.date_register|date:"d" }} {{ document.birth_certificate.date_register|date:"m"|volana_gasy|capfirst }} {{ document.birth_certificate.date_register|date:"Y" }}</p>
+                        <p class="indent-8 underline">N° {{ document.number }}/</p>
+                        <p class="indent-3">{{ document.date_register|date:"d" }} {{ document.date_register|date:"m"|volana_gasy|capfirst }} {{ document.date_register|date:"Y" }}</p>
                         <p class="indent-1 uppercase">
-                            {% if document.birth_certificate.certificate_type == "R" %}
-                                FAHATERAHANA SY<br>FANJANAHANA
+                            {% if document.certificate_type == "R" %}
+                                {{ document.birth_type }}
                             {% else %}
                                 FAHATERAHANA
                             {% endif %}
                         </p>
-                        <p class="pr-2">{{ document.birth_certificate.born.full_name }}</p>
-                        <p class="indent-8">{{ document.birth_certificate.born.birthday|date:"d-m-y" }}</p>
+                        <p class="pr-2">{{ document.born.full_name }}</p>
+                        <p class="indent-8">{{ document.born.birthday|date:"d-m-y" }}</p>
                         <p class="font-semibold indent-7 tracking-widest">---------------</p>
                     </div>
                     
@@ -207,7 +209,7 @@
                             after:left-0 after:w-full after:h-[20px]"
                         >
                             <p class="inline text-justify bg-clip-text">
-                                _______Nalaina tamin'ny bokim-piankohonana ao {{ document.birth_certificate.fokotany.name }}, taona {{ document.birth_certificate.date_register|date:"Y" }},
+                                _______Nalaina tamin'ny bokim-piankohonana ao {{ document.fokotany.name }}, taona {{ document.date_register|date:"Y" }},
                                 izao soratra manaraka izao.
                             </p>
                             <p class="inline">-------------------------------------------------------------------------------------------</p>
@@ -219,15 +221,26 @@
                             after:left-0 after:w-full after:h-[20px]"
                         >
                             <p class="inline text-justify">
-                                _________Tamin'ny {{ document.birth_certificate.born.birthday|date:"d"|isa_gasy }} {{ document.birth_certificate.born.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.birth_certificate.born.birthday|date:"Y"|isa_gasy }}, tamin'ny {{ document.birth_certificate.born.birthday|date:"h"|isa_gasy }} ora {{ document.birth_certificate.born.birthday|date:"h"|ora_gasy }}, no {% if document.birth_certificate.born.is_alive %}teraka {% else %}maty teo ampiterahana {% endif %}tao {{ document.birth_certificate.born.birth_place }}, 
-                                Commune {% if common_name|lower in document.birth_certificate.born.birth_place|lower %} io ihany{% else %} {{ common_name }}{% endif %}: {{ document.birth_certificate.born.full_name }}, 
-                                {% if document.birth_certificate.born.gender == 'M' %}zanakalahy{% else %}zanakavavy{% endif %}, zanak'i 
-                                {% if document.birth_certificate.father %}{{ document.birth_certificate.father.full_name }} teraka tamin'ny {{ document.birth_certificate.father.birthday|date:"d"|isa_gasy }} {{ document.birth_certificate.father.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.birth_certificate.father.birthday|date:"Y"|isa_gasy }}, tao {{ document.birth_certificate.father.birth_place }},{% if document.birth_certificate.father_carreer|lower != document.birth_certificate.mother_carreer|lower %} {{document.birth_certificate.father_carreer|lower}}, {% endif %}{% if document.birth_certificate.father_address != document.birth_certificate.mother_address %} monina ao {{document.birth_certificate.father_address}}{% endif %}
-                                {% if document.birth_certificate.certificate_type == 'R' %}izay nanjanak'azy teo amin'ny fahaterahany {% endif %} sy {% endif %}
-                                {{ document.birth_certificate.mother.full_name }}, teraka tamin'ny {{ document.birth_certificate.mother.birthday|date:"d"|isa_gasy }} {{ document.birth_certificate.mother.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.birth_certificate.mother.birthday|date:"Y"|isa_gasy }}, tao {{ document.birth_certificate.mother.birth_place }}{% if document.birth_certificate.father_carreer|lower != document.birth_certificate.mother_carreer|lower %}, {{document.birth_certificate.mother_carreer|lower}}, {% endif %}{% if document.birth_certificate.father_address != document.birth_certificate.mother_address %} monina ao {{document.birth_certificate.mother_address}}{% endif %}
-                                {% if document.birth_certificate.father_carreer|lower == document.birth_certificate.mother_carreer|lower and document.birth_certificate.father_address == document.birth_certificate.mother_address %}, samy {{document.birth_certificate.mother_carreer|lower}} sy monina ao {{document.birth_certificate.mother_address}}{% if not '-' in document.birth_certificate.mother_address %}, Commune ao {{ common_name }}{% endif %}
-                                {% elif document.birth_certificate.father_carreer|lower|lower == document.birth_certificate.mother_carreer|lower|lower %}, samy {{document.birth_certificate.mother_carreer|lower|lower}}
-                                {% elif document.birth_certificate.father_address == document.birth_certificate.mother_address %}, samy monina ao {{document.birth_certificate.mother_address}}{% if not '-' in document.birth_certificate.mother_address %}, Commune ao {{ common_name }}{% endif %}{% endif %}.
+                                _________Tamin'ny {% if document.born.birthday|date:"d" == 1 %}voalohany volana{% else %}{{ document.born.birthday|date:"d"|isa_gasy }}{% endif %} {{ document.born.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.born.birthday|date:"Y"|isa_gasy }},
+                                tamin'ny {{ document.born.birthday|date:"h"|isa_gasy }} ora {{ document.born.birthday|date:"h"|ora_gasy }},
+                                no {% if document.born.is_alive %}teraka {% else %}maty teo ampiterahana {% endif %}tao {{ document.born.birth_place }},
+                                Commune {% if common_name|lower in document.born.birth_place|lower %}io ihany{% else %}{{ common_name }}{% endif %}: {{ document.born.full_name }},
+                                {% if document.born.gender == 'M' %}zanakalahy{% else %}zanakavavy{% endif %}, zanak'i {% if document.father %}{{ document.father.full_name }} teraka tamin'ny {{ document.father.birthday|date:"d"|isa_gasy }} {{ document.father.birthday|date:"m"|volana_gasy|capfirst }},
+                                taona {{ document.father.birthday|date:"Y"|isa_gasy }},
+                                tao {{ document.father.birth_place }},
+                                {% if document.father_carreer|lower != document.mother_carreer|lower %}{{document.father_carreer|lower}},
+                                {% endif %}{% if document.father_address != document.mother_address %}monina ao {{document.father_address}},
+                                {% endif %}{% if document.certificate_type == 'R' %}izay nanjanak'azy teo amin'ny fahaterahany {% endif %}sy {% endif %}{{ document.mother.full_name }},
+                                teraka tamin'ny {{ document.mother.birthday|date:"d"|isa_gasy }} {{ document.mother.birthday|date:"m"|volana_gasy|capfirst }},
+                                taona {{ document.mother.birthday|date:"Y"|isa_gasy }},
+                                tao {{ document.mother.birth_place }},
+                                {% if document.father_carreer|lower != document.mother_carreer|lower %}{{document.mother_carreer|lower}},
+                                {% endif %}{% if document.father_address != document.mother_address %}monina ao {{document.mother_address}},
+                                {% endif %}{% if document.father_carreer|lower == document.mother_carreer|lower and document.father_address == document.mother_address %}samy {{document.father_carreer|lower}} sy monina ao {{document.mother_address}}{% if not '-' in document.mother_address %},
+                                Commune ao {{ common_name }}{% endif %}{% elif document.father_carreer|lower == document.mother_carreer|lower %},
+                                samy {{document.father_carreer|lower }}{% elif document.father_address == document.mother_address %},
+                                samy monina ao {{document.mother_address}}{% if not '-' in document.mother_address %},
+                                Commune ao {{ common_name }}{% endif %}{% endif %}.
                             </p>
                             <p class="inline">-------------------------------------------------------------------------------------------</p>
                         </div>
@@ -238,13 +251,14 @@
                             after:left-0 after:w-full after:h-[20px]"
                         >
                             <p class="inline text-justify">
-                                _________Nosoratana androany {{ document.birth_certificate.date_register|date:"d"|isa_gasy }} {{ document.birth_certificate.date_register|date:"m"|volana_gasy|capfirst }}, taona {{ document.birth_certificate.date_register|date:"Y"|isa_gasy }},
-                                tamin'ny {{ document.birth_certificate.date_register|date:"h"|isa_gasy }} ora {{ document.birth_certificate.date_register|date:"h"|ora_gasy }}, araky ny fanambarana nataon'i
-                                {% if document.birth_certificate.declarer == document.birth_certificate.father %} rainy izay {% elif document.birth_certificate.declarer == document.birth_certificate.mother %} reniny izay {% else %}{{ document.birth_certificate.declarer.full_name }},
-                                teraka tamin'ny {{ document.birth_certificate.declarer.birthday|date:"d"|isa_gasy }} {{ document.birth_certificate.declarer.birthday|date:"F"|capfirst }}, taona {{ document.birth_certificate.declarer.birthday|date:"Y"|isa_gasy }}, 
-                                tao {{ document.birth_certificate.declarer.birth_place }}, {{ document.birth_certificate.declarer_carreer|lower }}, monina ao {{ document.birth_certificate.declarer_address }},
+                                _________Nosoratana androany {{ document.date_register|date:"d"|isa_gasy }} {{ document.date_register|date:"m"|volana_gasy|capfirst }},
+                                taona {{ document.date_register|date:"Y"|isa_gasy }},
+                                tamin'ny {{ document.date_register|date:"h"|isa_gasy }} ora {{ document.date_register|date:"h"|ora_gasy }},
+                                araky ny fanambarana nataon'i {% if document.declarer == document.father %}rainy izay {% elif document.declarer == document.mother %} reniny izay {% else %}{{ document.declarer.full_name }},
+                                teraka tamin'ny {{ document.declarer.birthday|date:"d"|isa_gasy }} {{ document.declarer.birthday|date:"F"|capfirst }}, taona {{ document.declarer.birthday|date:"Y"|isa_gasy }}, 
+                                tao {{ document.declarer.birth_place }}, {{ document.declarer_carreer|lower }}, monina ao {{ document.declarer_address }},
                                 izay nanatrika ny fahaterahany ka {% endif %} miara manao Sonia aminay:
-                                {{ document.birth_certificate.responsible_staff }} mpiandraikitra sora-piankohonana ao {{ document.birth_certificate.fokotany.name }}, rehefa novakina taminy ity soratra ity.
+                                {{ document.responsible_staff }} mpiandraikitra sora-piankohonana ao {{ document.fokotany.name }}, rehefa novakina taminy ity soratra ity.
                             </p>
                             <p class="inline">-------------------------------------------------------------------------------------------</p>
                         </div>
@@ -330,6 +344,41 @@
             } else {
                 window.location.href = "{% url 'civil:birth' %}"
             }
+        }
+
+        function print_documents(e){
+            const documentMany = Number.parseInt('{{ many }}');
+            const documentId = Number.parseInt('{{ document.pk }}');
+            const documentType = '{{ type_cert }}';
+
+            console.log(documentMany);
+            console.log(documentId);
+            console.log(documentType);
+
+            // Impression
+            window.print();
+
+            // window.print_documents();
+
+            // Requête AJAX pour créer le document du certificate
+            $.ajax({
+                url: "{% url 'civil:certificate-creation' 0 1 2 %}"
+                .replace('0', documentType) // Ajustez l'URL selon votre configuration
+                .replace('1', documentId)  // Ajustez l'URL selon votre configuration
+                .replace('2', documentMany),  // Ajustez l'URL selon votre configuration
+                method: 'GET',
+                success: function(data) {
+                
+                    console.log(data)
+                
+                console.log('✅ Informations du père chargées avec succès');
+                $(e).prop("disabled", true);
+                },
+                error: function(xhr, status, error) {
+                    console.error('❌ Erreur lors du chargement des informations du père:', error);
+                    alert('Erreur lors du chargement des informations du père');
+                }
+            });
         }
     </script>
 {% endblock article %}

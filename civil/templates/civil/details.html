@@ -114,10 +114,13 @@
         </div>
 
         <!-- Liste de Copies de Naissance -->
-         <div class="container flex flex-col gap-2">
+         <div class="container flex flex-wrap gap-4 py-4 max-h-80 overflow-auto">
             {% for doc in document %}
-            <a href="{% url 'civil:certificate-preview' doc.pk %}" class="w-full shadow-md rounded-lg p-4 bg-white hover:bg-blue-50">
-                <p class="contain-content text-nowrap text-ellipsis">
+            <a href="{% url 'civil:certificate-preview' doc.pk %}"
+            class="w-fit shadow-md rounded-lg p-4 bg-white hover:bg-blue-50"
+            title="{{ doc.date_created|date:'d-m-Y H:i' }} --- N° {{ doc.pk }} --- {{ doc.birth_type }} --- {{ doc.get_price|intcomma }} Ar --- x{{ doc.num_copy }} --- {{ doc.get_total_price|intcomma }} Ar"
+            >
+                <p class="whitespace-nowrap">
                 <span class="text-blue-400">{{ doc.date_created|date:"d-m-Y H:i" }} </span>
                 --- N° {{ doc.pk }} --- {{ doc.birth_type }} --- {{ doc.get_price|intcomma }} Ar --- x{{ doc.num_copy }} --- {{ doc.get_total_price|intcomma }} Ar
                 </p>
