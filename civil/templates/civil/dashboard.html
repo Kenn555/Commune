@@ -76,8 +76,8 @@
   <div class="grid 2xl:grid-cols-3 max-2xl:grid-cols-2 max-md:grid-cols-1 gap-y-10 gap-x-5">
     {% for fkt in cetificates_year_fkt__data %}
     <div class="flex flex-col w-full h-[300px] p-4 bg-white rounded-lg shadow-md transform ease-linear duration-300">
-      <h5 class="contain-content text-nowrap text-ellipsis text-md font-semibold font-sans">
-        Titre de graphique - {{ fkt }}
+      <h5 class="flex justify-between contain-content text-nowrap text-ellipsis text-md font-semibold font-sans">
+        <span>Titre de graphique - {{ fkt }}</span> <span class="text-sky-500">{{ cetificates_year_fkt__many|values:fkt }}</span>
       </h5>
       <div class="overflow-x-auto">
         <div class="h-full max-md:w-[500px]">

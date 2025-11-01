@@ -20,7 +20,7 @@ class UserForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD.replace("w-full min-w-52", "w-36 text-gray-500") + " text-center text-lg tracking-widest cursor-pointer", 
-                "placeholder": "0000000001",
+                "title": "0000000001",
                 "title": "Matricule",
             }
         )
@@ -31,7 +31,6 @@ class UserForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert her/his first name"),
                 "title": _("Insert her/his first name"),
             }
         )
@@ -42,7 +41,6 @@ class UserForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert her/his last name"),
                 "title": _("Insert her/his last name"),
             }
         )
@@ -53,7 +51,6 @@ class UserForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert her/his username"),
                 "title": _("Insert her/his username"),
             }
         )
@@ -64,7 +61,6 @@ class UserForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert her/his password"),
                 "title": _("Insert her/his password"),
             }
         )
@@ -75,7 +71,6 @@ class UserForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert her/his email"),
                 "title": _("Insert her/his email"),
             }
         )
@@ -117,7 +112,6 @@ class StaffForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD.replace("w-full min-w-52", "w-36 text-gray-500") + " text-center text-lg tracking-widest cursor-pointer", 
-                "placeholder": "0000000001",
                 "title": "Matricule",
             }
         )
@@ -129,7 +123,6 @@ class StaffForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_staff", 
-                "placeholder": _("Insert her/his first name"),
                 "title": _("Insert her/his first name"),
             }
         )
@@ -140,7 +133,6 @@ class StaffForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_staff", 
-                "placeholder": _("Insert her/his last name"),
                 "title": _("Insert her/his last name"),
             }
         )
@@ -175,7 +167,6 @@ class StaffForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert her/his first contact"),
                 "title": _("Insert her/his first contact"),
             }
         )
@@ -188,7 +179,6 @@ class StaffForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert her/his second contact"),
                 "title": _("Insert her/his second contact"),
             }
         )
@@ -200,7 +190,6 @@ class StaffForm(forms.Form):
         widget=forms.EmailInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert her/his email"),
                 "title": _("Insert her/his email"),
             }
         )
@@ -208,11 +197,11 @@ class StaffForm(forms.Form):
 
     title = forms.ModelChoiceField(
         label=_("Title"),
-        queryset=Role.objects.all(),
+        queryset=Role.objects.all().order_by('service__grade', 'grade'),
         widget=forms.Select(
             attrs={
                 "class": CLASS_FIELD,
-                "placeholder": _("Select a Application..."),
+                "title": _("Select a Application..."),
             }
         )
     )
@@ -222,7 +211,6 @@ class StaffForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert her/his username"),
                 "title": _("Insert her/his username"),
             }
         )
@@ -233,66 +221,10 @@ class StaffForm(forms.Form):
         widget=forms.PasswordInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert her/his password"),
                 "title": _("Insert her/his password"),
             }
         )
     )
-
-    # title = forms.CharField(
-    #     label=_("Title"), 
-    #     widget=forms.TextInput(
-    #         attrs={
-    #             "class": CLASS_FIELD, 
-    #             "placeholder": _("Insert her/his role"),
-    #             "title": _("Insert her/his role"),
-    #         }
-    #     )
-    # )
-
-    # description = forms.CharField(
-    #     label=_("Description"), 
-    #     widget=forms.TextInput(
-    #         attrs={
-    #             "class": CLASS_FIELD, 
-    #             "placeholder": _("Insert her/his title"),
-    #             "title": _("Insert her/his title"),
-    #         }
-    #     )
-    # )
-
-    # application = forms.ModelChoiceField(
-    #     label=_("Application"),
-    #     queryset=Application.objects.all(),
-    #     widget=forms.Select(
-    #         attrs={
-    #             "class": CLASS_FIELD,
-    #             "placeholder": _("Select a Application..."),
-    #         }
-    #     )
-    # )
-
-    # service = forms.ModelChoiceField(
-    #     label=_("Service"),
-    #     queryset=Service.objects.all(),
-    #     widget=forms.Select(
-    #         attrs={
-    #             "class": CLASS_FIELD,
-    #             "placeholder": _("Select a Service..."),
-    #         }
-    #     )
-    # )
-
-    # is_boss = forms.BooleanField(
-    #     label=_("Manager"),
-    #     required=False,
-    #     label_suffix="",
-    #     widget=forms.CheckboxInput(
-    #         attrs={
-                
-    #         }
-    #     )
-    # )
 
     fieldsets = {
         _("Matricule"): ["number"],
@@ -322,3 +254,59 @@ class StaffForm(forms.Form):
                 raise TypeError(f"Invalid type for fieldset '{title}': {type(fields).__name__}")
 
         return fs
+
+
+class RoleForm(forms.Form):
+    title = forms.CharField(
+        label=_("Title"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert her/his role"),
+            }
+        )
+    )
+
+    description = forms.CharField(
+        label=_("Description"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert her/his title"),
+            }
+        )
+    )
+
+    service = forms.ModelChoiceField(
+        label=_("Service"),
+        queryset=Service.objects.all().order_by('title'),
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD,
+                "title": _("Select a Service..."),
+            }
+        )
+    )
+
+    grade = forms.IntegerField(
+        label=_("Grade"),
+        min_value=1,
+        initial=2,
+        widget=forms.NumberInput(
+            attrs={
+                "class": CLASS_FIELD + " text-center",
+                "title": _("Insert the Grade in the Service"),
+            }
+        )
+    )
+
+    application = forms.ModelChoiceField(
+        label=_("Application"),
+        queryset=Application.objects.all(),
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD,
+                "title": _("Select a Application..."),
+            }
+        )
+    )

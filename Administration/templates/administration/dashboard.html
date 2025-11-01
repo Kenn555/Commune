@@ -24,14 +24,14 @@
       <span class="text-right text-2xl">{{ user.count }}</span>
     </a>
     <a
-    href="{% url 'administration:application' %}"
+    href="{% url 'administration:role' %}"
     class="
     flex flex-col bg-white shadow-md rounded-lg 
     h-20 px-4 py-2 w-60
     max-sm:w-full
     ">
-      <p class="font-semibold">{% trans "application"|capfirst %}</p>
-      <span class="text-right text-2xl">{{ application.count }}</span>
+      <p class="font-semibold">{% trans "role"|capfirst %}</p>
+      <span class="text-right text-2xl">{{ role.count }}</span>
     </a>
   </div>
   

@@ -84,6 +84,10 @@ class BirthCertificate(models.Model):
     
     @property
     def numero(self):
+        return str(self.number).zfill(3)
+
+    @property
+    def pk_str(self):
         return str(self.pk).zfill(9)
 
 class BirthCertificateDocument(models.Model):
@@ -155,6 +159,7 @@ class BirthCertificateDocument(models.Model):
         return self.status in ['DRAFT', 'CANCELLED']
 
 class DeathCertificate(models.Model):
+    number = models.IntegerField(default=0, unique=True)
     dead = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name="death_dead")
     death_day = models.DateTimeField()
     death_place = models.CharField(max_length=100)
@@ -182,6 +187,10 @@ class DeathCertificate(models.Model):
                 name='unique_death_certificate'
             )
         ]
+
+    @property
+    def numero(self):
+        return str(self.number).zfill(3)
 
     def __str__(self):
         if self.dead.gender == "M":

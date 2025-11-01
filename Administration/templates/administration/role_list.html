@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block article %}
+{% load humanize %}
+{% load i18n %}
+
+  <style>
+    div > label {
+      font-weight: 600;
+      font-family: sans-serif;
+    }
+  </style>
+  
+<div class="flex flex-col px-8 py-8 bg-white rounded-3xl gap-y-10">
+    <div class="flex">
+        <h3 class="font-semibold text-xl text-sky-900">{% translate "roles register"|upper %}</h3>
+    </div>
+
+    <form action="{% url 'administration:role-save' %}" method="post" class="flex flex-col gap-4">
+        {% csrf_token %}
+        <div class="flex flex-col peer">
+            <div class="grid grid-cols-4 max-xl:grid-cols-2 max-md:grid-cols-1 gap-x-4 gap-y-8">
+                {% for field in form %}
+                <div class="w-full">
+                {{ field.label_tag }} {{ field }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="flex justify-end gap-8 text-white">
+            <input type="submit" value="{% trans 'Submit' %}" class="bg-primary px-4 py-3 rounded-lg w-32 cursor-pointer hover:bg-blue-500">
+            <input type="reset" value="{% trans 'Reset' %}" class="bg-secondary px-4 py-3 rounded-lg w-32 cursor-pointer hover:bg-gray-500">
+        </div>
+    </form>
+
+    <div class="flex">
+        <h3 class="font-semibold text-xl text-sky-900">{% translate "roles list"|upper %}</h3>
+    </div>
+
+    <div class="overflow-auto justify-center">
+        <div class="table w-full">
+            <div class="table-header-group sticky top-0 z-10 text-md font-semibold border-b bg-white">
+                {% for header in table.headers %}
+                <div class="table-cell px-4 py-2 text-center text-nowrap border-b-2 border-gray-200">
+                    {{ header|capfirst }}
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="table-row-group max-h-[500px]">
+                {% for data in table.datas %}
+                <div class="table-row {% cycle 'bg-white' 'bg-gray-200' %} cursor-pointer border-b border-white hover:bg-blue-400 hover:text-white items-center">
+                    {% for cell in data.row %}
+                    {% if cell.header == "action" %}
+                    <div class="peer table-cell sticky py-1 px-4 right-0 invisible peer-hover:visible hover:visible">
+                        <div class="flex flex-row flex-nowrap justify-center gap-3">  
+                            {% for button in cell.buttons %}                 
+                            <a href="{% url button.url %}" class="px-3 py-1 text-white rounded-md ring-2 ring-white 
+                            {% if button.style == 'green' %}
+                            bg-green-600
+                            {% elif button.style == 'blue' %}
+                            bg-blue-600
+                            {% elif button.style == 'red' %}
+                            bg-rose-600
+                            {% endif %}
+                            ">{{ button.name|capfirst }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="peer table-cell px-4 py-2 {{ cell.style }}" title="{{ cell.title }}">
+                        {{ cell.value }}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock article %}

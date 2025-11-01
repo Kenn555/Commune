@@ -1,7 +1,6 @@
 from datetime import date, datetime, timedelta
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import gettext
 from dal import autocomplete
 
 from administration.models import Common, Fokotany, Role, Service
@@ -14,7 +13,6 @@ CLASS_FIELD = """
         focus:outline-none focus:border-b-blue-400
         focus:ring-0 focus:ring-offset-0
     """
-EXEMPLE = gettext("e.g: %(example)s")
 
 class BirthCertificateForm(forms.Form):
     # Matricule
@@ -25,7 +23,6 @@ class BirthCertificateForm(forms.Form):
         widget=forms.Select(
             attrs={
                 "class": CLASS_FIELD + "text-lg cursor-pointer", 
-                "placeholder": "Betsiaka",
                 "title": "Fokotany",
             }
         )
@@ -38,7 +35,7 @@ class BirthCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
-                "placeholder": EXEMPLE % {"example": "JOHN"},
+                "data-type": "last_name",
                 "title": _("Insert her/his last name"),
             }
         )
@@ -51,7 +48,7 @@ class BirthCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
-                "placeholder": EXEMPLE % {"example": "Doe"},
+                "data-type": "first_name",
                 "title": _("Insert her/his first name"),
             }
         )
@@ -73,7 +70,6 @@ class BirthCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": EXEMPLE % {"example": "amin'ny CSBII ao Betsiaka"},
                 "title": _("Insert the place of birth"),
             }
         )
@@ -115,8 +111,8 @@ class BirthCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
+                "data-type": "last_name",
                 "data-gender": "M",
-                "placeholder": EXEMPLE % {"example": "JOHN"},
                 "title": _("Wait for her/his father's full name"),
             }
         )
@@ -129,8 +125,8 @@ class BirthCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
+                "data-type": "first_name",
                 "data-gender": "M",
-                "placeholder": EXEMPLE % {"example": "Doe"},
                 "title": _("Wait for her/his father's full name"),
             }
         )
@@ -142,7 +138,6 @@ class BirthCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": EXEMPLE % {"example": "Betsiaka"},
                 "title": _("Wait for her/his father's place of birth"),
             }
         )
@@ -168,7 +163,6 @@ class BirthCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": EXEMPLE % {"example": "Mpamboly"},
                 "title": _("Insert her/his father's job"),
             }
         )
@@ -180,7 +174,6 @@ class BirthCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": EXEMPLE % {"example": "Betsiaka"},
                 "title": _("Insert her/his father's address"),
             }
         )
@@ -200,8 +193,8 @@ class BirthCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
+                "data-type": "last_name",
                 "data-gender": "F",
-                "placeholder": EXEMPLE % {"example": "JOHN"},
                 "title": _("Wait for her/his mother's full name"),
             }
         )
@@ -214,8 +207,8 @@ class BirthCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
+                "data-type": "first_name",
                 "data-gender": "F",
-                "placeholder": EXEMPLE % {"example": "Doe"},
                 "title": _("Wait for her/his mother's full name"),
             }
         )
@@ -226,7 +219,6 @@ class BirthCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": EXEMPLE % {"example": "Betsiaka"},
                 "title": _("Wait for her/his mother's place of birth"),
             }
         )
@@ -250,7 +242,6 @@ class BirthCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": EXEMPLE % {"example": "Mpamboly"},
                 "title": _("Insert her/his mother's job"),
             }
         )
@@ -261,7 +252,6 @@ class BirthCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": EXEMPLE % {"example": "Betsiaka"},
                 "title": _("Insert her/his mother's address"),
             }
         )
@@ -281,7 +271,7 @@ class BirthCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
-                "placeholder": EXEMPLE % {"example": "JOHN"},
+                "data-type": "last_name",
                 "title": _("Wait for the declarer's full name"),
             }
         )
@@ -294,7 +284,7 @@ class BirthCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
-                "placeholder": EXEMPLE % {"example": "Doe"},
+                "data-type": "first_name",
                 "title": _("Wait for the declarer's full name"),
             }
         )
@@ -316,7 +306,6 @@ class BirthCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": EXEMPLE % {"example": "Betsiaka"},
                 "title": _("Wait for the declarer's place of birth"),
             }
         )
@@ -340,7 +329,6 @@ class BirthCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": EXEMPLE % {"example": "Rain-jaza"},
                 "title": _("Wait for the relationship with declarer"),
             }
         )
@@ -351,7 +339,6 @@ class BirthCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": EXEMPLE % {"example": "Mpamboly"},
                 "title": _("Insert the declarer's job"),
             }
         )
@@ -362,7 +349,6 @@ class BirthCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": EXEMPLE % {"example": "Betsiaka"},
                 "title": _("Insert the declarer's address"),
             }
         )
@@ -441,7 +427,6 @@ class DeathCertificateForm(forms.Form):
         widget=forms.Select(
             attrs={
                 "class": CLASS_FIELD + "text-lg cursor-pointer", 
-                "placeholder": "e.g. Betsiaka",
                 "title": "Fokotany",
             }
         )
@@ -453,7 +438,6 @@ class DeathCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + ' searched_person', 
-                "placeholder": _("Insert her/his last name"),
                 "title": _("Insert her/his last name"),
             }
         )
@@ -466,7 +450,7 @@ class DeathCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
-                "placeholder": _("Insert her/his first name"),
+                "data-type": "first_name",
                 "title": _("Insert her/his first name"),
             }
         )
@@ -488,7 +472,6 @@ class DeathCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert the place of birth"),
                 "title": _("Insert the place of birth"),
             }
         )
@@ -512,7 +495,6 @@ class DeathCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert the place of birth"),
                 "title": _("Insert the place of birth"),
             }
         )
@@ -537,7 +519,6 @@ class DeathCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert the dead's job"),
                 "title": _("Insert the dead's job"),
             }
         )
@@ -549,7 +530,6 @@ class DeathCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert the dead's address"),
                 "title": _("Insert the dead's address"),
             }
         )
@@ -570,8 +550,8 @@ class DeathCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
+                "data-type": "last_name",
                 "data-gender": "M",
-                "placeholder": _("Wait for her/his father's last name"),
                 "title": _("Wait for her/his father's last name"),
             }
         )
@@ -584,8 +564,8 @@ class DeathCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
+                "data-type": "first_name",
                 "data-gender": "    M",
-                "placeholder": _("Wait for her/his father's first name"),
                 "title": _("Wait for her/his father's first name"),
             }
         )
@@ -613,8 +593,8 @@ class DeathCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
+                "data-type": "last_name",
                 "data-gender": "F",
-                "placeholder": _("Wait for her/his mother's last name"),
                 "title": _("Wait for her/his mother's last name"),
             }
         )
@@ -627,8 +607,8 @@ class DeathCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
+                "data-type": "first_name",
                 "data-gender": "F",
-                "placeholder": _("Wait for her/his mother's first name"),
                 "title": _("Wait for her/his mother's first name"),
             }
         )
@@ -655,7 +635,7 @@ class DeathCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
-                "placeholder": _("Wait for the declarer's last name"),
+                "data-type": "last_name",
                 "title": _("Wait for the declarer's last name"),
             }
         )
@@ -667,7 +647,7 @@ class DeathCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
-                "placeholder": _("Wait for the declarer's first name"),
+                "data-type": "first_name",
                 "title": _("Wait for the declarer's first name"),
             }
         )
@@ -689,7 +669,6 @@ class DeathCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Wait for the declarer's place of birth"),
                 "title": _("Wait for the declarer's place of birth"),
             }
         )
@@ -726,7 +705,6 @@ class DeathCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Wait for the declarer's place of birth"),
                 "title": _("Wait for the relationship with declarer"),
             }
         )
@@ -737,7 +715,6 @@ class DeathCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert the declarer's job"),
                 "title": _("Insert the declarer's job"),
             }
         )
@@ -748,7 +725,6 @@ class DeathCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "placeholder": _("Insert the declarer's address"),
                 "title": _("Insert the declarer's address"),
             }
         )

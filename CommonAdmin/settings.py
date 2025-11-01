@@ -56,7 +56,7 @@ MENU_SERVICES = {
             {"name": "dashboard", "title": _("dashboard"), "url": "administration:index"},  
             {"name": "staff", "title": _("staff"), "url": "administration:staff"},
             {"name": "user", "title": _("user"), "url": "administration:user"},
-            {"name": "application", "title": _("application"), "url": "administration:application"},
+            {"name": "role", "title": _("role"), "url": "administration:role"},
             {"name": "settings", "title": _("settings"), "url": "administration:settings"},
         ]
 }
@@ -89,7 +89,7 @@ SERVICES_APP = [
         {"name": "dashboard", "title": _("dashboard"), "url": "administration:index"},  
         {"name": "staff", "title": _("staff"), "url": "administration:staff"},
         {"name": "user", "title": _("user"), "url": "administration:user"},
-        {"name": "application", "title": _("application"), "url": "administration:application"},
+        {"name": "role", "title": _("role"), "url": "administration:role"},
         {"name": "settings", "title": _("settings"), "url": "administration:settings"},
         ]},
 ]
@@ -126,7 +126,7 @@ INSTALLED_APPS = [
     # "civil.apps.CivilConfig",
     "theme.apps.ThemeConfig",
     # Tools
-    # "django_browser_reload",
+    "django_browser_reload",
     "django_filters",
     "tailwind"
 ]
@@ -140,7 +140,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "django_browser_reload.middleware.BrowserReloadMiddleware",
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = "CommonAdmin.urls"

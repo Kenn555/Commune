@@ -12,9 +12,10 @@ from django.utils.translation import ngettext
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth.hashers import make_password
+from django.contrib import messages
 
 from account.models import User
-from administration.forms import StaffForm, UserForm
+from administration.forms import RoleForm, StaffForm, UserForm
 from administration.models import Application, Role, Service, Staff
 from civil.models import BirthCertificate
 from civil.views import add_action_url, actions
@@ -92,7 +93,7 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
         "text": [],
         "staff": Staff.objects.all(),
         "user": User.objects.all(),
-        "application": Application.objects.all(),
+        "role": Role.objects.all(),
     }
 
     for service in request.session['urls']:
@@ -281,9 +282,12 @@ def staff_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 staff.save()
             else:
                 print("Un personnel est déjà affilié à ce poste. Trouvez-en un autre !!!!")
+                messages.error(request, "This role is already occupied by another staff !")
 
+            messages.success(request, "Staff created successfully !")
             return redirect(__package__+':'+menu_name)
         else:
+            messages.error(request, "Staff Creation Error !")
             return redirect(__package__+':'+menu_name+'-register')
             
 @login_required
@@ -300,10 +304,14 @@ def staff_stop(request: WSGIRequest, pk:int) -> HttpResponseRedirect | HttpRespo
     staff.date_stoped_last_role = datetime.now()
     # Mise à null de l'ancien role
     staff.role = None
+    
+    try:
+        staff.save(update_fields=["is_active", "last_role", "date_joined_last_role", "date_stoped_last_role", "role"])
+        messages.success(request, "Staff stopped successfully !")
+    except:
+        messages.error(request, "Staff Stop Error !")
 
-    staff.save(update_fields=["is_active", "last_role", "date_joined_last_role", "date_stoped_last_role", "role"])
-
-    return redirect(__package__+':staff')
+    return redirect(__package__+':'+menu_name)
 
 @login_required
 def user_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
@@ -448,7 +456,110 @@ def user_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerman
             )
 
             print(f"L'utilisateur {user.username} a été créé !!!!!!!")
+            messages.success(request, "User created successfully !")
 
             return redirect(__package__+':'+menu_name)
         else:
+            messages.error(request, "User Creation Error !")
             return redirect(__package__+':'+menu_name+'-register')
+
+@login_required
+def role_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
+    """  """
+
+    menu_name = "role"
+    
+    line_bypage = str(request.GET.get('line', 10))
+
+    # Tous les Certificats
+    role = Role.objects.all()
+
+    # Recherche
+    if 'q' in request.GET.keys():
+        role = role.filter(
+                    Q(name__icontains=request.GET['q']) |
+                    Q(title__icontains=request.GET['q'])
+                )
+
+    # Ordre
+    role = role.order_by("service__grade", "grade")
+
+    # Pagination
+    role_bypage = Paginator(role, line_bypage)
+
+    context = {
+        "accessed": __package__ in request.session['app_accessed'],
+        "app_home": __package__ + ":index",
+        "user": request.user,
+        "app_name": __package__,
+        "menu_name": menu_name,
+        "services": request.session['urls'],
+        "common_name": getattr(settings, "COMMON_NAME"),
+        "submenus": [],
+        "form": RoleForm(),
+        "table_length": line_bypage,
+        "table": {
+            "headers": [_("number"), _("title"), _("date"), _("service"), _("grade"), _("app"), _("status"), _("occupant"), _("since"), _("action")], 
+            "datas": [
+                {                                
+                    "index" : index,
+                    "pk": role.pk,
+                    "row": [
+                        {"header": "number", "value": str(role.pk).zfill(9), "style": "text-center w-12 text-nowrap", "title": str(role.pk).zfill(9)},
+                        {"header": "title", "value": role.title, "style": "text-start w-4 text-nowrap", "title": role.title},
+                        {"header": "date", "value": role.date_created, "style": "text-start w-4 text-nowrap", "title": role.date_created},
+                        {"header": "service", "value": role.service.title.title(), "style": "text-center w-4 text-nowrap", "title": role.service.title.title()},
+                        {"header": "grade", "value": role.grade, "style": "text-center w-4 text-nowrap", "title": role.grade},
+                        {"header": "app", "value": role.app, "style": "text-center w-4 text-nowrap", "title": role.app},
+                        {"header": "status", "value": "✅" if Staff.objects.filter(role=role) else "❌", "style": "text-center w-4 text-nowrap", "title": "Is active" if Staff.objects.filter(role=role) else "Is not active"},
+                        {"header": "occupant", "value": Staff.objects.get(role=role).full_name if Staff.objects.filter(role=role) else "No one", "style": "text-center w-4 text-nowrap", "title": Staff.objects.get(role=role).full_name if Staff.objects.filter(role=role) else "No one"},
+                        {"header": "since", "value": Staff.objects.get(role=role).since if Staff.objects.filter(role=role) else "No one", "style": "text-center w-4 text-nowrap", "title": Staff.objects.get(role=role).since if Staff.objects.filter(role=role) else "No one"},
+                        {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
+                            {"name": _("open"), "url": __package__+":role", "style": "green"},
+                            {"name": _("delete"), "url": __package__+":role", "style": "red"},
+                        ]},
+                    ],
+                } for index, role in enumerate(role_bypage.get_page(1))
+            ],
+        }
+    }
+
+    for service in request.session['urls']:
+        if service['name'] == __package__:
+            context['title'] = _(service['title'])
+            if 'submenus' in list(service.keys()):
+                context['submenus'] += service['submenus']
+                for submenu in service['submenus']:
+                    if submenu['name'] == menu_name:
+                        context['menu_title'] = _(submenu['title'])
+
+    return render(request, "administration/role_list.html", context)
+
+@login_required
+def role_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
+    """  """
+
+    menu_name = "role"
+    
+    print(request.POST.keys())
+        
+    form = RoleForm(request.POST)
+
+    # Table Poste
+    if form.data and form.is_valid():
+        role, role_exists = Role.objects.get_or_create(
+            name = "_".join(form['title'].data.lower().split(" ")),
+            title = form['title'].data,
+            description = form['description'].data,
+            service = Service.objects.get(pk=form['service'].data),
+            grade = form['grade'].data,
+            app = Application.objects.get(pk=form['application'].data),
+        )
+
+
+        print(f"L'utilisateur {role.name} a été créé !!!!!!!")
+        messages.success(request, "User created successfully !")
+    else:
+        messages.error(request, "User Creation Error !")
+
+    return redirect(__package__+':'+menu_name)

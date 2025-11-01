@@ -36,6 +36,11 @@ CERTIFICATE = {
     "marriage": MarriageCertificateForm,
 }
 
+GENDER_CHOICES = {
+    'M': _("Male"),
+    'F': _("Female")
+}
+
 TIMEZONE_MGA = timezone(timedelta(hours=3))
 TIMEZONE_UTC = timezone(timedelta(hours=0))
 
@@ -193,15 +198,15 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
     deaths = DeathCertificate.objects.all()
     marriages = MarriageCertificate.objects.all()
 
-    years_qr = BirthCertificate.objects.annotate(year=TruncYear('born__birthday', tzinfo=TIMEZONE_UTC)).values_list('year').order_by('year')
+    years_qr = BirthCertificate.objects.annotate(year=TruncYear('born__birthday', tzinfo=TIMEZONE_UTC)).values_list('year').order_by('year').reverse()
 
-    years = []
+    years = [datetime.now().year]
 
     for year in years_qr:
         if not year[0].year in years:
             years.append(year[0].year)
 
-    years.reverse()
+    # years.reverse()
 
     births_this_year = births.filter(
         born__birthday__gte=year__first_day,
@@ -351,10 +356,13 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
 
     certificates_year = {
             fkt.name: json.dumps({
-                "labels": ['Acte de Naissance', 'Acte de Décès'],
+                "labels": [
+                    'Acte de Naissance~' + str(births_this_year.filter(fokotany=fkt).count()), 
+                    'Acte de Décès~' + str(deaths_this_year.filter(fokotany=fkt).count())
+                ],
                 "datasets": [
                     {
-                        'label': gender['gender'],
+                        'label': gender['gender'] + f"~{sum(gender['count'])}",
                         'data': gender['count'],
                         'backgroundColor': gender['color'],
                         'borderColor':  gender['color'],
@@ -363,6 +371,13 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
                 ]
             }) for fkt in fokotany
         }
+    
+    context['cetificates_year_fkt__many'] = {
+        fkt.name : sum([
+            births_this_year.filter(fokotany=fkt).count(), 
+            deaths_this_year.filter(fokotany=fkt).count()
+        ]) for fkt in fokotany
+    }
 
     context["cetificates_year_fkt__data"] = certificates_year
 
@@ -402,7 +417,7 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             {"name": "date", "header": _("date"), "db_col_name": "date_register", "type": "date", "query": ["date_register__date"]},
             {"name": "number", "header": _("number"), "db_col_name": "number", "type": "number", "query": ["number"]},
             {"name": "full name", "header": _("full name"), "db_col_name": "born__last_name" if get_language() == 'mg' else "born__first_name", "type": "search", "query": ["born__last_name__icontains", "born__first_name__icontains"]},
-            {"name": "gender", "header": _("gender"), "db_col_name": "born__gender", "type": "select", "query": ["born__gender__icontains"], 'select': Person.GENDER_CHOICES},
+            {"name": "gender", "header": _("gender"), "db_col_name": "born__gender", "type": "select", "query": ["born__gender__icontains"], 'select': GENDER_CHOICES},
             {"name": "age", "header": _("age"), "db_col_name": "born__birthday", "type": "number", "query": ["born__birthday__lte"]},
             {"name": "birthday", "header": _("birthday"), "db_col_name": "born__birthday", "type": "date", "query": ["born__birthday"]},
             {"name": "father", "header": _("father"), "db_col_name": "father__last_name" if get_language() == 'mg' else "father__first_name", "type": "search", "query": ["father__last_name__icontains", "father__first_name__icontains"]},
@@ -525,7 +540,7 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 # print(certificates_data)
                 break
     else:
-        certificates_data = certificates_data.order_by("pk").reverse()
+        certificates_data = certificates_data.order_by("date_register").reverse()
 
     # Pagination
     certificate_bypage = Paginator(certificates_data, line_bypage)
@@ -561,6 +576,7 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
         "per_page": _(' per ') + str(certificate_bypage.num_pages),
         "table": {
             "headers": headers, 
+            "headers_json": json.dumps(headers), 
             "datas": [
                 {                                
                     "index" : index,
@@ -572,7 +588,7 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                     "row": [
                         {"header": "status", "value": (birth.born.birthday.astimezone(TIMEZONE_MGA) + timedelta(days=30)).timestamp() < datetime.now().timestamp(), "style": "", "title": "J" + str((birth.born.birthday.astimezone(TIMEZONE_MGA) + timedelta(days=30)).timetuple().tm_yday - datetime.now().timetuple().tm_yday)},
                         {"header": "date", "value": format(birth.date_register.astimezone(TIMEZONE_MGA),'%d/%m/%Y'), "style": "text-center w-4 text-nowrap", "title": birth.date_register},
-                        {"header": "number", "value": str(birth.number).zfill(9), "style": "text-center w-12 text-nowrap", "title": str(birth.number).zfill(9)},
+                        {"header": "number", "value": "N° " + str(birth.number), "style": "text-center w-12 text-nowrap", "title": "N° " + str(birth.number)},
                         {"header": "full name", "value": birth.born, "style": "text-start w-4 text-nowrap", "title": birth.born},
                         {"header": "gender", "value": Person.GENDER_CHOICES[birth.born.gender], "style": "text-center text-nowrap", "title": Person.GENDER_CHOICES[birth.born.gender]},
                         {"header": "age", "value": date.today().year - birth.born.birthday.astimezone(TIMEZONE_MGA).year, "style": "text-center text-nowrap", "title": ngettext("%(age)d year old", "%(age)d years old", date.today().year - birth.born.birthday.astimezone(TIMEZONE_MGA).year) % {"age": date.today().year - birth.born.birthday.astimezone(TIMEZONE_MGA).year}},
@@ -624,7 +640,7 @@ def birth_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponseP
         "app_name": __package__,
         "menu_name": menu_name,
         "form": CERTIFICATE[menu_name](),
-        "number_initial": "1".zfill(9) if not BirthCertificate.objects.count() else str(BirthCertificate.objects.last().number + 1).zfill(9),
+        "number_initial": "1".zfill(3) if not BirthCertificate.objects.count() else str(BirthCertificate.objects.last().number + 1).zfill(3),
         "register_manager": __package__ + ":register_manager",
         "page_urls": {"list": __package__ + ":" + menu_name, "register": __package__ + ":" + menu_name + "-register"},
         "services": request.session['urls'],
@@ -1078,10 +1094,9 @@ def death(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
         "per_page": _(' per ') + str(certificate_bypage.num_pages),
         "table": {
             "headers": headers, 
+            "datas": []
         }
     }
-
-    context["table"]["datas"] = []
 
     for index, death in enumerate(certificate_page):
         if BirthCertificate.objects.filter(born=death.dead) and BirthCertificate.objects.filter(born=BirthCertificate.objects.get(born=death.dead).father):
@@ -1103,7 +1118,7 @@ def death(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
                 "detail_url": 'civil:birth-detail',
                 "row": [
                     {"header": "date", "value": format(death.date_created.astimezone(TIMEZONE_MGA),'%d/%m/%Y'), "style": "text-center w-4 text-nowrap", "title": death.date_created},
-                    {"header": "number", "value": str(death.pk).zfill(9), "style": "text-center w-12 text-nowrap", "title": str(death.pk).zfill(9)},
+                    {"header": "number", "value": "N° " + death.numero, "style": "text-center w-12 text-nowrap", "title": "N° " + death.numero},
                     {"header": "full name", "value": death.dead, "style": "text-start w-4 text-nowrap", "title": death.dead},
                     {"header": "gender", "value": Person.GENDER_CHOICES[death.dead.gender], "style": "text-center text-nowrap", "title": Person.GENDER_CHOICES[death.dead.gender]},
                     {"header": "lived", "value": death.death_day.astimezone(TIMEZONE_MGA).year - death.dead.birthday.astimezone(TIMEZONE_MGA).year, "style": "text-center text-nowrap", "title": ngettext("%(age)d year old", "%(age)d years old", death.death_day.astimezone(TIMEZONE_MGA).year - death.dead.birthday.astimezone(TIMEZONE_MGA).year) % {"age": death.death_day.astimezone(TIMEZONE_MGA).year - death.dead.birthday.astimezone(TIMEZONE_MGA).year}},
@@ -1152,7 +1167,7 @@ def death_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponseP
         "app_name": __package__,
         "menu_name": menu_name,
         "form": CERTIFICATE[menu_name](),
-        "number_initial": "1".zfill(9) if not DeathCertificate.objects.count() else str(BirthCertificate.objects.last().id + 1).zfill(9),
+        "number_initial": "1".zfill(3) if not DeathCertificate.objects.count() else str(BirthCertificate.objects.last().number + 1).zfill(3),
         "register_manager": __package__ + ":register_manager",
         "page_urls": {"list": __package__ + ":" + menu_name, "register": __package__ + ":" + menu_name + "-register"},
         "services": request.session['urls'],
@@ -1251,10 +1266,12 @@ def death_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             declarer_carreer = request.POST['declarer_job'].strip()
             declarer_address = request.POST['declarer_address'].strip()
             date_declaration = request.POST['declaration_date']
+            number = int(request.POST['number'])
 
             # Table BirthCertificate
             if form.is_valid():
                 DeathCertificate.objects.create(
+                    number = number,
                     dead = dead,
                     death_day = death_day,
                     death_place = death_place,

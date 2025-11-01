@@ -347,3 +347,8 @@ print(certificates_year)
 
 
 # print(context)
+
+
+activate('en')
+
+print(EXEMPLE % {'example': 'Kenn'})

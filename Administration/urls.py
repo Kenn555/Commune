@@ -18,7 +18,8 @@ urlpatterns = [
     path("user/register/", views.user_register, name="user-register"),
     path("user/save/", views.user_save, name="user-save"),
     # Applications
-    path("app/", views.staff_list, name="application"),
+    path("role/", views.role_list, name="role"),
+    path("role/save", views.role_save, name="role-save"),
     # Paramètrages
     path("settings/", views.staff_list, name="settings"),
 
