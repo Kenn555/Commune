@@ -101,7 +101,7 @@ class BirthCertificateDocument(models.Model):
     }
     
     # Relation avec le certificat
-    birth_certificate = models.ForeignKey(
+    certificate = models.ForeignKey(
         BirthCertificate, 
         on_delete=models.CASCADE, 
         related_name="document_birth",
@@ -144,8 +144,12 @@ class BirthCertificateDocument(models.Model):
         return int(self.price) * int(self.num_copy) if self.price.is_integer() else self.price * self.num_copy
     
     @property
+    def type_cert(self):
+        return 'birth_doc'
+    
+    @property
     def birth_type(self):
-        return self.birth_certificate.birth_type
+        return self.certificate.birth_type
     
     @property
     def is_validated(self):
@@ -212,7 +216,7 @@ class DeathCertificateDocument(models.Model):
     }
     
     # Relation avec le certificat
-    death_certificate = models.ForeignKey(
+    certificate = models.ForeignKey(
         DeathCertificate, 
         on_delete=models.CASCADE, 
         related_name="document_death",

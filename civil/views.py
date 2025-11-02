@@ -848,12 +848,20 @@ def birth_detail(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpR
         "mother_certificated": False,
     }
     certificate = BirthCertificate.objects.get(pk=birth_id)
+    birth_doc = BirthCertificateDocument.objects.filter(certificate=certificate)
+    death_doc = DeathCertificateDocument.objects.filter(certificate__dead=certificate.born)
+
+    print(birth_doc)
+
+    context['birth_doc'] = birth_doc
+    context['death_doc'] = death_doc
+
     document = sorted(
         chain(
-            BirthCertificateDocument.objects.filter(birth_certificate=certificate), 
-            DeathCertificateDocument.objects.filter(death_certificate__dead=certificate.born)
+            birth_doc, 
+            death_doc,
         ),
-        key=attrgetter('date_register'),
+        key=attrgetter('date_created'),
         reverse=True
     )
 
@@ -871,7 +879,7 @@ def birth_detail(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpR
         context["document_count"] += doc.num_copy 
 
     try:
-        print(document[0].birth_certificate.pk)
+        print(document[0].certificate.pk)
         context["document"] = document
     except IndexError:
         ...
@@ -916,10 +924,27 @@ def certificate_preview(request: WSGIRequest, pk:int, type_cert='birth', many=1)
 
     if is_doc:
         if type_cert == 'birth':
-            document = get_object_or_404(BirthCertificateDocument, pk=pk).birth_certificate
+            document = get_object_or_404(BirthCertificateDocument, pk=pk)
     else:
         if type_cert == 'birth':
-            document = get_object_or_404(BirthCertificate, pk=pk)
+            birth = get_object_or_404(BirthCertificate, pk=pk)
+            document = BirthCertificateDocument(
+                certificate = birth,
+                father = birth.father,
+                father_carreer = birth.father_carreer,
+                father_address = birth.father_address,
+                mother_carreer = birth.mother_carreer,
+                mother_address = birth.mother_address,
+                declarer_carreer = birth.declarer_carreer,
+                declarer_address = birth.declarer_address,
+                was_alive = birth.was_alive,
+                date_register = birth.date_register,
+                document_number = birth.number,
+                status = 'D',
+                num_copy = many,
+                date_created = datetime.now(),
+                price = ServicePrice.objects.get(pk=1).certificate_price,
+            )
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
@@ -948,16 +973,15 @@ def certificate_preview(request: WSGIRequest, pk:int, type_cert='birth', many=1)
     return render(request, "civil/preview.html", context)
 
 @login_required
-def certificate_creation(request, menu:str, type_cert:str, pk:int, many=1):
+def certificate_creation(request, menu:str, pk:int, many=1):
     """Vue pour l'impression (version simplifiée sans boutons)"""
 
     try:
-        certificate = get_object_or_404(BirthCertificate, pk=pk)
-
-        if type_cert == 'birth':
+        if menu == 'birth':
+            certificate = get_object_or_404(BirthCertificate, pk=pk)
             print(certificate)
             document = BirthCertificateDocument(
-                birth_certificate=certificate,
+                certificate=certificate,
                 father=certificate.father,
                 father_carreer=certificate.father_carreer,
                 father_address=certificate.father_address,
@@ -966,20 +990,24 @@ def certificate_creation(request, menu:str, type_cert:str, pk:int, many=1):
                 declarer_carreer=certificate.declarer_carreer,
                 declarer_address=certificate.declarer_address,
                 was_alive=certificate.was_alive,
-                status="D",
+                document_number=certificate.number,
+                status="V",
                 price=ServicePrice.objects.last().certificate_price,
                 num_copy=many,
+                date_register=certificate.date_register
             )
-        elif type_cert == 'death':
-            certificate = get_object_or_404(DeathCertificate, dead=certificate.born)
+        elif menu == 'death':
+            certificate = get_object_or_404(DeathCertificate, dead=pk)
             print(certificate)
             document = DeathCertificateDocument(
-                death_certificate=certificate,
-                status="D",
+                certificate=certificate,
+                document_number=certificate.number,
+                status="V",
                 price=ServicePrice.objects.last().certificate_price,
                 num_copy=many,
+                date_register=certificate.date_register
             )
-        # document.save()
+        document.save()
         return JsonResponse({"price": document.get_total_price})
     except:
         return JsonResponse({'error': 'Birth not found'}, status=404)

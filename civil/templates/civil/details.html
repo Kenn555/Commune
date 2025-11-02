@@ -65,8 +65,7 @@
         </div>
         <div class="flex flex-col gap-4 justify-between whitespace-nowrap">
             <div class="space-y-2 text-end">
-                <p class="text-xl text-right max-md:text-left tracking-widest"><b>N°</b> {{ certificate.numero }}</p>
-                <p class="text-right max-md:text-left tracking-widest"><b>PK :</b> {{ certificate.pk_str }}</p>
+                <p class="text-xl text-right max-md:text-left tracking-widest"><b>PK :</b> {{ certificate.pk_str }}</p>
                 <p><b>{% trans 'register date'|capfirst %} :</b> {{ certificate.date_register|date:'d-m-Y H:i' }}</p>
             </div>
             <div class="flex gap-x-7 justify-end whitespace-nowrap">
@@ -84,21 +83,23 @@
         <div class="flex flex-wrap justify-center gap-7">
             <a href="" class="flex items-center p-4 gap-4 rounded-xl shadow-md w-80">
                 <div class="flex rounded-full min-w-16 min-h-16 items-center justify-center border-4 border-blue-500 text-xl font-semibold">
-                    {{ document_count }}
+                    {{ birth_doc.count }}
                 </div>
                 <div class="flex flex-col">
                     <p class="text-md font-semibold">{% trans "Copies de Naissance"|upper %}</p>
-                    <p class="text-blue-400">{% trans 'last at ' %}{{ document.last.created_at|date:'d-m-Y H:i' }}</p>
+                    <p class="text-blue-400"><b>N°</b> {{ birth_doc.last.document_number }}</p>
+                    <p class="text-blue-400">{% trans 'last at'|capfirst %} {{ birth_doc.last.date_created|date:'d-m-Y H:i' }}</p>
                 </div>
             </a>
             {% if not certificate.born.is_alive %}
             <a href="" class="disabled:cursor-not-allowed flex items-center p-4 gap-4 rounded-xl shadow-md w-80">
                 <div class="flex rounded-full min-w-16 min-h-16 items-center justify-center border-4 border-gray-500 text-xl font-semibold">
-                    {{ 0 }}
+                    {{ death_doc.count }}
                 </div>
                 <div class="flex flex-col">
                     <p class="text-md font-semibold">{% trans "Copies de Décès"|upper %}</p>
-                    <p class="text-gray-400">{% trans 'last at ' %}</p>
+                    <p class="text-gray-400"><b>N°</b> {{ death_doc.last.document_number }}</p>
+                    <p class="text-gray-400">{% trans 'last at'|capfirst %} {{ death_doc.last.date_created|date:'d-m-Y H:i' }}</p>
                 </div>
             </a>
             {% endif %}
@@ -116,13 +117,13 @@
         <!-- Liste de Copies de Naissance -->
          <div class="container flex flex-wrap gap-4 py-4 max-h-80 overflow-auto">
             {% for doc in document %}
-            <a href="{% url 'civil:certificate-preview' doc.pk %}"
+            <a href="{% url 'civil:certificate-preview' doc.type_cert doc.pk doc.num_copy %}"
             class="w-fit shadow-md rounded-lg p-4 bg-white hover:bg-blue-50"
             title="{{ doc.date_created|date:'d-m-Y H:i' }} --- N° {{ doc.pk }} --- {{ doc.birth_type }} --- {{ doc.get_price|intcomma }} Ar --- x{{ doc.num_copy }} --- {{ doc.get_total_price|intcomma }} Ar"
             >
                 <p class="whitespace-nowrap">
                 <span class="text-blue-400">{{ doc.date_created|date:"d-m-Y H:i" }} </span>
-                --- N° {{ doc.pk }} --- {{ doc.birth_type }} --- {{ doc.get_price|intcomma }} Ar --- x{{ doc.num_copy }} --- {{ doc.get_total_price|intcomma }} Ar
+                --- N° {{ doc.document_number }} --- {{ doc.birth_type }} --- {{ doc.get_price|intcomma }} Ar --- x{{ doc.num_copy }} --- {{ doc.get_total_price|intcomma }} Ar
                 </p>
             </a>
             {% endfor %}
@@ -165,7 +166,7 @@
                     Faire Cp. Mariage
                 </a>
             </form>
-            {% if not certificate.father %}
+            {% if certificate.father %}
             <a href="" class="max-2xl:hidden peer-checked:block px-4 py-2 border border-white text-white shadow-md bg-yellow-500 hover:bg-yellow-400 rounded-lg w-full text-center cursor-pointer"
             title="Reconnaissance par le père"
             >
