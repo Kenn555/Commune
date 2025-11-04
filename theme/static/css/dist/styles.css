@@ -2482,6 +2482,10 @@ select {
   font-weight: 600;
 }
 
+.font-thin {
+  font-weight: 100;
+}
+
 .uppercase {
   text-transform: uppercase;
 }
@@ -3160,6 +3164,10 @@ select {
 
   .max-2xl\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .max-2xl\:p-0 {
+    padding: 0px;
   }
 }
 

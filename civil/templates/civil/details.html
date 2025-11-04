@@ -143,7 +143,7 @@
         <!-- Boutons d'Actions -->
          <div class="flex flex-col items-center fixed gap-2 rounded-xl bg-white shadow-md max-w-72 p-4 right-10 bottom-7 max-md:right-5 max-md:bottom-5 transform animate-out duration-300">
             <input type="checkbox" name="" id="show-action" class="hidden peer">
-            <label for="show-action" class="hidden max-2xl:block peer-checked:hidden text-xl cursor-pointer w-full h-full text-center">Actions</label>
+            <label for="show-action" class="hidden max-2xl:block peer-checked:hidden text-3xl font-extralight px-2 rounded-lg cursor-pointer w-full h-full text-center">+</label>
             <a class="max-2xl:hidden peer-checked:block px-4 py-2 border border-white text-white shadow-md bg-gray-300 rounded-lg w-full text-center cursor-not-allowed"
             title="En construction"
             >
@@ -160,9 +160,15 @@
                     <button type="button" onclick="downManyCp()" class="px-4 text-xl bg-gray-100 rounded-lg">-</button>
                     <input id="id_many_cp" name="many_cp" type="number" value=1 min=1 max=10 class="text-end w-16 focus:ring-0 border-0 border-b-2">
                     <button type="button" onclick="upManyCp()" class="px-4 text-xl bg-gray-100 rounded-lg">+</button>
-                    <input type="text" name="client_detail" id="id-client-field"
-                    placeholder="{% translate 'About the client' %}"
-                    class="w-full border-0 border-b-2 focus:ring-0">
+                    <div class="flex w-full">
+                        <select name="client_gender" id="id-client-gender" class="border-0 border-b-2 focus:ring-0">
+                            <option value="M">{% translate "Mr" %}</option>
+                            <option value="F">{% translate "Mrs" %}</option>
+                        </select>
+                        <input type="text" name="client_detail" id="id-client-field"
+                        placeholder="{% translate 'About the client' %}"
+                        class="w-full border-0 border-b-2 focus:ring-0">
+                    </div>
                 </div>
                 <button name="type_cert" value="birth" class="px-4 py-2 border border-white text-white shadow-md bg-green-600 hover:bg-green-500 rounded-lg w-full text-center cursor-pointer"
                 title="Faire une Copie de Naissance"
@@ -208,11 +214,11 @@
                 </a>
                 {% endif %}
             </form>
-            <a href="{% url 'civil:birth-delete' certificate.pk %}" class="max-2xl:hidden peer-checked:block px-4 py-2 border border-white text-white shadow-md {% if certificate %}bg-rose-600 hover:bg-rose-500{% else %}{% endif %} rounded-lg w-full text-center cursor-pointer"
+            <button type="button" onclick="supprimCertificate()" class="max-2xl:hidden peer-checked:block px-4 py-2 border border-white text-white shadow-md {% if certificate %}bg-rose-600 hover:bg-rose-500{% else %}{% endif %} rounded-lg w-full text-center cursor-pointer"
             title="Supprimer"
             >
                 Supprimer
-            </a>
+            </button>
             <a onclick="history.back()" class="max-2xl:hidden peer-checked:block px-4 py-2 border border-white text-white shadow-md bg-gray-600 hover:bg-gray-500 rounded-lg w-full text-center cursor-pointer"
             title="Retourner"
             >
@@ -232,6 +238,11 @@
     function upManyCp() {
         if ($('#id_many_cp').val() < 10) {
             $('#id_many_cp').val(Number($('#id_many_cp').val()) + 1);
+        }
+    }
+    function supprimCertificate(){
+        if (confirm('{% trans "Are you sure you want to delete this certificate ? This action will delete all documents that attached to it." %}')) {
+            document.location.assign("{% url 'civil:birth-delete' 1 %}".replace('1', Number.parseInt('{{ certificate.pk|safe }}')));
         }
     }
 </script>

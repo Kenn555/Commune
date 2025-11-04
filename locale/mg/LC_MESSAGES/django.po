@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-31 11:14+0300\n"
+"POT-Creation-Date: 2025-11-04 15:32+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,17 +28,20 @@ msgid "dashboard"
 msgstr "Tabilao"
 
 #: .\CommonAdmin\settings.py:39 .\CommonAdmin\settings.py:69
-#: .\civil\templates\civil\dashboard.html:22 .\civil\views.py:292
+#: .\civil\templates\civil\dashboard.html:22 .\civil\views.py:310
+#: .\civil\views.py:396
 msgid "birth certificate"
 msgstr "taratasy mpahaterana"
 
 #: .\CommonAdmin\settings.py:40 .\CommonAdmin\settings.py:70
-#: .\civil\templates\civil\dashboard.html:30 .\civil\views.py:299
+#: .\civil\templates\civil\dashboard.html:30 .\civil\views.py:317
+#: .\civil\views.py:397
 msgid "death certificate"
 msgstr "taratasy mpahafatesana"
 
 #: .\CommonAdmin\settings.py:41 .\CommonAdmin\settings.py:71
-#: .\civil\templates\civil\dashboard.html:38
+#: .\civil\templates\civil\dashboard.html:38 .\civil\views.py:324
+#: .\civil\views.py:398
 msgid "marriage certificate"
 msgstr "taratasy mpanambadiana"
 
@@ -93,7 +96,7 @@ msgid "Number"
 msgstr "Nomerao"
 
 #: .\administration\forms.py:30 .\administration\forms.py:121
-#: .\civil\forms.py:45 .\civil\forms.py:447 .\civil\forms.py:773
+#: .\civil\forms.py:45 .\civil\forms.py:447 .\civil\forms.py:786
 msgid "First Name"
 msgstr "Fanampin'anarana"
 
@@ -103,12 +106,12 @@ msgid "Insert her/his first name"
 msgstr "Ampidiro ny fanampin'anarana"
 
 #: .\administration\forms.py:40 .\administration\forms.py:132
-#: .\civil\forms.py:33 .\civil\forms.py:437 .\civil\forms.py:768
+#: .\civil\forms.py:33 .\civil\forms.py:437 .\civil\forms.py:781
 msgid "Last Name"
 msgstr "Anarana"
 
 #: .\administration\forms.py:44 .\administration\forms.py:136
-#: .\civil\forms.py:39 .\civil\forms.py:441 .\civil\forms.py:769
+#: .\civil\forms.py:39 .\civil\forms.py:441 .\civil\forms.py:782
 msgid "Insert her/his last name"
 msgstr "Ampidiro ny anarana"
 
@@ -139,14 +142,14 @@ msgstr "Ampidiro ny anarana"
 
 #: .\administration\forms.py:80 .\administration\forms.py:230
 #: .\administration\templates\administration\user_register.html:5
-#: .\civil\forms.py:384 .\civil\forms.py:734 .\civil\forms_model.py:65
-#: .\civil\templates\civil\register.html:5 .\civil\views.py:666
-#: .\civil\views.py:1193
+#: .\civil\forms.py:384 .\civil\forms.py:747 .\civil\forms_model.py:65
+#: .\civil\templates\civil\register.html:5 .\civil\views.py:714
+#: .\civil\views.py:1408
 msgid "Matricule"
 msgstr "Nomerao"
 
 #: .\administration\forms.py:81 .\administration\forms.py:231
-#: .\administration\views.py:440 .\civil\forms.py:385 .\civil\forms.py:735
+#: .\administration\views.py:440 .\civil\forms.py:385 .\civil\forms.py:748
 #: .\civil\forms_model.py:66 .\civil\forms_model.py:92
 msgid "Informations"
 msgstr "Mombamomba"
@@ -239,13 +242,13 @@ msgstr "Ampidiro ny toerana nahaterahany"
 msgid "Application"
 msgstr "fitaovana"
 
-#: .\administration\models.py:73 .\civil\models.py:10 .\civil\tests.py:233
-#: .\civil\views.py:40 .\civil\views.py:333
+#: .\administration\models.py:73 .\civil\models.py:11 .\civil\views.py:41
+#: .\civil\views.py:365
 msgid "Male"
 msgstr "Lahy"
 
-#: .\administration\models.py:74 .\civil\models.py:11 .\civil\tests.py:234
-#: .\civil\views.py:41 .\civil\views.py:334
+#: .\administration\models.py:74 .\civil\models.py:12 .\civil\views.py:42
+#: .\civil\views.py:366
 msgid "Female"
 msgstr "Vavy"
 
@@ -254,7 +257,7 @@ msgstr "Vavy"
 msgid "%(first_name)s %(last_name)s, %(role)s,"
 msgstr "%(last_name)s %(first_name)s, %(role)s,"
 
-#: .\administration\models.py:106 .\civil\models.py:31 .\civil\models.py:34
+#: .\administration\models.py:106 .\civil\models.py:33 .\civil\models.py:42
 #, python-format
 msgid "%(first_name)s %(last_name)s"
 msgstr "%(last_name)s %(first_name)s"
@@ -316,7 +319,7 @@ msgid "Lines"
 msgstr "fitrandrahana"
 
 #: .\administration\templates\administration\user_register.html:4
-#: .\civil\forms.py:386 .\civil\forms.py:736
+#: .\civil\forms.py:386 .\civil\forms.py:749
 #: .\civil\templates\civil\register.html:4
 msgid "Other Informations"
 msgstr "Mombamomba ny afa"
@@ -331,12 +334,12 @@ msgid "Do a Certificate"
 msgstr "taratasy mpahafatesana"
 
 #: .\administration\views.py:152 .\administration\views.py:358
-#: .\administration\views.py:502 .\civil\views.py:408 .\civil\views.py:947
+#: .\administration\views.py:502 .\civil\views.py:455 .\civil\views.py:1137
 msgid "number"
 msgstr "Nomerao"
 
 #: .\administration\views.py:152 .\administration\views.py:358
-#: .\civil\views.py:409 .\civil\views.py:948
+#: .\civil\views.py:456 .\civil\views.py:1138
 msgid "full name"
 msgstr "anarana feno"
 
@@ -344,19 +347,19 @@ msgstr "anarana feno"
 msgid "title"
 msgstr ""
 
-#: .\administration\views.py:152 .\civil\views.py:410 .\civil\views.py:949
+#: .\administration\views.py:152 .\civil\views.py:457 .\civil\views.py:1139
 msgid "gender"
 msgstr "sokajy"
 
-#: .\administration\views.py:152 .\civil\views.py:411
+#: .\administration\views.py:152 .\civil\views.py:458
 msgid "age"
 msgstr "taona"
 
 #: .\administration\views.py:152 .\civil\templates\civil\details.html:17
 #: .\civil\templates\civil\details.html:30
 #: .\civil\templates\civil\details.html:43
-#: .\civil\templates\civil\details.html:54 .\civil\views.py:412
-#: .\civil\views.py:951
+#: .\civil\templates\civil\details.html:54 .\civil\views.py:459
+#: .\civil\views.py:1141
 msgid "birthday"
 msgstr "andro nahaterahany"
 
@@ -369,12 +372,12 @@ msgid "service"
 msgstr ""
 
 #: .\administration\views.py:152 .\administration\views.py:358
-#: .\administration\views.py:502 .\civil\views.py:406
+#: .\administration\views.py:502 .\civil\views.py:453
 msgid "status"
 msgstr "sora-piakohonana"
 
 #: .\administration\views.py:152 .\administration\views.py:358
-#: .\administration\views.py:502 .\civil\views.py:417 .\civil\views.py:956
+#: .\administration\views.py:502 .\civil\views.py:464 .\civil\views.py:1146
 msgid "action"
 msgstr ""
 
@@ -382,18 +385,13 @@ msgstr ""
 msgid "(before)"
 msgstr "(taloha)"
 
-#: .\administration\views.py:162 .\civil\views.py:584 .\civil\views.py:808
-#: .\civil\views.py:1114
+#: .\administration\views.py:162 .\civil\views.py:632 .\civil\views.py:878
+#: .\civil\views.py:1306
 #, python-format
 msgid "%(age)d year old"
 msgid_plural "%(age)d years old"
 msgstr[0] ""
 msgstr[1] ""
-
-#: .\administration\views.py:168 .\administration\views.py:518
-#: .\civil\views.py:591 .\civil\views.py:1121
-msgid "open"
-msgstr ""
 
 #: .\administration\views.py:169
 msgid "stop"
@@ -436,11 +434,11 @@ msgid "modify"
 msgstr ""
 
 #: .\administration\views.py:373 .\administration\views.py:519
-#: .\civil\views.py:593
+#: .\civil\views.py:641
 msgid "delete"
 msgstr ""
 
-#: .\administration\views.py:502 .\civil\views.py:407 .\civil\views.py:946
+#: .\administration\views.py:502 .\civil\views.py:454 .\civil\views.py:1136
 msgid "date"
 msgstr ""
 
@@ -458,6 +456,10 @@ msgstr ""
 
 #: .\administration\views.py:502
 msgid "since"
+msgstr ""
+
+#: .\administration\views.py:518 .\civil\views.py:639 .\civil\views.py:1313
+msgid "open"
 msgstr ""
 
 #: .\civil\forms.py:20 .\civil\forms.py:424
@@ -589,59 +591,59 @@ msgstr "Andraso ny fivoahan'ny toerana nahaterahany"
 msgid "Wait for the declarer's date of birth"
 msgstr " Andraso ny fivoahan'ny daty nahaterahany"
 
-#: .\civil\forms.py:328 .\civil\forms.py:704
+#: .\civil\forms.py:328 .\civil\forms.py:691
 msgid "Relationship"
 msgstr ""
 
-#: .\civil\forms.py:332 .\civil\forms.py:708
+#: .\civil\forms.py:332 .\civil\forms.py:695
 msgid "Wait for the relationship with declarer"
 msgstr ""
 
-#: .\civil\forms.py:338 .\civil\forms.py:714
+#: .\civil\forms.py:338 .\civil\forms.py:701
 msgid "Declarer's Job"
 msgstr "Asan'ny Ray"
 
-#: .\civil\forms.py:342 .\civil\forms.py:718
+#: .\civil\forms.py:342 .\civil\forms.py:705
 msgid "Insert the declarer's job"
 msgstr "Ampidiro ny asan'"
 
-#: .\civil\forms.py:348 .\civil\forms.py:724
+#: .\civil\forms.py:348 .\civil\forms.py:711
 msgid "Declarer's Address"
 msgstr "Asan'ny Ray"
 
-#: .\civil\forms.py:352 .\civil\forms.py:728
+#: .\civil\forms.py:352 .\civil\forms.py:715
 msgid "Insert the declarer's address"
 msgstr "Ampidiro ny asan'"
 
-#: .\civil\forms.py:358 .\civil\forms.py:691
+#: .\civil\forms.py:358 .\civil\forms.py:721
 msgid "Date of Declaration"
 msgstr "Andro nahafatesany"
 
-#: .\civil\forms.py:365 .\civil\forms.py:698
+#: .\civil\forms.py:365 .\civil\forms.py:728
 msgid "Wait for the date of declaration"
 msgstr " Andraso ny fivoahan'ny daty nahaterahany"
 
-#: .\civil\forms.py:371
+#: .\civil\forms.py:371 .\civil\forms.py:734
 msgid "Date of Register"
 msgstr "Andro nahafatesany"
 
-#: .\civil\forms.py:378
+#: .\civil\forms.py:378 .\civil\forms.py:741
 msgid "Wait for the date of register"
 msgstr " Andraso ny fivoahan'ny daty nahaterahany"
 
-#: .\civil\forms.py:387 .\civil\forms.py:737
-#: .\civil\templates\civil\details.html:29 .\civil\views.py:413
-#: .\civil\views.py:953
+#: .\civil\forms.py:387 .\civil\forms.py:750
+#: .\civil\templates\civil\details.html:29 .\civil\views.py:460
+#: .\civil\views.py:1143
 msgid "father"
 msgstr "ray"
 
-#: .\civil\forms.py:391 .\civil\forms.py:738
-#: .\civil\templates\civil\details.html:42 .\civil\views.py:414
-#: .\civil\views.py:954
+#: .\civil\forms.py:391 .\civil\forms.py:751
+#: .\civil\templates\civil\details.html:42 .\civil\views.py:461
+#: .\civil\views.py:1144
 msgid "mother"
 msgstr "reny"
 
-#: .\civil\forms.py:394 .\civil\forms.py:739
+#: .\civil\forms.py:394 .\civil\forms.py:752
 #: .\civil\templates\civil\details.html:53
 #: .\civil\templates\civil\register.html:6
 msgid "declarer"
@@ -707,11 +709,11 @@ msgstr "Andraso ny fivoahan'ny anarany feno"
 msgid "Wait for the declarer's first name"
 msgstr "Andraso ny fivoahan'ny anarany feno"
 
-#: .\civil\forms.py:777
+#: .\civil\forms.py:790
 msgid "Date of Marriage"
 msgstr "Andro hanambadiany"
 
-#: .\civil\forms.py:782
+#: .\civil\forms.py:795
 msgid "Place of Marriage"
 msgstr "Toerana hanambadiany"
 
@@ -723,62 +725,74 @@ msgstr "Ray aman-dReny"
 msgid "Informations Mariage"
 msgstr "Andro hanambadiany"
 
-#: .\civil\models.py:38
+#: .\civil\models.py:33 .\civil\models.py:42
+#, fuzzy, python-format
+#| msgid "%(first_name)s %(last_name)s"
+msgid "%(last_name)s"
+msgstr "%(last_name)s %(first_name)s"
+
+#: .\civil\models.py:47
 msgid "Birth"
 msgstr "Fahaterahana"
 
-#: .\civil\models.py:39
+#: .\civil\models.py:48
 msgid "Birth and Recognition"
 msgstr "Fahaterahana sy Fanjanahana"
 
-#: .\civil\models.py:76
-#, python-format
-msgid "%(born)s born at %(birthday)s son of %(father)s%(mother)s declared by %(declarer)s, %(relationship)s, at %(date_declaration)s"
+#: .\civil\models.py:85
+#, fuzzy, python-format
+#| msgid "%(born)s born at %(birthday)s son of %(father)s%(mother)s declared by %(declarer)s, %(relationship)s, at %(date_declaration)s"
+msgid "%(born)s born at %(birthday)s son of %(father)s%(mother)s declared by %(declarer)s, %(relationship)s, at %(date_register)s"
 msgstr "%(born)s teraka tamin'ny %(birthday)s zanakalahin'i %(father)s%(mother)s araka nambaran'i %(declarer)s tamin'ny %(date_created)s"
 
-#: .\civil\models.py:78
-#, python-format
-msgid "%(born)s born at %(birthday)s daughter of %(father)s%(mother)s declared by %(declarer)s, %(relationship)s, at %(date_declaration)s"
+#: .\civil\models.py:87
+#, fuzzy, python-format
+#| msgid "%(born)s born at %(birthday)s daughter of %(father)s%(mother)s declared by %(declarer)s, %(relationship)s, at %(date_declaration)s"
+msgid "%(born)s born at %(birthday)s daughter of %(father)s%(mother)s declared by %(declarer)s, %(relationship)s, at %(date_register)s"
 msgstr "%(born)s teraka tamin'ny %(birthday)s zanakavavin'i %(father)s%(mother)s araka nambaran'i %(declarer)s tamin'ny %(date_created)s"
 
-#: .\civil\models.py:79
+#: .\civil\models.py:88
 msgid " and "
 msgstr " sy i "
 
-#: .\civil\models.py:97
+#: .\civil\models.py:106 .\civil\models.py:240
 msgid "Draft"
 msgstr ""
 
-#: .\civil\models.py:98
+#: .\civil\models.py:107 .\civil\models.py:241
 msgid "Validated"
 msgstr ""
 
-#: .\civil\models.py:99
+#: .\civil\models.py:108 .\civil\models.py:242
 msgid "Cancelled"
 msgstr ""
 
-#: .\civil\models.py:132
+#: .\civil\models.py:142 .\civil\models.py:266
 #, python-format
 msgid "Birth Certificate - %(number)s"
 msgstr "Taratasy mpiterahana - %(number)s"
 
-#: .\civil\models.py:197
+#: .\civil\models.py:230
 #, python-format
 msgid "%(dead)s dead at %(death_day)s son of %(father)s%(mother)s declared by %(declarer)s at %(date_declaration)s"
 msgstr "%(born)s teraka tamin'ny %(birthday)s zanakalahin'i %(father)s%(mother)s araka nambaran'i %(declarer)s tamin'ny %(date_created)s"
 
-#: .\civil\models.py:199
+#: .\civil\models.py:232
 #, python-format
 msgid "%(dead)s dead at %(death_day)s daughter of %(father)s%(mother)s declared by %(declarer)s at %(date_declaration)s"
 msgstr "%(born)s teraka tamin'ny %(birthday)s zanakavavin'i %(father)s%(mother)s araka nambaran'i %(declarer)s tamin'ny %(date_created)s"
 
-#: .\civil\models.py:222
+#: .\civil\models.py:285
+msgid "Death"
+msgstr "Fahafatesana"
+
+#: .\civil\models.py:334
 #, python-format
 msgid "%(groom)s and %(bride)s married at %(wedding_day)s done at %(date_created)s"
 msgstr ""
 
-#: .\civil\templates\civil\details.html:18 .\civil\views.py:416
-#: .\civil\views.py:955
+#: .\civil\templates\civil\details.html:18 .\civil\views.py:463
+#: .\civil\views.py:1145
 msgid "fokotany"
 msgstr ""
 
@@ -804,27 +818,44 @@ msgstr ""
 msgid "declaration date"
 msgstr ""
 
-#: .\civil\templates\civil\details.html:70
+#: .\civil\templates\civil\details.html:69
 msgid "register date"
 msgstr "fampidirana"
 
-#: .\civil\templates\civil\details.html:90
+#: .\civil\templates\civil\details.html:89
 msgid "Copies de Naissance"
 msgstr ""
 
 #: .\civil\templates\civil\details.html:91
-#: .\civil\templates\civil\details.html:101
-#: .\civil\templates\civil\details.html:111
-msgid "last at "
-msgstr ""
+#: .\civil\templates\civil\details.html:102
+#, fuzzy
+#| msgid "Last Name"
+msgid "last at"
+msgstr "Anarana"
 
 #: .\civil\templates\civil\details.html:100
 msgid "Copies de Décès"
 msgstr ""
 
-#: .\civil\templates\civil\details.html:110
+#: .\civil\templates\civil\details.html:111
 msgid "Copies de Mariage"
 msgstr "Andro hanambadiany"
+
+#: .\civil\templates\civil\details.html:112
+msgid "last at "
+msgstr ""
+
+#: .\civil\templates\civil\details.html:165
+msgid "Mr"
+msgstr "Atoa"
+
+#: .\civil\templates\civil\details.html:166
+msgid "Mrs"
+msgstr "Rtoa"
+
+#: .\civil\templates\civil\details.html:169
+msgid "About the client"
+msgstr ""
 
 #: .\civil\templates\civil\list.html:20
 msgid "Column"
@@ -838,11 +869,11 @@ msgstr ""
 msgid "click for sorting"
 msgstr ""
 
-#: .\civil\templates\civil\list.html:111
+#: .\civil\templates\civil\list.html:112
 msgid "No data"
 msgstr ""
 
-#: .\civil\templates\civil\list.html:123
+#: .\civil\templates\civil\list.html:126
 #, python-format
 msgid ""
 "\n"
@@ -861,92 +892,110 @@ msgstr[1] ""
 "            %(counter)s soritra.\n"
 "            "
 
-#: .\civil\templates\civil\preview.html:94
+#: .\civil\templates\civil\list.html:233
+msgid "Are you sure you want to delete this certificate ? This action will delete all documents that attached to it."
+msgstr ""
+
+#: .\civil\templates\civil\preview.html:82
 msgid "Certificate Preview"
 msgstr "Fijery ny Taratasy"
 
-#: .\civil\templates\civil\preview.html:117
+#: .\civil\templates\civil\preview.html:106
 msgid "Print"
 msgstr "Mamoaka"
 
-#: .\civil\templates\civil\preview.html:127
+#: .\civil\templates\civil\preview.html:116
 msgid "Edit"
 msgstr "Manova"
 
-#: .\civil\templates\civil\preview.html:138
+#: .\civil\templates\civil\preview.html:127
 msgid "Delete"
 msgstr "Mamafa"
 
-#: .\civil\templates\civil\preview.html:148
+#: .\civil\templates\civil\preview.html:137
 msgid "Back"
 msgstr "Miverina"
 
-#: .\civil\templates\civil\preview.html:293
+#: .\civil\templates\civil\preview.html:308
 msgid "Issued on"
 msgstr ""
 
-#: .\civil\templates\civil\preview.html:294
+#: .\civil\templates\civil\preview.html:309
 msgid "Document"
 msgstr ""
 
-#: .\civil\templates\civil\preview.html:324
+#: .\civil\templates\civil\preview.html:339
 msgid "Are you sure you want to delete this certificate?"
 msgstr ""
 
-#: .\civil\views.py:72
+#: .\civil\views.py:73
 msgid "list"
 msgstr "lisitra"
 
-#: .\civil\views.py:75
+#: .\civil\views.py:76
 msgid "register"
 msgstr "fampidirana"
 
-#: .\civil\views.py:97
+#: .\civil\views.py:98
 #, python-format
 msgid "%(last_name)s %(first_name)s - born at %(birthday_day)s at %(birthday_hour)s."
 msgstr "%(last_name)s %(first_name)s - teraka tamin'ny %(birthday_day)s tamin'ny %(birthday_hour)s."
 
-#: .\civil\views.py:415
+#: .\civil\views.py:462
 msgid "birth"
 msgstr "teraka"
 
-#: .\civil\views.py:415 .\civil\views.py:588 .\civil\views.py:809
+#: .\civil\views.py:462 .\civil\views.py:636 .\civil\views.py:879
 msgid "alive"
 msgstr "velona"
 
-#: .\civil\views.py:415 .\civil\views.py:588 .\civil\views.py:809
+#: .\civil\views.py:462 .\civil\views.py:636 .\civil\views.py:879
 msgid "dead"
 msgstr "maty"
 
-#: .\civil\views.py:566 .\civil\views.py:1084
+#: .\civil\views.py:613 .\civil\views.py:1274
 msgid " per "
 msgstr ""
 
-#: .\civil\views.py:586 .\civil\views.py:1117 .\civil\views.py:1118
+#: .\civil\views.py:634 .\civil\views.py:1309 .\civil\views.py:1310
 msgid "unknown"
 msgstr ""
 
-#: .\civil\views.py:917
-msgid "Certificate validated successfully."
-msgstr ""
-
-#: .\civil\views.py:919
-msgid "This certificate cannot be validated."
-msgstr ""
-
-#: .\civil\views.py:933
-msgid "This certificate cannot be deleted."
-msgstr ""
-
-#: .\civil\views.py:936
+#: .\civil\views.py:920 .\civil\views.py:1120
 msgid "Certificate deleted successfully."
 msgstr ""
 
-#: .\civil\views.py:950
+#: .\civil\views.py:922 .\civil\views.py:1122
+msgid "This certificate cannot be deleted."
+msgstr ""
+
+#: .\civil\views.py:1041
+#, fuzzy
+#| msgid "Birth Certificate - %(number)s"
+msgid "Birth Certificate created successfully."
+msgstr "Taratasy mpiterahana - %(number)s"
+
+#: .\civil\views.py:1044
+msgid "This birth certificate cannot be created."
+msgstr ""
+
+#: .\civil\views.py:1059
+msgid "Death Certificate created successfully."
+msgstr ""
+
+#: .\civil\views.py:1062
+msgid "This death certificate cannot be created."
+msgstr ""
+
+#: .\civil\views.py:1065
+msgid "This certificate cannot be created."
+msgstr ""
+
+#: .\civil\views.py:1140
 msgid "lived"
 msgstr "Velona"
 
-#: .\civil\views.py:952
+#: .\civil\views.py:1142
 msgid "death day"
 msgstr ""
 
@@ -960,11 +1009,11 @@ msgstr "%(title)s - Kaominina %(common_name)s."
 msgid "%(common_name)s Town"
 msgstr "Kaominina %(common_name)s"
 
-#: .\theme\templates\base.html:111
+#: .\theme\templates\base.html:112
 msgid "profil"
 msgstr "endrika"
 
-#: .\theme\templates\base.html:114
+#: .\theme\templates\base.html:115
 msgid "logout"
 msgstr "hiala"
 

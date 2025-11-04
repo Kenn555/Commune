@@ -42,6 +42,11 @@ GENDER_CHOICES = {
     'F': _("Female")
 }
 
+GENDER_CLIENT = {
+    'M': "Atoa",
+    'F': "Rtoa"
+}
+
 TIMEZONE_MGA = timezone(timedelta(hours=3))
 TIMEZONE_UTC = timezone(timedelta(hours=0))
 
@@ -636,9 +641,9 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                         {"header": "birth", "value": _("alive") if birth.was_alive else _("dead"), "style": "text-center w-4 text-nowrap", "title": _("alive") if birth.was_alive else _("dead")},
                         {"header": "fokotany", "value": birth.fokotany.name, "style": "text-start w-4 text-nowrap", "title": birth.fokotany},
                         {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
-                            {"name": _("open"), "url": "civil:person-detail", "style": "blue"},
-                            # {"name": _("print"), "url": "civil:certificate-preview", "style": "blue"},
-                            {"name": _("delete"), "url": "civil:birth-delete", "style": "red"},
+                            {"name": "open", "title": _("open"), "url": "civil:person-detail", "style": "blue"},
+                            # {"name": "print", "title": _("print"), "url": "civil:certificate-preview", "style": "blue"},
+                            {"name": "delete", "title": _("delete"), "url": "civil:birth-delete", "style": "red"},
                         ]},
                     ],
                 } for index, birth in enumerate(certificate_page)
@@ -915,8 +920,16 @@ def birth_modify(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpR
 
 @login_required
 def birth_delete(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
-    print(BirthCertificate.objects.get(pk=birth_id).delete())
-    print("SUPPRIME !!!!!!!!!!!!!!!!!!!")
+    try:
+        certificate = BirthCertificate.objects.get(pk=birth_id)
+        full_name = certificate.born.full_name
+        
+        certificate.delete()
+
+        messages.success(request, _('The Certificate of %(full_name)s deleted successfully.') % {'full_name': full_name})
+    except:
+        messages.error(request, _('This certificate cannot be deleted.'))
+
     return redirect('civil:birth')
 
 @login_required
@@ -960,7 +973,7 @@ def certificate_preview(request: WSGIRequest, pk:int) -> HttpResponseRedirect | 
                 num_copy = many,
                 date_created = datetime.now(),
                 price = ServicePrice.objects.get(pk=1).certificate_price,
-                notes = request.POST.get('client_detail', None),
+                notes = GENDER_CLIENT[request.POST.get('client_gender', '')] + " " + request.POST['client_detail'] if request.POST.get('client_detail', None) else None,
             )
         elif type_cert == 'death':
             print("DEATH !!!!!!!!!")
@@ -971,7 +984,7 @@ def certificate_preview(request: WSGIRequest, pk:int) -> HttpResponseRedirect | 
                 status = 'D',
                 num_copy = many,
                 price = ServicePrice.objects.get(pk=1).certificate_price,
-                notes = request.POST.get('client_detail', None),
+                notes = GENDER_CLIENT[request.POST.get('client_gender', '')] + " " + request.POST['client_detail'] if request.POST.get('client_detail', None) else None,
             )
 
             # messages.success(request, _('Death Certificate created successfully.'))
@@ -1030,7 +1043,7 @@ def certificate_creation(request: WSGIRequest, type_cert:str, pk:int, many:int):
                 status = 'D',
                 num_copy = many,
                 price = ServicePrice.objects.get(pk=1).certificate_price,
-                notes = request.POST.get('client_detail', None),
+                notes = GENDER_CLIENT[request.POST.get('client_gender', '')] + " " + request.POST['client_detail'] if request.POST.get('client_detail', None) else None,
             )
             document.save()
 
@@ -1048,7 +1061,7 @@ def certificate_creation(request: WSGIRequest, type_cert:str, pk:int, many:int):
                 status = 'D',
                 num_copy = many,
                 price = ServicePrice.objects.get(pk=1).certificate_price,
-                notes = request.POST.get('client_detail', None),
+                notes = GENDER_CLIENT[request.POST.get('client_gender', '')] + " " + request.POST['client_detail'] if request.POST.get('client_detail', None) else None,
             )
             document.save()
 
@@ -1105,8 +1118,10 @@ def certificate_deletion(request: WSGIRequest, menu:str, pk:int):
 
     if menu == "birth":
         document = get_object_or_404(BirthCertificateDocument, pk=pk)
+        person = document.certificate.born.pk
     if menu == "death":
         document = get_object_or_404(DeathCertificateDocument, pk=pk)
+        person = document.certificate.dead.pk
     
     if document.can_delete:
         response = document.delete()
@@ -1115,8 +1130,8 @@ def certificate_deletion(request: WSGIRequest, menu:str, pk:int):
     else:
         messages.error(request, _('This certificate cannot be deleted.'))
     
-    if menu == "birth":
-        return redirect(__package__+':person-detail', document.certificate.pk)
+    if menu == "birth" or (menu == 'death' and BirthCertificate.objects.filter(born_id=person)):
+        return redirect(__package__+':person-detail', person)
     if menu == "death":
         return redirect(__package__+':death')
 
@@ -1130,7 +1145,7 @@ def death(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
             {"name": "date", "header": _("date"), "db_col_name": "date_created", "type": "date", "query": ["date_created__date"]},
             {"name": "number", "header": _("number"), "db_col_name": "pk", "type": "number", "query": ["pk"]},
             {"name": "full name", "header": _("full name"), "db_col_name": "dead__last_name" if get_language() == 'mg' else "dead__first_name", "type": "search", "query": ["dead__last_name__icontains", "dead__first_name__icontains"]},
-            {"name": "gender", "header": _("gender"), "db_col_name": "dead__gender", "type": "select", "query": ["dead__gender__icontains"], 'select': Person.GENDER_CHOICES},
+            {"name": "gender", "header": _("gender"), "db_col_name": "dead__gender", "type": "select", "query": ["dead__gender__icontains"], 'select': GENDER_CHOICES},
             {"name": "lived", "header": _("lived"), "db_col_name": "death_day", "type": "number", "query": ["death_day__lte"]},
             {"name": "birthday", "header": _("birthday"), "db_col_name": "dead__birthday", "type": "date", "query": ["dead__birthday"]},
             {"name": "death day", "header": _("death day"), "db_col_name": "death_day", "type": "date", "query": ["death_day"]},
@@ -1268,6 +1283,7 @@ def death(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
         "per_page": _(' per ') + str(certificate_bypage.num_pages),
         "table": {
             "headers": headers, 
+            "headers_json": json.dumps(headers), 
             "datas": []
         }
     }
@@ -1303,9 +1319,9 @@ def death(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
                     {"header": "mother", "value": death.mother_full_name or _("unknown"), "style": "text-start w-4 text-nowrap", "title": death.mother_full_name or _("unknown")},
                     {"header": "fokotany", "value": death.fokotany.name, "style": "text-start w-4 text-nowrap", "title": death.fokotany},
                     {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
-                        {"name": _("open"), "url": "civil:person-detail", "style": "blue"},
-                        # {"name": _("print"), "url": "civil:certificate-preview", "style": "blue"},
-                        # {"name": _("delete"), "url": "civil:death-delete", "style": "red"},
+                        {"name": "open", "title": _("open"), "url": "civil:person-detail", "style": "blue"},
+                        # {"name": "print", "title": _("print"), "url": "civil:certificate-preview", "style": "blue"},
+                        # {"name": "delete", "title": _("delete"), "url": "civil:death-delete", "style": "red"},
                     ]},
                 ],
             }

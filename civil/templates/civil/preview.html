@@ -109,7 +109,7 @@
                         <!-- Bouton Modifier -->
                         {% if document.can_edit %}
                         <a href="" 
-                            class="flex items-center gap-2 bg-yellow-600 hover:bg-yellow-500 text-white px-6 py-2 rounded-lg transition">
+                            class="hidden items-center gap-2 bg-yellow-600 hover:bg-yellow-500 text-white px-6 py-2 rounded-lg transition">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
@@ -169,8 +169,8 @@
                         <p class="indent-1 uppercase">
                             {{ document.birth_type }}
                         </p>
-                        <p class="pr-2">{{ document.certificate.born.full_name }}</p>
-                        <p class="indent-8">{{ document.certificate.born.birthday|date:"d-m-y" }}</p>
+                        <p class="pr-2">{% if type_cert == 'birth' %}{{ document.certificate.born.full_name }}{% elif type_cert == 'death' %}{{ document.certificate.dead.full_name }}{% endif %}</p>
+                        <p class="indent-8">{% if type_cert == 'birth' %}{{ document.certificate.born.birthday|date:"d-m-y" }}{% elif type_cert == 'death' %}{{  document.certificate.death_day|date:"d-m-y" }}{% endif %}</p>
                         <p class="font-semibold indent-7 tracking-widest">---------------</p>
                     </div>
                     
@@ -210,26 +210,25 @@
                                 tamin'ny {{ document.certificate.born.birthday|date:"h"|isa_gasy }} ora{% if document.certificate.born.birthday|date:"i" != "00" %} sy {{ document.certificate.born.birthday|date:"i"|isa_gasy }} minitra{% endif %} {{ document.certificate.born.birthday|date:"h"|ora_gasy }},
                                 no {% if document.certificate.born.is_alive %}teraka {% else %}maty teo ampiterahana {% endif %}tao {{ document.certificate.born.birth_place }},
                                 Commune {% if common_name|lower in document.certificate.born.birth_place|lower %}io ihany{% else %}{{ common_name }}{% endif %}: {{ document.certificate.born.full_name }},
-                                {% if document.certificate.born.gender == 'M' %}zanakalahy{% else %}zanakavavy{% endif %}, zanak'i {% if document.father %}{{ document.father.full_name }} teraka tamin'ny {{ document.father.birthday|date:"d"|isa_gasy }} {{ document.father.birthday|date:"m"|volana_gasy|capfirst }},
+                                {% if document.certificate.born.gender == 'M' %}zanakalahy{% else %}zanakavavy{% endif %}, zanak'i {% if document.father %}{{ document.father.full_name }} teraka tamin'ny {% if document.certificate.father.birthday_is_date %}{{ document.father.birthday|date:"d"|isa_gasy }} {{ document.father.birthday|date:"m"|volana_gasy|capfirst }},{% endif %}
                                 taona {{ document.father.birthday|date:"Y"|isa_gasy }},
                                 tao {{ document.father.birth_place }},
                                 {% if document.father_carreer|lower != document.certificate.mother_carreer|lower %}{{document.father_carreer|lower}},
                                 {% endif %}{% if document.father_address != document.certificate.mother_address %}monina ao {{document.father_address}},
                                 {% endif %}{% if document.certificate_type == 'R' %}izay nanjanak'azy teo amin'ny fahaterahany {% endif %}sy {% endif %}{{ document.certificate.mother.full_name }},
-                                teraka tamin'ny {{ document.certificate.mother.birthday|date:"d"|isa_gasy }} {{ document.certificate.mother.birthday|date:"m"|volana_gasy|capfirst }},
+                                teraka tamin'ny {% if document.certificate.mother.birthday_is_date %}{{ document.certificate.mother.birthday|date:"d"|isa_gasy }} {{ document.certificate.mother.birthday|date:"m"|volana_gasy|capfirst }},{% endif %}
                                 taona {{ document.certificate.mother.birthday|date:"Y"|isa_gasy }},
                                 tao {{ document.certificate.mother.birth_place }},
                                 {% if document.father_carreer|lower != document.certificate.mother_carreer|lower %}{{document.certificate.mother_carreer|lower}},
-                                {% endif %}{% if document.father_address != document.certificate.mother_address %}monina ao {{document.certificate.mother_address}},
-                                {% endif %}{% if document.father_carreer|lower == document.certificate.mother_carreer|lower and document.father_address == document.certificate.mother_address %}samy {{document.father_carreer|lower}} sy monina ao {{document.certificate.mother_address}}{% if not '-' in document.certificate.mother_address %},
+                                {% endif %}{% if document.father_address != document.certificate.mother_address %}monina ao {{document.certificate.mother_address}}{% endif %}{% if document.father_carreer|lower == document.certificate.mother_carreer|lower and document.father_address == document.certificate.mother_address %}samy {{document.father_carreer|lower}} sy monina ao {{document.certificate.mother_address}}{% if not ' - ' in document.certificate.mother_address %},
                                 Commune ao {{ common_name }}{% endif %}{% elif document.father_carreer|lower == document.certificate.mother_carreer|lower %},
                                 samy {{document.father_carreer|lower }}{% elif document.father_address == document.certificate.mother_address %},
-                                samy monina ao {{document.certificate.mother_address}}{% if not '-' in document.certificate.mother_address %},
+                                samy monina ao {{document.certificate.mother_address}}{% if not ' - ' in document.certificate.mother_address %},
                                 Commune ao {{ common_name }}{% endif %}{% endif %}.
                             </p>
                         {% elif document.type_cert == "death_doc" %}
                             <p class="inline text-justify">
-                                _________Tamin'ny {% if document.certificate.death_day|date:"d" == 1 %}voalohany volana{% else %}{{ document.certificate.death_day|date:"d"|isa_gasy }}{% endif %} {{ document.death_day|date:"m"|volana_gasy|capfirst}}, taona {{ document.certificate.death_day|date:"Y"|isa_gasy }},
+                                _________Tamin'ny {% if document.certificate.death_day|date:"d" == 1 %}voalohany volana{% else %}{{ document.certificate.death_day|date:"d"|isa_gasy }}{% endif %} {{ document.certificate.death_day|date:"m"|volana_gasy|capfirst }}, taona {{ document.certificate.death_day|date:"Y"|isa_gasy }},
                                 tamin'ny {{ document.certificate.death_day|date:"h"|isa_gasy }} ora{% if document.certificate.death_day|date:"i" != "00" %} sy {{ document.certificate.death_day|date:"i"|isa_gasy }} minitra{% endif %} {{ document.certificate.death_day|date:"h"|ora_gasy }},
                                 no maty tao {{ document.certificate.death_place }},
                                 Commune {% if common_name|lower in document.certificate.death_place|lower %} io ihany{% else %}{{ common_name }}{% endif %}: {{ document.certificate.dead.full_name }},
@@ -257,7 +256,8 @@
                                 taona {{ document.certificate.date_register|date:"Y"|isa_gasy }},
                                 tamin'ny {{ document.certificate.date_register|date:"h"|isa_gasy }} ora {{ document.certificate.date_register|date:"h"|ora_gasy }},
                                 araky ny fanambarana nataon'i {% if document.certificate.declarer == document.certificate.father %}rainy izay {% elif document.certificate.declarer == document.certificate.mother %} reniny izay {% else %}{{ document.certificate.declarer.full_name }},
-                                teraka tamin'ny {{ document.certificate.declarer.birthday|date:"d"|isa_gasy }} {{ document.certificate.declarer.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.certificate.declarer.birthday|date:"Y"|isa_gasy }}, 
+                                teraka tamin'ny {% if document.certificate.declarer.birthday_is_date %}{{ document.certificate.declarer.birthday|date:"d"|isa_gasy }} {{ document.certificate.declarer.birthday|date:"m"|volana_gasy|capfirst }},{% endif %}
+                                taona {{ document.certificate.declarer.birthday|date:"Y"|isa_gasy }}, 
                                 tao {{ document.certificate.declarer.birth_place }}, {{ document.declarer_carreer|lower }}, monina ao {{ document.declarer_address }},
                                 izay nanatrika ny fahaterahany ka {% endif %} miara manao Sonia aminay:
                                 {{ document.certificate.responsible_staff }} mpiandraikitra sora-piankohonana ao {{ document.certificate.fokotany.name }}, rehefa novakina taminy ity soratra ity.
@@ -279,7 +279,7 @@
                         <div class="flex items-end mt-12">                        
                             <div class="flex w-full flex-col gap-y-8">
                                 <p class="indent-8 leading-tight">Kopia manontolo nadika tamin'ny boky androany 
-                                    {{ document.date_created|date:"d" }} {{ document.date_created|date:"m"|volana_gasy|capfirst }} {{ document.date_created|date:"Y" }} {% if client %}, ary nomena an’{{ document.notes }}{% endif %} .</p>
+                                    {{ document.date_created|date:"d" }} {{ document.date_created|date:"m"|volana_gasy|capfirst }} {{ document.date_created|date:"Y" }}{% if client %}, ary nomena{% if "Atoa" in document.notes %} an'{% else %} an-d{% endif %}{{ document.notes }}{% endif %}.</p>
                                 
                                 <p class="font-bold uppercase mb-2 text-center">NY MPIANDRAIKITRA SORA-PIANKOHONANA</p>
                                 
