@@ -813,6 +813,7 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 
                 # certificate_creation(request, menu_name, certificate.pk, many=1)
 
+                messages.success(request, "BirthCertificate created successfully !")
                 return redirect('civil:birth')
             else:
                 messages.error(request, "BirthCertificate Creation Error:" + form.errors.as_text)

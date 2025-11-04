@@ -382,16 +382,16 @@ class BirthCertificateForm(forms.Form):
 
     fieldsets = {
         _("Matricule"): ["fokotany"],
-        _("Informations"): ["last_name", "first_name", "gender", "birth_place", "birthday", "is_alive"],
+        _("Informations"): ["birthday", "birth_place", "last_name", "first_name", "gender", "is_alive"],
         _("Other Informations"): {
             _("father"): [
                 "father_exist", "father_last_name",
-                "father_first_name", "father_birth_place", "father_birthday", "father_job", "father_address"
+                "father_first_name", "father_birthday", "father_birth_place", "father_job", "father_address"
             ],
             _("mother"): ["mother_exist", "mother_last_name",
-                "mother_first_name", "mother_birth_place", "mother_birthday", "mother_job", "mother_address"
+                "mother_first_name", "mother_birthday", "mother_birth_place", "mother_job", "mother_address"
             ],
-            _("declarer"): ["declarer_present", "declarer_last_name", "declarer_first_name", "declarer_gender", "declarer_birth_place", "declarer_birthday", "declarer_relation", "declarer_job", "declarer_address", "declaration_date", "register_date"]
+            _("declarer"): ["declarer_present", "declarer_last_name", "declarer_first_name", "declarer_gender", "declarer_birthday", "declarer_birth_place", "declarer_job", "declarer_address", "declarer_relation", "declaration_date", "register_date"]
         },
     }
 
@@ -745,11 +745,11 @@ class DeathCertificateForm(forms.Form):
 
     fieldsets = {
         _("Matricule"): ["fokotany"],
-        _("Informations"): ["last_name", "first_name", "gender", "birth_place", "birthday", "death_place", "death_day", "dead_job", "dead_address"],
+        _("Informations"): ["birthday", "birth_place", "last_name", "first_name", "gender", "death_place", "death_day", "dead_job", "dead_address"],
         _("Other Informations"): {
             _("father"): [ "father_exist", "father_last_name", "father_first_name", "father_was_alive"],
             _("mother"): ["mother_exist", "mother_last_name","mother_first_name", "mother_was_alive"],
-            _("declarer"): ["declarer_present", "declarer_last_name", "declarer_first_name", "declarer_gender", "declarer_birth_place", "declarer_birthday", "declarer_relation", "declarer_job", "declarer_address", "declaration_date", "register_date"]
+            _("declarer"): ["declarer_present", "declarer_last_name", "declarer_first_name", "declarer_gender", "declarer_birthday", "declarer_birth_place", "declarer_job", "declarer_address", "declarer_relation", "declaration_date", "register_date"]
         },
     }
 
