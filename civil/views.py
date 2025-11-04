@@ -120,7 +120,7 @@ class MotherAutocomplete(PersonAutocomplete):
         return qs.filter(gender='F')
 
 @login_required
-def search_persons(request, type:str, q_name:str):
+def search_persons(request: WSGIRequest, type:str, q_name:str):
     """Retourne une liste de personnes en JSON"""
     try:
         person_list = Person.objects.filter(
@@ -150,7 +150,7 @@ def search_persons(request, type:str, q_name:str):
     ...
 
 @login_required 
-def get_person_details(request, person_id):
+def get_person_details(request: WSGIRequest, person_id):
     """Retourne les détails d'une personne en JSON"""
     try:
         person = Person.objects.get(id=person_id)
@@ -618,10 +618,11 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 {                                
                     "index" : index,
                     "pk": birth.pk,
+                    "person_pk": birth.born.pk,
                     "is_alive": birth.born.is_alive,
                     "father_cert_pk": BirthCertificate.objects.get(born=birth.father).pk if BirthCertificate.objects.filter(born=birth.father) else None,
                     "mother_cert_pk": BirthCertificate.objects.get(born=birth.mother).pk if BirthCertificate.objects.filter(born=birth.mother) else None,
-                    "detail_url": 'civil:birth-detail',
+                    "detail_url": 'civil:person-detail',
                     "row": [
                         {"header": "status", "value": (birth.born.birthday.astimezone(TIMEZONE_MGA) + timedelta(days=30)).timestamp() < datetime.now().timestamp(), "style": "", "title": "J" + str((birth.born.birthday.astimezone(TIMEZONE_MGA) + timedelta(days=30)).timetuple().tm_yday - datetime.now().timetuple().tm_yday)},
                         {"header": "date", "value": format(birth.date_register.astimezone(TIMEZONE_MGA),'%d/%m/%Y'), "style": "text-center w-4 text-nowrap", "title": birth.date_register},
@@ -635,7 +636,7 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                         {"header": "birth", "value": _("alive") if birth.was_alive else _("dead"), "style": "text-center w-4 text-nowrap", "title": _("alive") if birth.was_alive else _("dead")},
                         {"header": "fokotany", "value": birth.fokotany.name, "style": "text-start w-4 text-nowrap", "title": birth.fokotany},
                         {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
-                            {"name": _("open"), "url": "civil:birth-detail", "style": "blue"},
+                            {"name": _("open"), "url": "civil:person-detail", "style": "blue"},
                             # {"name": _("print"), "url": "civil:certificate-preview", "style": "blue"},
                             {"name": _("delete"), "url": "civil:birth-delete", "style": "red"},
                         ]},
@@ -825,7 +826,7 @@ def birth_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
     ...
 
 @login_required
-def birth_detail(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
+def person_detail(request: WSGIRequest, person_id) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
 
     print("DETAIL !!!!!!!!!!!!!!!!!!!")
 
@@ -847,11 +848,17 @@ def birth_detail(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpR
         "status": "",
         "mother_certificated": False,
     }
-    certificate = BirthCertificate.objects.get(pk=birth_id)
-    birth_doc = BirthCertificateDocument.objects.filter(certificate=certificate)
-    death_doc = DeathCertificateDocument.objects.filter(certificate__dead=certificate.born)
+    certificate = BirthCertificate.objects.get(born_id=person_id)
+    birth_doc = BirthCertificateDocument.objects.filter(
+        certificate=certificate, 
+        # status="V",
+    )
+    death_doc = DeathCertificateDocument.objects.filter(
+        certificate__dead_id=person_id, 
+        # status="V",
+    )
 
-    print(birth_doc)
+    print(death_doc)
 
     context['birth_doc'] = birth_doc
     context['death_doc'] = death_doc
@@ -912,9 +919,14 @@ def birth_delete(request: WSGIRequest, birth_id) -> HttpResponseRedirect | HttpR
     return redirect('civil:birth')
 
 @login_required
-def certificate_preview(request: WSGIRequest, pk:int, type_cert='birth', many=1) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
+def certificate_preview(request: WSGIRequest, pk:int) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
 
     is_doc = False
+
+    print(request.POST)
+
+    type_cert = request.POST.get('type_cert', None)
+    many = int(request.POST.get('many_cp', 1))
 
     if '_doc' in type_cert:
         type_cert = type_cert.replace('_doc', "")
@@ -924,10 +936,14 @@ def certificate_preview(request: WSGIRequest, pk:int, type_cert='birth', many=1)
 
     if is_doc:
         if type_cert == 'birth':
-            document = get_object_or_404(BirthCertificateDocument, pk=pk)
+            document = BirthCertificateDocument.objects.annotate(person=models.F('certificate__born')).get(pk=pk)
+        if type_cert == 'death':
+            document = DeathCertificateDocument.objects.annotate(person=models.F('certificate__dead')).get(pk=pk)
+        person = document.person
     else:
+        birth = get_object_or_404(BirthCertificate, pk=pk)
+        person = birth.born.pk
         if type_cert == 'birth':
-            birth = get_object_or_404(BirthCertificate, pk=pk)
             document = BirthCertificateDocument(
                 certificate = birth,
                 father = birth.father,
@@ -939,12 +955,28 @@ def certificate_preview(request: WSGIRequest, pk:int, type_cert='birth', many=1)
                 declarer_address = birth.declarer_address,
                 was_alive = birth.was_alive,
                 date_register = birth.date_register,
-                document_number = birth.number,
                 status = 'D',
                 num_copy = many,
                 date_created = datetime.now(),
                 price = ServicePrice.objects.get(pk=1).certificate_price,
+                notes = request.POST.get('client_detail', None),
             )
+        elif type_cert == 'death':
+            print("DEATH !!!!!!!!!")
+            death = DeathCertificate.objects.get(dead=birth.born)
+            print(death.number)
+            document = DeathCertificateDocument(
+                certificate = death,
+                status = 'D',
+                num_copy = many,
+                price = ServicePrice.objects.get(pk=1).certificate_price,
+                notes = request.POST.get('client_detail', None),
+            )
+
+            # messages.success(request, _('Death Certificate created successfully.'))
+            # messages.error(request, _('This death certificate cannot be created.'))
+
+        document.save()
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
@@ -958,7 +990,9 @@ def certificate_preview(request: WSGIRequest, pk:int, type_cert='birth', many=1)
         "document": document,
         "type_cert": type_cert,
         "many": many,
+        "person": person,
         "many_document": range(many),
+        "client": document.notes,
     }
 
     for service in request.session['urls']:
@@ -973,75 +1007,117 @@ def certificate_preview(request: WSGIRequest, pk:int, type_cert='birth', many=1)
     return render(request, "civil/preview.html", context)
 
 @login_required
-def certificate_creation(request, menu:str, pk:int, many=1):
+def certificate_creation(request: WSGIRequest, type_cert:str, pk:int, many:int):
     """Vue pour l'impression (version simplifiée sans boutons)"""
+    
+    birth = get_object_or_404(BirthCertificate, pk=pk)
+
+    if type_cert == 'birth':
+        try:
+            document = BirthCertificateDocument(
+                certificate = birth,
+                father = birth.father,
+                father_carreer = birth.father_carreer,
+                father_address = birth.father_address,
+                mother_carreer = birth.mother_carreer,
+                mother_address = birth.mother_address,
+                declarer_carreer = birth.declarer_carreer,
+                declarer_address = birth.declarer_address,
+                was_alive = birth.was_alive,
+                date_register = birth.date_register,
+                document_number = birth.number,
+                status = 'D',
+                num_copy = many,
+                price = ServicePrice.objects.get(pk=1).certificate_price,
+                notes = request.POST.get('client_detail', None),
+            )
+            document.save()
+
+            messages.success(request, _('Birth Certificate created successfully.'))
+            return redirect(__package__+':birth', pk=pk)
+        except:
+            messages.error(request, _('This birth certificate cannot be created.'))
+            return redirect(__package__+':person-detail', pk=document.certificate.pk)
+    elif type_cert == 'death':
+        print("DEATH !!!!!!!!!")
+        try:
+            death = get_object_or_404(DeathCertificate, dead=birth.born)
+            document = DeathCertificateDocument(
+                certificate = death,
+                status = 'D',
+                num_copy = many,
+                price = ServicePrice.objects.get(pk=1).certificate_price,
+                notes = request.POST.get('client_detail', None),
+            )
+            document.save()
+
+            messages.success(request, _('Death Certificate created successfully.'))
+            return redirect(__package__+':birth', pk=pk)
+        except:
+            messages.error(request, _('This death certificate cannot be created.'))
+            return redirect(__package__+':person-detail', pk=document.certificate.pk)
+    else:
+        messages.error(request, _('This certificate cannot be created.'))
+        if type_cert == 'death':
+            return redirect(__package__+':death')
+    
+
+    # try:
+    #     if menu == 'birth':
+    #         document = get_object_or_404(BirthCertificateDocument, pk=pk)
+    #         document.status = "V"
+    #     elif menu == 'death':
+    #         document = get_object_or_404(DeathCertificateDocument, dead=pk)
+    #         document.status = "V"
+    #     document.save()
+    #     return JsonResponse({"price": document.get_total_price})
+    # except:
+    #     return JsonResponse({'error': 'Birth not found'}, status=404)
+
+@login_required
+def certificate_validate(request: WSGIRequest, menu:str, pk):
+    """Valider un certificat"""
 
     try:
         if menu == 'birth':
-            certificate = get_object_or_404(BirthCertificate, pk=pk)
-            print(certificate)
-            document = BirthCertificateDocument(
-                certificate=certificate,
-                father=certificate.father,
-                father_carreer=certificate.father_carreer,
-                father_address=certificate.father_address,
-                mother_carreer=certificate.mother_carreer,
-                mother_address=certificate.mother_address,
-                declarer_carreer=certificate.declarer_carreer,
-                declarer_address=certificate.declarer_address,
-                was_alive=certificate.was_alive,
-                document_number=certificate.number,
-                status="V",
-                price=ServicePrice.objects.last().certificate_price,
-                num_copy=many,
-                date_register=certificate.date_register
-            )
+            document = get_object_or_404(BirthCertificateDocument, pk=pk)
+            document.date_validated = datetime.now()
+            document.validated_by = Staff.objects.get(role__access=request.user) if Staff.objects.filter(role__access=request.user) else None
+            document.status = "V"
         elif menu == 'death':
-            certificate = get_object_or_404(DeathCertificate, dead=pk)
-            print(certificate)
-            document = DeathCertificateDocument(
-                certificate=certificate,
-                document_number=certificate.number,
-                status="V",
-                price=ServicePrice.objects.last().certificate_price,
-                num_copy=many,
-                date_register=certificate.date_register
-            )
+            document = get_object_or_404(DeathCertificateDocument, pk=pk)
+            document.date_validated = datetime.now()
+            document.validated_by = Staff.objects.get(role__access=request.user) if Staff.objects.filter(role__access=request.user) else None
+            document.status = "V"
         document.save()
         return JsonResponse({"price": document.get_total_price})
     except:
         return JsonResponse({'error': 'Birth not found'}, status=404)
 
-def certificate_validate(request, pk):
+@login_required
+def certificate_deletion(request: WSGIRequest, menu:str, pk:int):
     """Valider un certificat"""
-    document = get_object_or_404(BirthCertificateDocument, pk=pk)
-    
-    if document.can_edit:
-        document.status = 'VALIDATED'
-        document.validated_by = request.user.get_full_name() or request.user.username
-        document.validated_at = timezone.now()
-        document.save()
-        messages.success(request, _('Certificate validated successfully.'))
-    else:
-        messages.error(request, _('This certificate cannot be validated.'))
-    
-    return redirect('certificate-preview', pk=pk)
 
 
-class CertificateDeleteView(DeleteView):
-    """Vue pour supprimer un certificat"""
-    model = BirthCertificateDocument
-    success_url = reverse_lazy('certificate-list')
+    if '_doc' in menu:
+        menu = menu.replace('_doc', '')
+
+    if menu == "birth":
+        document = get_object_or_404(BirthCertificateDocument, pk=pk)
+    if menu == "death":
+        document = get_object_or_404(DeathCertificateDocument, pk=pk)
     
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        
-        if not self.object.can_delete:
-            messages.error(request, _('This certificate cannot be deleted.'))
-            return redirect('certificate-preview', pk=self.object.pk)
-        
+    if document.can_delete:
+        response = document.delete()
+        print(response)
         messages.success(request, _('Certificate deleted successfully.'))
-        return super().delete(request, *args, **kwargs)
+    else:
+        messages.error(request, _('This certificate cannot be deleted.'))
+    
+    if menu == "birth":
+        return redirect(__package__+':person-detail', document.certificate.pk)
+    if menu == "death":
+        return redirect(__package__+':death')
 
 @login_required
 def death(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
@@ -1210,9 +1286,10 @@ def death(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
             {                                
                 "index" : index,
                 "pk": BirthCertificate.objects.get(born=death.dead).pk if BirthCertificate.objects.filter(born=death.dead) else None,
+                "person_pk": death.dead.pk,
                 "father_cert_pk": father_cert_pk,
                 "mother_cert_pk": mother_cert_pk,
-                "detail_url": 'civil:birth-detail',
+                "detail_url": 'civil:person-detail',
                 "row": [
                     {"header": "date", "value": format(death.date_created.astimezone(TIMEZONE_MGA),'%d/%m/%Y'), "style": "text-center w-4 text-nowrap", "title": death.date_created},
                     {"header": "number", "value": "N° " + death.numero, "style": "text-center w-12 text-nowrap", "title": "N° " + death.numero},
@@ -1225,7 +1302,7 @@ def death(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
                     {"header": "mother", "value": death.mother_full_name or _("unknown"), "style": "text-start w-4 text-nowrap", "title": death.mother_full_name or _("unknown")},
                     {"header": "fokotany", "value": death.fokotany.name, "style": "text-start w-4 text-nowrap", "title": death.fokotany},
                     {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
-                        {"name": _("open"), "url": "civil:birth-detail", "style": "blue"},
+                        {"name": _("open"), "url": "civil:person-detail", "style": "blue"},
                         # {"name": _("print"), "url": "civil:certificate-preview", "style": "blue"},
                         # {"name": _("delete"), "url": "civil:death-delete", "style": "red"},
                     ]},
@@ -1257,14 +1334,37 @@ def death_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponseP
 
     request.session['menu_app'] = menu_name
 
+    form = CERTIFICATE[menu_name]()
+
+    cert_pk = int(request.POST.get('cert_pk', 0))
+
+    if cert_pk > 0:
+        # Information personnelle du mort
+        form.fields['last_name'].initial = BirthCertificate.objects.get(pk=cert_pk).born.last_name
+        form.fields['first_name'].initial = BirthCertificate.objects.get(pk=cert_pk).born.first_name
+        form.fields['gender'].initial = BirthCertificate.objects.get(pk=cert_pk).born.gender
+        form.fields['birth_place'].initial = BirthCertificate.objects.get(pk=cert_pk).born.birth_place
+        form.fields['birthday'].initial = BirthCertificate.objects.get(pk=cert_pk).born.birthday
+        # Information du père
+        form.fields['father_exist'].initial = True if BirthCertificate.objects.get(pk=cert_pk).father else False
+        form.fields['father_last_name'].initial = BirthCertificate.objects.get(pk=cert_pk).father.last_name
+        form.fields['father_first_name'].initial = BirthCertificate.objects.get(pk=cert_pk).father.first_name
+        form.fields['father_was_alive'].initial = BirthCertificate.objects.get(pk=cert_pk).father.is_alive
+        # Information du mère
+        form.fields['mother_exist'].initial = True if BirthCertificate.objects.get(pk=cert_pk).mother else False
+        form.fields['mother_last_name'].initial = BirthCertificate.objects.get(pk=cert_pk).mother.last_name
+        form.fields['mother_first_name'].initial = BirthCertificate.objects.get(pk=cert_pk).mother.first_name
+        form.fields['mother_was_alive'].initial = BirthCertificate.objects.get(pk=cert_pk).mother.is_alive
+        print("THAT'S OK")
+
     context = {
         "accessed": __package__ in request.session['app_accessed'],
         "app_home": __package__ + ":index",
         "user": request.user,
         "app_name": __package__,
         "menu_name": menu_name,
-        "form": CERTIFICATE[menu_name](),
-        "number_initial": "1".zfill(3) if not DeathCertificate.objects.count() else str(BirthCertificate.objects.last().number + 1).zfill(3),
+        "form": form,
+        "number_initial": "1".zfill(3) if not DeathCertificate.objects.count() else str(DeathCertificate.objects.last().number + 1).zfill(3),
         "register_manager": __package__ + ":register_manager",
         "page_urls": {"list": __package__ + ":" + menu_name, "register": __package__ + ":" + menu_name + "-register"},
         "services": request.session['urls'],
@@ -1324,6 +1424,13 @@ def death_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             
             dead_is_older = date.today().year - Person.objects.get(pk=dead.pk).birthday.year >= 50
 
+            certificate = None
+
+            try:
+                certificate = BirthCertificate.objects.get(born=dead)
+            except:
+                ...
+
             if dead_is_older:
                 father_is_alive = False
                 mother_is_alive = False
@@ -1363,6 +1470,7 @@ def death_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
             declarer_carreer = request.POST['declarer_job'].strip()
             declarer_address = request.POST['declarer_address'].strip()
             date_declaration = request.POST['declaration_date']
+            date_register = request.POST['register_date']
             number = int(request.POST['number'])
 
             # Table BirthCertificate
@@ -1374,8 +1482,10 @@ def death_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                     death_place = death_place,
                     dead_carreer = dead_carreer,
                     dead_address = dead_address,
+                    father = certificate.father if certificate else None,
                     father_full_name = father_full_name,
                     father_is_alive = father_is_alive,
+                    mother = certificate.mother if certificate else None,
                     mother_full_name = mother_full_name,
                     mother_is_alive = mother_is_alive,
                     declarer = declarer,
@@ -1386,6 +1496,7 @@ def death_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                     responsible_staff = Staff.objects.get(role=1),
                     fokotany = fokotany,
                     date_declaration = date_declaration,
+                    date_register = date_register,
                 )
 
                 return redirect('civil:death')

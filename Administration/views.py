@@ -165,7 +165,7 @@ def staff_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                         {"header": "service", "value": staff.role.service.title.title() if staff.role else staff.last_role.service.title.title(), "style": "text-start w-4 text-nowrap", "title": staff.role.service.title.title() if staff.role else staff.last_role.service.title.title()},
                         {"header": "status", "value": "✅" if staff.role else "❌", "style": "text-center w-4 text-nowrap", "title": "Is active" if staff.role else "Is not active"},
                         {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
-                            {"name": _("open"), "url": "civil:certificate-preview", "style": "green"},
+                            # {"name": _("open"), "url": __package__+":staff", "style": "green"},
                             {"name": _("stop"), "url": __package__+":staff-stop", "style": "red"},
                         ]},
                     ],

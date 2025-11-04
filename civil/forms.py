@@ -687,19 +687,6 @@ class DeathCertificateForm(forms.Form):
         )
     )
     
-    declaration_date = forms.DateTimeField(
-        label=_("Date of Declaration"), 
-        initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
-        widget=forms.DateTimeInput(
-            attrs={
-                "class": CLASS_FIELD + " text-right", 
-                "type": "datetime-local",
-                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
-                "title": _("Wait for the date of declaration")
-            }
-        )
-    )
-    
     declarer_relation = forms.CharField(
         label=_("Relationship"), 
         widget=forms.TextInput(
@@ -729,6 +716,32 @@ class DeathCertificateForm(forms.Form):
             }
         )
     )
+    
+    declaration_date = forms.DateTimeField(
+        label=_("Date of Declaration"),     
+        initial=(datetime.now() - timedelta(days=30)).__format__("%Y-%m-%d %H:%M"), 
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
+                "title": _("Wait for the date of declaration")
+            }
+        )
+    )
+    
+    register_date = forms.DateTimeField(
+        label=_("Date of Register"), 
+        initial=datetime.now().__format__("%Y-%m-%d %H:%M"),
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
+                "title": _("Wait for the date of register")
+            }
+        )
+    )
 
     fieldsets = {
         _("Matricule"): ["fokotany"],
@@ -736,7 +749,7 @@ class DeathCertificateForm(forms.Form):
         _("Other Informations"): {
             _("father"): [ "father_exist", "father_last_name", "father_first_name", "father_was_alive"],
             _("mother"): ["mother_exist", "mother_last_name","mother_first_name", "mother_was_alive"],
-            _("declarer"): ["declarer_present", "declarer_last_name", "declarer_first_name", "declarer_gender", "declarer_birth_place", "declarer_birthday", "declarer_relation", "declarer_job", "declarer_address", "declaration_date"]
+            _("declarer"): ["declarer_present", "declarer_last_name", "declarer_first_name", "declarer_gender", "declarer_birth_place", "declarer_birthday", "declarer_relation", "declarer_job", "declarer_address", "declaration_date", "register_date"]
         },
     }
 

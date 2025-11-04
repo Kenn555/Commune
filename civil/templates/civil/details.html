@@ -22,7 +22,7 @@
                         <div class="flex flex-col">
                             <a 
                             {% if father_certificated %} 
-                            href="{% url 'civil:birth-detail' father_certificated.pk %}" title="{% trans 'clic here'|capfirst %}" 
+                            href="{% url 'civil:person-detail' father_certificated.pk %}" title="{% trans 'clic here'|capfirst %}" 
                             {% endif %} 
                             {% if certificate.father == certificate.declarer %} 
                             class="text-lg underline underline-offset-2 {% if father_certificated %} cursor-pointer {% endif %}" 
@@ -35,7 +35,7 @@
                         <div class="flex flex-col">
                             <a 
                             {% if mother_certificated %} 
-                            href="{% url 'civil:birth-detail' mother_certificated.pk %}" title="{% trans 'clic here'|capfirst %}" 
+                            href="{% url 'civil:person-detail' mother_certificated.pk %}" title="{% trans 'clic here'|capfirst %}" 
                             {% endif %} 
                             {% if certificate.mother == certificate.declarer %} 
                             class="text-lg underline underline-offset-2 {% if mother_certificated %} cursor-pointer {% endif %}" 
@@ -48,7 +48,7 @@
                         <div class="flex flex-col">
                             <a 
                             {% if declarer_certificated %} 
-                            href="{% url 'civil:birth-detail' declarer_certificated.pk %}" title="{% trans 'clic here'|capfirst %}" 
+                            href="{% url 'civil:person-detail' declarer_certificated.pk %}" title="{% trans 'clic here'|capfirst %}" 
                             {% endif %}
                             class="text-lg {% if declarer_certificated %} cursor-pointer {% endif %}"><b>{% trans 'declarer'|capfirst %} :</b> {{ certificate.declarer.full_name }}</a>
                             <p class="text-sm"><b>{% trans 'birthday'|capfirst %} :</b> {{ certificate.declarer.birthday|date:'d-m-Y' }}</p>
@@ -117,22 +117,33 @@
         <!-- Liste de Copies de Naissance -->
          <div class="container flex flex-wrap gap-4 py-4 max-h-80 overflow-auto">
             {% for doc in document %}
-            <a href="{% url 'civil:certificate-preview' doc.type_cert doc.pk doc.num_copy %}"
-            class="w-fit shadow-md rounded-lg p-4 bg-white hover:bg-blue-50"
-            title="{{ doc.date_created|date:'d-m-Y H:i' }} --- N° {{ doc.pk }} --- {{ doc.birth_type }} --- {{ doc.get_price|intcomma }} Ar --- x{{ doc.num_copy }} --- {{ doc.get_total_price|intcomma }} Ar"
+            <form method="post" action="{% url 'civil:certificate-preview' doc.pk %}"
+            class="w-fit shadow-md rounded-lg bg-white hover:bg-blue-50"
+            title="{{ doc.date_created|date:'d-m-Y H:i' }} --- N° {{ doc.document_number }} --- {{ doc.birth_type }} --- {{ doc.get_price|intcomma }} Ar --- x{{ doc.num_copy }} --- {{ doc.get_total_price|intcomma }} Ar"
             >
-                <p class="whitespace-nowrap">
+            {% csrf_token %}
+                <input type="hidden" name="client_detail" value="{{ doc.notes }}">
+                <input type="hidden" name="many_cp" value="{{ doc.num_copy }}">
+                <input type="hidden" name="type_cert" value="{{ doc.type_cert }}">
+                <button class="p-4 space-x-2 whitespace-nowrap h-full">
                 <span class="text-blue-400">{{ doc.date_created|date:"d-m-Y H:i" }} </span>
                 --- N° {{ doc.document_number }} --- {{ doc.birth_type }} --- {{ doc.get_price|intcomma }} Ar --- x{{ doc.num_copy }} --- {{ doc.get_total_price|intcomma }} Ar
-                </p>
-            </a>
+                <span class="px-2 py-1 text-xs rounded-full text-white
+                {% if doc.status == 'V' %}
+                bg-orange-400
+                {% elif doc.status == 'D' %}
+                bg-yellow-400
+                {% endif %}
+                ">{{ doc.status_str }}</span>
+                </button>
+            </form>
             {% endfor %}
          </div>
 
         <!-- Boutons d'Actions -->
-         <div class="flex flex-col items-center fixed gap-2 rounded-xl bg-white shadow-md min-w-52 p-4 right-10 bottom-7 max-md:right-5 max-md:bottom-5">
+         <div class="flex flex-col items-center fixed gap-2 rounded-xl bg-white shadow-md max-w-72 p-4 right-10 bottom-7 max-md:right-5 max-md:bottom-5 transform animate-out duration-300">
             <input type="checkbox" name="" id="show-action" class="hidden peer">
-            <label for="show-action" class="hidden max-2xl:block peer-checked:hidden text-xl cursor-pointer w-full h-full text-center py-2">Actions</label>
+            <label for="show-action" class="hidden max-2xl:block peer-checked:hidden text-xl cursor-pointer w-full h-full text-center">Actions</label>
             <a class="max-2xl:hidden peer-checked:block px-4 py-2 border border-white text-white shadow-md bg-gray-300 rounded-lg w-full text-center cursor-not-allowed"
             title="En construction"
             >
@@ -143,36 +154,60 @@
             >
                 Arbre Généalogique
             </a>
-            <form action="" method="post" class="max-2xl:hidden peer-checked:flex flex flex-col gap-1">
+            <form action="{% url 'civil:certificate-preview' certificate.pk %}" method="post" class="max-2xl:hidden peer-checked:flex flex flex-col gap-1">
                 {% csrf_token %}
-                <div class="flex gap-x-2 justify-center">
+                <div class="flex flex-wrap gap-x-2 justify-center">
                     <button type="button" onclick="downManyCp()" class="px-4 text-xl bg-gray-100 rounded-lg">-</button>
                     <input id="id_many_cp" name="many_cp" type="number" value=1 min=1 max=10 class="text-end w-16 focus:ring-0 border-0 border-b-2">
                     <button type="button" onclick="upManyCp()" class="px-4 text-xl bg-gray-100 rounded-lg">+</button>
+                    <input type="text" name="client_detail" id="id-client-field"
+                    placeholder="{% translate 'About the client' %}"
+                    class="w-full border-0 border-b-2 focus:ring-0">
                 </div>
-                <button name="cp_birth" class="px-4 py-2 border border-white text-white shadow-md bg-green-600 hover:bg-green-500 rounded-lg w-full text-center cursor-pointer"
+                <button name="type_cert" value="birth" class="px-4 py-2 border border-white text-white shadow-md bg-green-600 hover:bg-green-500 rounded-lg w-full text-center cursor-pointer"
                 title="Faire une Copie de Naissance"
                 >
                     Faire Cp. Naissance
                 </button>
-                <button name="cp_death"  class="px-4 py-2 border border-white text-white shadow-md bg-green-600 hover:bg-green-500 rounded-lg w-full text-center cursor-pointer"
+                {% if not certificate.born.is_alive %}
+                <button name="type_cert" value="death" class="px-4 py-2 border border-white text-white shadow-md bg-green-600 hover:bg-green-500 rounded-lg w-full text-center cursor-pointer"
                 title="Faire une Copie de Décès"
                 >
                     Faire Cp. Décès
                 </button>
+                {% endif %}
+                {% if certificate.born.is_married %}
                 <a href="" class="px-4 py-2 border border-white text-white shadow-md bg-green-600 hover:bg-green-500 rounded-lg w-full text-center cursor-pointer"
                 title="Faire une Copie de Mariage"
                 >
                     Faire Cp. Mariage
                 </a>
+                {% endif %}
             </form>
-            {% if certificate.father %}
-            <a href="" class="max-2xl:hidden peer-checked:block px-4 py-2 border border-white text-white shadow-md bg-yellow-500 hover:bg-yellow-400 rounded-lg w-full text-center cursor-pointer"
-            title="Reconnaissance par le père"
-            >
-                Reconnaitre
-            </a>
-            {% endif %}
+            <form method='post' action="{% url 'civil:death-register' %}" class="max-2xl:hidden peer-checked:flex flex flex-col w-full gap-1">
+            {% csrf_token %}
+                {% if certificate.born.is_alive %}
+                <button name="cert_pk" value="{{ certificate.pk }}" class="px-4 py-2 border border-white text-white shadow-md bg-yellow-500 hover:bg-yellow-400 rounded-lg w-full text-center cursor-pointer"
+                title="Reconnaissance par le père"
+                >
+                Dead
+                </button>
+                {% endif %}
+                {% if certificate.father %}
+                <a href="" class="px-4 py-2 border border-white text-white shadow-md bg-yellow-500 hover:bg-yellow-400 rounded-lg w-full text-center cursor-pointer"
+                title="Reconnaissance par le père"
+                >
+                    Recognize
+                </a>
+                {% endif %}
+                {% if not certificate.born.is_married %}
+                <a href="" class="px-4 py-2 border border-white text-white shadow-md bg-yellow-500 hover:bg-yellow-400 rounded-lg w-full text-center cursor-pointer"
+                title="Reconnaissance par le père"
+                >
+                    Marry
+                </a>
+                {% endif %}
+            </form>
             <a href="{% url 'civil:birth-delete' certificate.pk %}" class="max-2xl:hidden peer-checked:block px-4 py-2 border border-white text-white shadow-md {% if certificate %}bg-rose-600 hover:bg-rose-500{% else %}{% endif %} rounded-lg w-full text-center cursor-pointer"
             title="Supprimer"
             >

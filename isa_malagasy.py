@@ -63,7 +63,7 @@ class IsaGasy:
                     if index in range(1, len(self.__isa_boky)):
                         if index == 1 and isa == "1":
                             resultat += " ambiny "
-                        elif (self.__isa_boky[index][int(isa)-1] in self.__isa_boky + [self.__isa_boky[0]]):
+                        elif index == 1:
                             resultat += " amby "
                         else:
                             resultat += " sy "
@@ -82,4 +82,4 @@ class IsaGasy:
                 valiny[laharana] += teny[faha]
         return valiny
     
-print(IsaGasy(20000).ho_teny())
+print(IsaGasy(2021).ho_teny())

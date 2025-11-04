@@ -71,7 +71,7 @@
                     {% else %}
                     <a 
                     {% if cell.header == "full name" and data.pk %}
-                    href="{% url data.detail_url data.pk %}"
+                    href="{% url data.detail_url data.person_pk %}"
                     {% elif data.father_cert_pk and cell.header == "father" %}
                     href="{% url data.detail_url data.father_cert_pk %}"
                     {% elif data.mother_cert_pk and cell.header == "mother" %}

@@ -85,10 +85,12 @@ class IsaGasy:
                         if index in range(1, len(self.__isa_boky)):
                             if index == 1 and isa == "1":
                                 resultat += " ambin'ny "
-                            elif (self.__isa_boky[index][int(isa)-1] in self.__isa_boky + [self.__isa_boky[0]]):
+                            # elif (self.__isa_boky[index][int(isa)-1] in self.__isa_boky + [self.__isa_boky[0]]):
+                            elif index == 1:
                                 resultat += " amby "
                             else:
                                 resultat += " sy "
+
                     resultat += self.__isa_boky[index][int(isa)-1]
 
         return resultat    

@@ -16,7 +16,8 @@ class Person(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     birth_place = models.CharField(max_length=100)
     birthday = models.DateTimeField()
-    is_alive = models.BooleanField(default=False)
+    is_alive = models.BooleanField(default=True)
+    is_married = models.BooleanField(default=False)
     is_parent = models.BooleanField(default=False)
     
     class Meta:
@@ -29,10 +30,17 @@ class Person(models.Model):
 
     @property
     def full_name(self):
-        return _("%(first_name)s %(last_name)s").strip() % {"last_name": self.last_name, "first_name": self.first_name or ''}
+        text = _("%(first_name)s %(last_name)s").strip() if self.first_name else _("%(last_name)s").strip()
+        return text % {"last_name": self.last_name, "first_name": self.first_name or ''}
+
+    @property
+    def birthday_is_date(self):
+        birthday = self.birthday.astimezone(timezone(timedelta(hours=3)))
+        return False if birthday.day == 1 and birthday.month == 1 and birthday.hour == 0 and birthday.minute == 0 else True
 
     def __str__(self):
-        return _("%(first_name)s %(last_name)s").strip() % {"last_name": self.last_name, "first_name": self.first_name or ''}
+        text = _("%(first_name)s %(last_name)s").strip() if self.first_name else _("%(last_name)s").strip()
+        return text % {"last_name": self.last_name, "first_name": self.first_name or ''}
 
 class BirthCertificate(models.Model):
     CERTIFICATE_TYPES = {
@@ -117,13 +125,14 @@ class BirthCertificateDocument(models.Model):
     date_register = models.DateTimeField(null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    date_validated = models.DateTimeField(null=True, blank=True)
+    client_detail = models.CharField(max_length=120, null=True)
     # Métadonnées du document
-    document_number = models.IntegerField(null=True)
+    date_validated = models.DateTimeField(null=True, blank=True)
+    validated_by = models.ForeignKey(Staff, on_delete=models.DO_NOTHING, related_name="document_birth_staff", null=True)
     # Statut
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='DRAFT')
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='D')
     # Notes
-    notes = models.TextField(blank=True)
+    notes = models.TextField(null=True)
     # Price
     price = models.FloatField(default=1000)
     # Many of documents
@@ -144,6 +153,10 @@ class BirthCertificateDocument(models.Model):
         return int(self.price) * int(self.num_copy) if self.price.is_integer() else self.price * self.num_copy
     
     @property
+    def status_str(self):
+        return self.STATUS_CHOICES[self.status]
+    
+    @property
     def type_cert(self):
         return 'birth_doc'
     
@@ -153,26 +166,39 @@ class BirthCertificateDocument(models.Model):
     
     @property
     def is_validated(self):
-        return self.status == 'VALIDATED'
+        return self.status == 'V'
     
     @property
     def can_edit(self):
-        return self.status == 'DRAFT'
+        return self.status == 'D'
     
     @property
     def can_delete(self):
-        return self.status in ['DRAFT', 'CANCELLED']
+        return self.status in [
+            'D', # Si le certificat est un brouillon
+            # 'V', # Si le certificat a déjà été validé
+        ]
+    
+    @property
+    def filled_pk(self):
+        return str(self.pk).zfill(9)
+    
+    @property
+    def document_number(self):
+        return self.certificate.numero
 
 class DeathCertificate(models.Model):
-    number = models.IntegerField(default=0, unique=True)
+    number = models.IntegerField(default=0)
     dead = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name="death_dead")
     death_day = models.DateTimeField()
     death_place = models.CharField(max_length=100)
     was_born = models.BooleanField(default=True)
     dead_carreer = models.CharField(max_length=80, null=True)
     dead_address = models.CharField(max_length=100, null=True)
+    father = models.ForeignKey(Person, on_delete=models.SET_NULL, related_name="death_father", null=True,)
     father_full_name = models.CharField(max_length=120, null=True)
     father_is_alive = models.BooleanField(null=True)
+    mother = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name="death_mother", null=True,)
     mother_full_name = models.CharField(max_length=120, null=True)
     mother_is_alive = models.BooleanField(null=True)
     declarer = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name="death_declarer")
@@ -182,6 +208,7 @@ class DeathCertificate(models.Model):
     declarer_address = models.CharField(max_length=100, default="Betsiaka")
     responsible_staff = models.ForeignKey(Staff, on_delete=models.DO_NOTHING, related_name="death_responsible_role")
     fokotany = models.ForeignKey(Fokotany, on_delete=models.DO_NOTHING, related_name="death_fokotany", default=0)
+    date_register = models.DateTimeField(null=True)
     date_declaration = models.DateTimeField()
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -221,9 +248,15 @@ class DeathCertificateDocument(models.Model):
         on_delete=models.CASCADE, 
         related_name="document_death",
     )
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='DRAFT')
+    date_register = models.DateTimeField(null=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    # Métadonnées du document
+    date_validated = models.DateTimeField(null=True, blank=True)
+    validated_by = models.ForeignKey(Staff, on_delete=models.DO_NOTHING, related_name="document_death_staff", null=True)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='D')
     # Notes
-    notes = models.TextField(blank=True)
+    notes = models.TextField(null=True)
     # Price
     price = models.FloatField(default=1000)
     # Many of documents
@@ -244,20 +277,39 @@ class DeathCertificateDocument(models.Model):
         return int(self.price) * int(self.num_copy) if self.price.is_integer() else self.price * self.num_copy
     
     @property
+    def status_str(self):
+        return self.STATUS_CHOICES[self.status]
+
+    @property
     def birth_type(self):
-        return self.birth_certificate.birth_type
+        return _("Death")
+    
+    @property
+    def type_cert(self):
+        return 'death_doc'
     
     @property
     def is_validated(self):
-        return self.status == 'VALIDATED'
+        return self.status == 'V'
     
     @property
     def can_edit(self):
-        return self.status == 'DRAFT'
+        return self.status == 'D'
     
     @property
     def can_delete(self):
-        return self.status in ['DRAFT', 'CANCELLED']
+        return self.status in [
+            'D', 
+            # 'V',
+        ]
+    
+    @property
+    def filled_pk(self):
+        return str(self.pk).zfill(9)
+    
+    @property
+    def document_number(self):
+        return self.certificate.numero
 
 class MarriageCertificate(models.Model):
     groom = models.ForeignKey(Person, on_delete=models.DO_NOTHING, related_name="marriage_husband")

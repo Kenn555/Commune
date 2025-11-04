@@ -99,7 +99,7 @@
                     <div class="flex gap-x-2">
                     <!-- Bouton Imprimer -->
                         <button onclick="print_documents(this)" 
-                            class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg transition">
+                            class="flex items-center gap-2 bg-blue-700 hover:bg-blue-600 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg transition">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
                             </svg>
@@ -109,7 +109,7 @@
                         <!-- Bouton Modifier -->
                         {% if document.can_edit %}
                         <a href="" 
-                            class="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg transition">
+                            class="flex items-center gap-2 bg-yellow-600 hover:bg-yellow-500 text-white px-6 py-2 rounded-lg transition">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
@@ -120,7 +120,7 @@
                         <!-- Bouton Supprimer -->
                         {% if document.can_delete %}
                         <button onclick="confirmDelete()" 
-                            class="flex items-center gap-2 bg-red-600 hover:bg-rose-700 text-white px-6 py-2 rounded-lg transition">
+                            class="flex items-center gap-2 bg-red-600 bg-rose-700 hover:bg-rose-600 text-white px-6 py-2 rounded-lg transition">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                             </svg>
@@ -150,7 +150,7 @@
             <div class="a4-page flex flex-col items-end text-[12pt] font-['Times_New_Roman']">
                 <!-- Watermark -->
                 {% if document.status == 'V' %}
-                <div class="relative text-[1pt] font-black top-[100%] left-[0%] z-[9] transform scale-[100] -rotate-45 -translate-x-[3600%] translate-y-[30600%] print:top-[50%] print:translate-y-0 text-rose-200/20"/>VALIDATED</div>
+                <div class="relative text-[1pt] font-black top-[100%] left-[0%] z-[9] transform scale-[100] -rotate-45 -translate-x-[3600%] translate-y-[30600%] print:top-[50%] print:translate-y-0 print:hidden text-rose-200/20"/>VALIDATED</div>
                 {% endif %}
                     
                 <!-- Note en haut à droite (filigrane) -->
@@ -204,9 +204,10 @@
                             after:bg-white
                             after:left-0 after:w-full after:h-[20px]"
                         >
+                        {% if document.type_cert == 'birth_doc' %}
                             <p class="inline text-justify">
                                 _________Tamin'ny {% if document.certificate.born.birthday|date:"d" == 1 %}voalohany volana{% else %}{{ document.certificate.born.birthday|date:"d"|isa_gasy }}{% endif %} {{ document.certificate.born.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.certificate.born.birthday|date:"Y"|isa_gasy }},
-                                tamin'ny {{ document.certificate.born.birthday|date:"h"|isa_gasy }} ora {{ document.certificate.born.birthday|date:"h"|ora_gasy }},
+                                tamin'ny {{ document.certificate.born.birthday|date:"h"|isa_gasy }} ora{% if document.certificate.born.birthday|date:"i" != "00" %} sy {{ document.certificate.born.birthday|date:"i"|isa_gasy }} minitra{% endif %} {{ document.certificate.born.birthday|date:"h"|ora_gasy }},
                                 no {% if document.certificate.born.is_alive %}teraka {% else %}maty teo ampiterahana {% endif %}tao {{ document.certificate.born.birth_place }},
                                 Commune {% if common_name|lower in document.certificate.born.birth_place|lower %}io ihany{% else %}{{ common_name }}{% endif %}: {{ document.certificate.born.full_name }},
                                 {% if document.certificate.born.gender == 'M' %}zanakalahy{% else %}zanakavavy{% endif %}, zanak'i {% if document.father %}{{ document.father.full_name }} teraka tamin'ny {{ document.father.birthday|date:"d"|isa_gasy }} {{ document.father.birthday|date:"m"|volana_gasy|capfirst }},
@@ -226,6 +227,23 @@
                                 samy monina ao {{document.certificate.mother_address}}{% if not '-' in document.certificate.mother_address %},
                                 Commune ao {{ common_name }}{% endif %}{% endif %}.
                             </p>
+                        {% elif document.type_cert == "death_doc" %}
+                            <p class="inline text-justify">
+                                _________Tamin'ny {% if document.certificate.death_day|date:"d" == 1 %}voalohany volana{% else %}{{ document.certificate.death_day|date:"d"|isa_gasy }}{% endif %} {{ document.death_day|date:"m"|volana_gasy|capfirst}}, taona {{ document.certificate.death_day|date:"Y"|isa_gasy }},
+                                tamin'ny {{ document.certificate.death_day|date:"h"|isa_gasy }} ora{% if document.certificate.death_day|date:"i" != "00" %} sy {{ document.certificate.death_day|date:"i"|isa_gasy }} minitra{% endif %} {{ document.certificate.death_day|date:"h"|ora_gasy }},
+                                no maty tao {{ document.certificate.death_place }},
+                                Commune {% if common_name|lower in document.certificate.death_place|lower %} io ihany{% else %}{{ common_name }}{% endif %}: {{ document.certificate.dead.full_name }},
+                                {% if document.certificate.dead.gender == "M" %}lehilahy{% else %}vehivavy{% endif %}, teraka tamin'ny {% if document.certificate.dead.birthday|date:"d" == 1 %}voalohany volana{% else %}{{ document.certificate.dead.birthday|date:"d"|isa_gasy }}{% endif %} {{ document.certificate.dead.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.certificate.dead.birthday|date:"Y"|isa_gasy }},
+                                tao {{ document.certificate.dead.birth_place }}, {{ document.certificate.dead_carreer|lower }},
+                                monina ao {{ document.certificate.dead_address }}{% if document.certificate.father_full_name or document.certificate.mother_full_name %}, zanak'i {% if document.certificate.father_full_name %}{{ document.certificate.father_full_name }}{% if document.certificate.father %},
+                                teraka tamin'ny {% if document.certificate.father.birthday_is_date %}{{ document.certificate.father.birthday|date:"d"|isa_gasy }} {{ document.certificate.father.birthday|date:"m"|volana_gasy|capfirst }},{% endif %}
+                                taona {{ document.certificate.father.birthday|date:"Y"|isa_gasy }},
+                                tao {{ document.certificate.father.birth_place }}{% endif %}{% if not document.certificate.father_is_alive %} efa maty{% endif %}{% endif %}{% if document.certificate.father_full_name and document.certificate.mother_full_name %} sy {% endif %}{% if document.certificate.mother_full_name %}{{ document.certificate.mother_full_name }}{% if document.certificate.mother %},
+                                teraka tamin'ny {% if document.certificate.mother.birthday_is_date %}{{ document.certificate.mother.birthday|date:"d"|isa_gasy }} {{ document.certificate.mother.birthday|date:"m"|volana_gasy|capfirst }},{% endif %}
+                                taona {{ document.certificate.mother.birthday|date:"Y"|isa_gasy }},
+                                tao {{ document.certificate.mother.birth_place }}{% endif %}{% if not document.certificate.father_is_alive %} efa maty{% endif %}{% endif %}{% endif %}
+                            </p>
+                        {% endif %}
                             <p class="inline">-------------------------------------------------------------------------------------------</p>
                         </div>
 
@@ -239,7 +257,7 @@
                                 taona {{ document.certificate.date_register|date:"Y"|isa_gasy }},
                                 tamin'ny {{ document.certificate.date_register|date:"h"|isa_gasy }} ora {{ document.certificate.date_register|date:"h"|ora_gasy }},
                                 araky ny fanambarana nataon'i {% if document.certificate.declarer == document.certificate.father %}rainy izay {% elif document.certificate.declarer == document.certificate.mother %} reniny izay {% else %}{{ document.certificate.declarer.full_name }},
-                                teraka tamin'ny {{ document.certificate.declarer.birthday|date:"d"|isa_gasy }} {{ document.certificate.declarer.birthday|date:"F"|capfirst }}, taona {{ document.certificate.declarer.birthday|date:"Y"|isa_gasy }}, 
+                                teraka tamin'ny {{ document.certificate.declarer.birthday|date:"d"|isa_gasy }} {{ document.certificate.declarer.birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.certificate.declarer.birthday|date:"Y"|isa_gasy }}, 
                                 tao {{ document.certificate.declarer.birth_place }}, {{ document.declarer_carreer|lower }}, monina ao {{ document.declarer_address }},
                                 izay nanatrika ny fahaterahany ka {% endif %} miara manao Sonia aminay:
                                 {{ document.certificate.responsible_staff }} mpiandraikitra sora-piankohonana ao {{ document.certificate.fokotany.name }}, rehefa novakina taminy ity soratra ity.
@@ -261,7 +279,7 @@
                         <div class="flex items-end mt-12">                        
                             <div class="flex w-full flex-col gap-y-8">
                                 <p class="indent-8 leading-tight">Kopia manontolo nadika tamin'ny boky androany 
-                                    {{ document.date_created|date:"d" }} {{ document.date_created|date:"m"|volana_gasy|capfirst }} {{ document.date_created|date:"Y" }}.</p>
+                                    {{ document.date_created|date:"d" }} {{ document.date_created|date:"m"|volana_gasy|capfirst }} {{ document.date_created|date:"Y" }} {% if client %}, ary nomena an’{{ document.notes }}{% endif %} .</p>
                                 
                                 <p class="font-bold uppercase mb-2 text-center">NY MPIANDRAIKITRA SORA-PIANKOHONANA</p>
                                 
@@ -286,8 +304,8 @@
     </div>
     <!-- Pied de page -->
     <div class="absolute no-print bottom-8 left-0 right-0 text-center text-xs text-gray-500">
-        <p>{% trans "Issued on" %} {{ document.created_at|date:"d/m/Y" }} - 
-           {% trans "Document" %} #{{ document.document_number }}</p>
+        <p>{% trans "Issued on" %} {{ document.date_created|date:"d/m/Y" }} - 
+           {% trans "Document" %} #{{ document.filled_pk }}</p>
     </div>
     
     <script>
@@ -318,24 +336,34 @@
         }
         function confirmDelete() {
             if (confirm('{% trans "Are you sure you want to delete this certificate?" %}')) {
-                window.location.href = "";
+               window.location.href = "{% url 'civil:certificate-delete' document.type_cert document.pk %}"
             }
         }
 
         function back_or_list(){
-            if(document.referrer !== ""){
-                history.back()
-            } else {
-                window.location.href = "{% url 'civil:birth' %}"
-            }
+            // if("{{ document.status }}" === "D"){
+            //     // Requête AJAX pour supprimer le document du certificate en brouillon avant de quitter
+            //     $.ajax({
+            //         url: "{% url 'civil:certificate-delete' 0 1 %}"
+            //         .replace('0', documentType) // Ajustez l'URL selon votre configuration
+            //         .replace('1', documentId), // Ajustez l'URL selon votre configuration
+            //         method: 'GET',
+            //         success: function(data) {
+            //             console.log('✅ Le document est supprimé avec succès');
+            //         },
+            //         error: function(xhr, status, error) {
+            //             console.error('❌ Erreur lors de la suppression du document:', error);
+            //             alert("Erreur lors de la suppression du document.\nRecharger la page et faites une nouvelle tentative.\nSi l'erreur persiste, contactez le service technique.");
+            //         }
+            //     });
+            // }
+            window.location.assign('{% url "civil:person-detail" person %}');
         }
 
         function print_documents(e){
-            const documentMany = Number.parseInt('{{ many }}');
-            const documentId = Number.parseInt('{{ document.certificate.pk }}');
+            const documentId = Number.parseInt('{{ document.pk }}');
             const documentType = '{{ type_cert }}';
 
-            console.log(documentMany);
             console.log(documentId);
             console.log(documentType);
 
@@ -347,10 +375,9 @@
             } else {
                 // Requête AJAX pour créer le document du certificate
                 $.ajax({
-                    url: "{% url 'civil:certificate-creation' 0 1 2 %}"
+                    url: "{% url 'civil:certificate-validate' 0 1 %}"
                     .replace('0', documentType) // Ajustez l'URL selon votre configuration
-                    .replace('1', documentId)  // Ajustez l'URL selon votre configuration
-                    .replace('2', documentMany),  // Ajustez l'URL selon votre configuration
+                    .replace('1', documentId), // Ajustez l'URL selon votre configuration
                     method: 'GET',
                     success: function(data) {
                         console.log('✅ Le document est créé avec succès');
@@ -359,6 +386,7 @@
                         window.print();
                         // Désactivation du bouton print
                         $(e).prop("disabled", true);
+                        window.location.assign('{% url "civil:person-detail" person %}');
                     },
                     error: function(xhr, status, error) {
                         console.error('❌ Erreur lors de la création du document:', error);

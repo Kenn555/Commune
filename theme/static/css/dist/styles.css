@@ -1198,14 +1198,6 @@ select {
   z-index: 50;
 }
 
-.z-\[\] {
-  z-index: ;
-}
-
-.z-\[3\] {
-  z-index: 3;
-}
-
 .z-\[9\] {
   z-index: 9;
 }
@@ -1584,6 +1576,10 @@ select {
 
 .max-w-6xl {
   max-width: 72rem;
+}
+
+.max-w-72 {
+  max-width: 18rem;
 }
 
 .max-w-7xl {
@@ -2032,6 +2028,11 @@ select {
   background-color: rgb(37 99 235 / var(--tw-bg-opacity));
 }
 
+.bg-blue-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(29 78 216 / var(--tw-bg-opacity));
+}
+
 .bg-gray-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
@@ -2111,6 +2112,11 @@ select {
   background-color: rgb(225 29 72 / var(--tw-bg-opacity));
 }
 
+.bg-rose-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(190 18 60 / var(--tw-bg-opacity));
+}
+
 .bg-secondary {
   --tw-bg-opacity: 1;
   background-color: rgb(39 49 66 / var(--tw-bg-opacity));
@@ -2140,9 +2146,19 @@ select {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
+.bg-yellow-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(250 204 21 / var(--tw-bg-opacity));
+}
+
 .bg-yellow-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(234 179 8 / var(--tw-bg-opacity));
+}
+
+.bg-yellow-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(202 138 4 / var(--tw-bg-opacity));
 }
 
 .bg-gradient-to-r {
@@ -2567,6 +2583,10 @@ select {
   color: rgb(255 89 145 / var(--tw-text-opacity));
 }
 
+.text-rose-200\/20 {
+  color: rgb(254 205 211 / 0.2);
+}
+
 .text-rose-400 {
   --tw-text-opacity: 1;
   color: rgb(251 113 133 / var(--tw-text-opacity));
@@ -2595,79 +2615,6 @@ select {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.text-yellow-500 {
-  --tw-text-opacity: 1;
-  color: rgb(234 179 8 / var(--tw-text-opacity));
-}
-
-.text-rose-500 {
-  --tw-text-opacity: 1;
-  color: rgb(244 63 94 / var(--tw-text-opacity));
-}
-
-.text-rose-300 {
-  --tw-text-opacity: 1;
-  color: rgb(253 164 175 / var(--tw-text-opacity));
-}
-
-.text-rose-800 {
-  --tw-text-opacity: 1;
-  color: rgb(159 18 57 / var(--tw-text-opacity));
-}
-
-.text-rose-700 {
-  --tw-text-opacity: 1;
-  color: rgb(190 18 60 / var(--tw-text-opacity));
-}
-
-.text-rose-700\/10 {
-  color: rgb(190 18 60 / 0.1);
-}
-
-.text-rose-500\/10 {
-  color: rgb(244 63 94 / 0.1);
-}
-
-.text-rose-900\/10 {
-  color: rgb(136 19 55 / 0.1);
-}
-
-.text-rose-50\/10 {
-  color: rgb(255 241 242 / 0.1);
-}
-
-.text-rose-50\/90 {
-  color: rgb(255 241 242 / 0.9);
-}
-
-.text-rose-800\/90 {
-  color: rgb(159 18 57 / 0.9);
-}
-
-.text-rose-800\/0 {
-  color: rgb(159 18 57 / 0);
-}
-
-.text-rose-800\/40 {
-  color: rgb(159 18 57 / 0.4);
-}
-
-.text-rose-500\/40 {
-  color: rgb(244 63 94 / 0.4);
-}
-
-.text-rose-300\/40 {
-  color: rgb(253 164 175 / 0.4);
-}
-
-.text-rose-200\/40 {
-  color: rgb(254 205 211 / 0.4);
-}
-
-.text-rose-200\/20 {
-  color: rgb(254 205 211 / 0.2);
 }
 
 .underline {
@@ -2822,6 +2769,16 @@ select {
   }
 }
 
+.animate-out {
+  animation-name: exit;
+  animation-duration: 150ms;
+  --tw-exit-opacity: initial;
+  --tw-exit-scale: initial;
+  --tw-exit-rotate: initial;
+  --tw-exit-translate-x: initial;
+  --tw-exit-translate-y: initial;
+}
+
 .duration-200 {
   animation-duration: 200ms;
 }
@@ -2935,9 +2892,9 @@ select {
   background-color: rgb(59 130 246 / var(--tw-bg-opacity));
 }
 
-.hover\:bg-blue-700:hover {
+.hover\:bg-blue-600:hover {
   --tw-bg-opacity: 1;
-  background-color: rgb(29 78 216 / var(--tw-bg-opacity));
+  background-color: rgb(37 99 235 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-gray-100:hover {
@@ -2975,9 +2932,9 @@ select {
   background-color: rgb(244 63 94 / var(--tw-bg-opacity));
 }
 
-.hover\:bg-rose-700:hover {
+.hover\:bg-rose-600:hover {
   --tw-bg-opacity: 1;
-  background-color: rgb(190 18 60 / var(--tw-bg-opacity));
+  background-color: rgb(225 29 72 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-sky-500:hover {
@@ -3000,9 +2957,9 @@ select {
   background-color: rgb(250 204 21 / var(--tw-bg-opacity));
 }
 
-.hover\:bg-yellow-600:hover {
+.hover\:bg-yellow-500:hover {
   --tw-bg-opacity: 1;
-  background-color: rgb(202 138 4 / var(--tw-bg-opacity));
+  background-color: rgb(234 179 8 / var(--tw-bg-opacity));
 }
 
 .hover\:text-blue-500:hover {
@@ -3374,6 +3331,10 @@ select {
 @media print {
   .print\:top-\[50\%\] {
     top: 50%;
+  }
+
+  .print\:hidden {
+    display: none;
   }
 
   .print\:translate-y-0 {
