@@ -18,7 +18,9 @@ urlpatterns = [
     path('certificate/validate/<str:menu>/<int:pk>/', views.certificate_validate, name='certificate-validate'),
     path('certificate/delete/<str:menu>/<int:pk>/', views.certificate_deletion, name='certificate-delete'),
     # Person
-    path("detail/<int:person_id>/", views.person_detail, name='person-detail'),
+    path("person/detail/<int:person_id>/", views.person_detail, name='person-detail'),
+    path("person/modify/<int:person_id>/", views.person_modify, name='person-modify'),
+    path("person/save/<int:person_id>/", views.person_save, name='person-save'),
     # Décès
     path("death/", views.death, name='death'),
     path("death/register/", views.death_register, name='death-register'),

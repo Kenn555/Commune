@@ -166,7 +166,9 @@ def staff_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                         {"header": "status", "value": "✅" if staff.role else "❌", "style": "text-center w-4 text-nowrap", "title": "Is active" if staff.role else "Is not active"},
                         {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
                             # {"name": _("open"), "url": __package__+":staff", "style": "green"},
-                            {"name": _("stop"), "url": __package__+":staff-stop", "style": "red"},
+                            {"name": _("stop"), "url": __package__+":staff-stop", "style": "red"}
+                            if staff.role else 
+                            {"name": _("affect"), "url": __package__+":staff-stop", "style": "green"},
                         ]},
                     ],
                 } for index, staff in enumerate(staff_bypage.get_page(1))

@@ -2,8 +2,10 @@ from datetime import date, datetime, timedelta
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from dal import autocomplete
+from django.db.models.functions import Concat
+from django.db import models
 
-from administration.models import Common, Fokotany, Role, Service
+from administration.models import Common, Fokotany, Role, Service, Staff
 from civil.models import BirthCertificate, DeathCertificate, Person
 
 
@@ -13,6 +15,124 @@ CLASS_FIELD = """
         focus:outline-none focus:border-b-blue-400
         focus:ring-0 focus:ring-offset-0
     """
+
+class PersonForm(forms.Form):    
+    # Informations personnelles
+    last_name = forms.CharField(
+        label=_("Last Name"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "last_name",
+                "title": _("Insert her/his last name"),
+            }
+        )
+    )
+    
+    first_name = forms.CharField(
+        label=_("First Name"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "first_name",
+                "title": _("Insert her/his first name"),
+            }
+        )
+    )
+    
+    gender = forms.ChoiceField(
+        label=_("Gender"), 
+        choices=Person.GENDER_CHOICES,
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD,
+                "title": _("Choose the gender")
+            }
+        )
+    )
+    
+    birth_place = forms.CharField(
+        label=_("Place of Birth"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the place of birth"),
+            }
+        )
+    )
+    
+    birthday = forms.DateTimeField(
+        label=_("Birthday"), 
+        # initial=datetime.now().__format__("%Y-%m-%d %H:%M"),
+        required=False, 
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
+                "title": _("Enter/Choose the date of birth")
+            }
+        )
+    )
+    
+    job = forms.CharField(
+        label=_("Job"),
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the person's job"),
+            }
+        )
+    )
+    
+    address = forms.CharField(
+        label=_("Address"),
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the person's address"),
+            }
+        )
+    )
+
+    is_alive = forms.BooleanField(
+        label=_("Alive"),
+        required=False,
+        initial=True,
+        label_suffix="",
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+    )
+
+    fieldsets = {
+        _("Informations"): ["birthday", "birth_place", "last_name", "first_name", "gender", "job", "address", "is_alive"],
+    }
+
+    @property
+    def fieldsets_fields(self):
+        fs = {}
+        for title, fields in self.fieldsets.items():
+            # Cas 1 : la section est une simple liste de champs
+            if isinstance(fields, (list, tuple)):
+                fs[title] = [self[ch] for ch in fields]
+
+            # Cas 2 : la section contient des sous-groupes (dictionnaire imbriqué)
+            elif isinstance(fields, dict):
+                sub_fs = {}
+                for sub_title, sub_fields in fields.items():
+                    sub_fs[sub_title] = [self[ch] for ch in sub_fields]
+                fs[title] = sub_fs
+
+            # Cas 3 : si un autre type apparaît (sécurité)
+            else:
+                raise TypeError(f"Invalid type for fieldset '{title}': {type(fields).__name__}")
+
+        return fs
 
 class BirthCertificateForm(forms.Form):
     # Matricule
@@ -179,6 +299,13 @@ class BirthCertificateForm(forms.Form):
         )
     )
 
+    father_was_alive = forms.BooleanField(
+        label=_("He is alive"),
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+    )
+
     # Mère
     mother_exist = forms.BooleanField(
         label=_("Have a Mother"),
@@ -255,6 +382,13 @@ class BirthCertificateForm(forms.Form):
                 "title": _("Insert her/his mother's address"),
             }
         )
+    )
+
+    mother_was_alive = forms.BooleanField(
+        label=_("She is alive"),
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
     )
 
     # Déclarant  
@@ -380,18 +514,37 @@ class BirthCertificateForm(forms.Form):
         )
     )
 
+    # Responsable
+    staff_direction = []
+    for staff in Staff.objects.filter(role__service__grade=1).order_by('role__grade'):
+        staff_direction.append((staff.pk, staff.full_name + ', ' + staff.role.title))
+    responsible = forms.ChoiceField(
+        label=_("Responsible"), 
+        choices = staff_direction,
+        initial = staff_direction[0],
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD + "text-lg cursor-pointer", 
+                "title": "Responsible",
+            }
+        )
+    )
+
     fieldsets = {
         _("Matricule"): ["fokotany"],
         _("Informations"): ["birthday", "birth_place", "last_name", "first_name", "gender", "is_alive"],
-        _("Other Informations"): {
+        _("Parent Informations"): {
             _("father"): [
                 "father_exist", "father_last_name",
-                "father_first_name", "father_birthday", "father_birth_place", "father_job", "father_address"
+                "father_first_name", "father_birthday", "father_birth_place", "father_job", "father_address", "father_was_alive"
             ],
             _("mother"): ["mother_exist", "mother_last_name",
-                "mother_first_name", "mother_birthday", "mother_birth_place", "mother_job", "mother_address"
+                "mother_first_name", "mother_birthday", "mother_birth_place", "mother_job", "mother_address", "mother_was_alive"
             ],
-            _("declarer"): ["declarer_present", "declarer_last_name", "declarer_first_name", "declarer_gender", "declarer_birthday", "declarer_birth_place", "declarer_job", "declarer_address", "declarer_relation", "declaration_date", "register_date"]
+            _("declarer"): ["declarer_present", "declarer_last_name", "declarer_first_name", "declarer_gender", "declarer_birthday", "declarer_birth_place", "declarer_job", "declarer_address", "declarer_relation",],
+        },
+        _("Register Informations"): {
+            _("register"): ["responsible", "declaration_date", "register_date"],
         },
     }
 
@@ -415,8 +568,6 @@ class BirthCertificateForm(forms.Form):
                 raise TypeError(f"Invalid type for fieldset '{title}': {type(fields).__name__}")
 
         return fs
-
-
 
 class DeathCertificateForm(forms.Form):
     # Matricule
@@ -468,7 +619,8 @@ class DeathCertificateForm(forms.Form):
     )
     
     birth_place = forms.CharField(
-        label=_("Place of Birth"), 
+        label=_("Place of Birth"),
+        required=False, 
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -479,6 +631,7 @@ class DeathCertificateForm(forms.Form):
     
     birthday = forms.DateTimeField(
         label=_("Birthday"), 
+        required=False,
         # initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
         widget=forms.DateTimeInput(
             attrs={
@@ -519,7 +672,7 @@ class DeathCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "title": _("Insert the dead's job"),
+                "title": _("Insert the person's job"),
             }
         )
     )
@@ -530,7 +683,7 @@ class DeathCertificateForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
-                "title": _("Insert the dead's address"),
+                "title": _("Insert the person's address"),
             }
         )
     )
@@ -567,6 +720,53 @@ class DeathCertificateForm(forms.Form):
                 "data-type": "first_name",
                 "data-gender": "    M",
                 "title": _("Wait for her/his father's first name"),
+            }
+        )
+    )
+    
+    father_birth_place = forms.CharField(
+        label=_("Place of Birth"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Wait for her/his father's place of birth"),
+            }
+        )
+    )
+    
+    father_birthday = forms.DateTimeField(
+        label=_("Birthday"), 
+        required=False,
+        # initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
+                "title": _("Wait for her/his father's date of birth")
+            }
+        )
+    )
+    
+    father_job = forms.CharField(
+        label=_("Father's Job"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert her/his father's job"),
+            }
+        )
+    )
+
+    father_address = forms.CharField(
+        label=_("Father's Address"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert her/his father's address"),
             }
         )
     )
@@ -613,6 +813,53 @@ class DeathCertificateForm(forms.Form):
             }
         )
     )
+    
+    mother_birth_place = forms.CharField(
+        label=_("Place of Birth"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Wait for her/his mother's place of birth"),
+            }
+        )
+    )
+    
+    mother_birthday = forms.DateTimeField(
+        label=_("Birthday"), 
+        required=False,
+        # initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
+                "title": _("Wait for her/his mother's date of birth")
+            }
+        )
+    )
+    
+    mother_job = forms.CharField(
+        label=_("Mother's Job"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert her/his mother's job"),
+            }
+        )
+    )
+    
+    mother_address = forms.CharField(
+        label=_("Mother's Address"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert her/his mother's address"),
+            }
+        )
+    )
 
     mother_was_alive = forms.BooleanField(
         label=_("She is alive"),
@@ -643,6 +890,7 @@ class DeathCertificateForm(forms.Form):
     
     declarer_first_name = forms.CharField(
         label=_("Declarer's First Name"), 
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
@@ -745,11 +993,14 @@ class DeathCertificateForm(forms.Form):
 
     fieldsets = {
         _("Matricule"): ["fokotany"],
-        _("Informations"): ["birthday", "birth_place", "last_name", "first_name", "gender", "death_place", "death_day", "dead_job", "dead_address"],
-        _("Other Informations"): {
-            _("father"): [ "father_exist", "father_last_name", "father_first_name", "father_was_alive"],
-            _("mother"): ["mother_exist", "mother_last_name","mother_first_name", "mother_was_alive"],
-            _("declarer"): ["declarer_present", "declarer_last_name", "declarer_first_name", "declarer_gender", "declarer_birthday", "declarer_birth_place", "declarer_job", "declarer_address", "declarer_relation", "declaration_date", "register_date"]
+        _("Informations"): ["death_day", "death_place", "last_name", "first_name", "gender", "birthday", "birth_place", "dead_job", "dead_address"],
+        _("Parent Informations"): {
+            _("father"): [ "father_exist", "father_last_name", "father_first_name", "father_birthday", "father_birth_place", "father_job", "father_address", "father_was_alive"],
+            _("mother"): ["mother_exist", "mother_last_name","mother_first_name", "mother_birthday", "mother_birth_place", "mother_job", "mother_address", "mother_was_alive"],
+            _("declarer"): ["declarer_present", "declarer_last_name", "declarer_first_name", "declarer_gender", "declarer_birthday", "declarer_birth_place", "declarer_job", "declarer_address", "declarer_relation",],
+        },
+        _("Register Informations"): {
+            _("register"): ["declaration_date", "register_date"],
         },
     }
 
@@ -777,20 +1028,731 @@ class DeathCertificateForm(forms.Form):
 
 
 class MarriageCertificateForm(forms.Form):
-    last_name_man = forms.CharField(
+    # Matricule
+    fokotany = forms.ChoiceField(
+        label=_("Fokotany"), 
+        choices=Fokotany.objects.values_list("id","name").order_by('name'),
+        initial=Fokotany.objects.get(name=Common.objects.get(pk=1).name.capitalize()).pk,
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD + "text-lg cursor-pointer", 
+                "title": "Fokotany",
+            }
+        )
+    )
+    
+    # Informations personnelles du marié
+    groom_last_name = forms.CharField(
         label=_("Last Name"), 
-        initial=_("Insert her/his last name")
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "last_name",
+                "title": _("Insert her/his last name"),
+            }
+        )
     )
     
-    first_name_man = forms.CharField(
-        label=_("First Name")
+    groom_first_name = forms.CharField(
+        label=_("First Name"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "first_name",
+                "title": _("Insert her/his first name"),
+            }
+        )
     )
     
-    date_of_marriage = forms.DateField(
-        label=_("Date of Marriage"), 
-        widget=forms.SelectDateWidget(years=range(1900, 2026))
+    groom_gender = forms.ChoiceField(
+        label=_("Gender"), 
+        choices=Person.GENDER_CHOICES,
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD,
+                "title": _("Choose the gender")
+            }
+        )
     )
     
-    place_of_marriage = forms.CharField(
-        label=_("Place of Marriage")
+    groom_birth_place = forms.CharField(
+        label=_("Place of Birth"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the place of birth"),
+            }
+        )
     )
+    
+    groom_birthday = forms.DateTimeField(
+        label=_("Birthday"), 
+        # initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
+                "title": _("Enter/Choose the date of birth")
+            }
+        )
+    )
+    
+    groom_job = forms.CharField(
+        label=_("Place of Birth"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the place of birth"),
+            }
+        )
+    )
+    
+    groom_address = forms.CharField(
+        label=_("Address"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the address"),
+            }
+        )
+    )
+    
+    groom_nationality = forms.CharField(
+        label=_("Nationality"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the nationality"),
+                "placeholder": "Malagasy",
+            }
+        )
+    )
+    
+    # Informations personnelles de la mariée
+    bride_last_name = forms.CharField(
+        label=_("Last Name"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "last_name",
+                "title": _("Insert her/his last name"),
+            }
+        )
+    )
+    
+    bride_first_name = forms.CharField(
+        label=_("First Name"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "first_name",
+                "title": _("Insert her/his first name"),
+            }
+        )
+    )
+    
+    bride_gender = forms.ChoiceField(
+        label=_("Gender"), 
+        choices=Person.GENDER_CHOICES,
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD,
+                "title": _("Choose the gender")
+            }
+        )
+    )
+    
+    bride_birth_place = forms.CharField(
+        label=_("Place of Birth"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the place of birth"),
+            }
+        )
+    )
+    
+    bride_birthday = forms.DateTimeField(
+        label=_("Birthday"), 
+        # initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
+                "title": _("Enter/Choose the date of birth")
+            }
+        )
+    )
+    
+    bride_job = forms.CharField(
+        label=_("Place of Birth"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the place of birth"),
+            }
+        )
+    )
+    
+    bride_address = forms.CharField(
+        label=_("Address"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the address"),
+            }
+        )
+    )
+    
+    bride_nationality = forms.CharField(
+        label=_("Nationality"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the nationality"),
+                "placeholder": "Malagasy",
+            }
+        )
+    )
+    
+    # Informations des parents du marié
+    # Père du marié
+    father_groom_exist = forms.BooleanField(
+        label=_("Have a Father"),
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+    )
+
+    father_groom_last_name = forms.CharField(
+        label=_("Last Name"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "last_name",
+                "title": _("Insert her/his last name"),
+            }
+        )
+    )
+    
+    father_groom_first_name = forms.CharField(
+        label=_("First Name"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "first_name",
+                "title": _("Insert her/his first name"),
+            }
+        )
+    )
+    
+    father_groom_address = forms.CharField(
+        label=_("Address"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the address"),
+            }
+        )
+    )
+
+    father_groom_was_alive = forms.BooleanField(
+        label=_("He is alive"),
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+    )
+
+    # Mère du marié
+    mother_groom_exist = forms.BooleanField(
+        label=_("Have a Mother"),
+        required=True,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+    )
+
+    mother_groom_last_name = forms.CharField(
+        label=_("Last Name"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "last_name",
+                "title": _("Insert her/his last name"),
+            }
+        )
+    )
+    
+    mother_groom_first_name = forms.CharField(
+        label=_("First Name"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "first_name",
+                "title": _("Insert her/his first name"),
+            }
+        )
+    )
+    
+    mother_groom_address = forms.CharField(
+        label=_("Address"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the address"),
+            }
+        )
+    )
+
+    mother_groom_was_alive = forms.BooleanField(
+        label=_("She is alive"),
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+    )
+    
+    # Informations personnelles de la mariée
+    bride_last_name = forms.CharField(
+        label=_("Last Name"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "last_name",
+                "title": _("Insert her/his last name"),
+            }
+        )
+    )
+    
+    bride_first_name = forms.CharField(
+        label=_("First Name"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "first_name",
+                "title": _("Insert her/his first name"),
+            }
+        )
+    )
+    
+    bride_gender = forms.ChoiceField(
+        label=_("Gender"), 
+        choices=Person.GENDER_CHOICES,
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD,
+                "title": _("Choose the gender")
+            }
+        )
+    )
+    
+    bride_birth_place = forms.CharField(
+        label=_("Place of Birth"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the place of birth"),
+            }
+        )
+    )
+    
+    bride_birthday = forms.DateTimeField(
+        label=_("Birthday"), 
+        # initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
+                "title": _("Enter/Choose the date of birth")
+            }
+        )
+    )
+    
+    bride_job = forms.CharField(
+        label=_("Place of Birth"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the place of birth"),
+            }
+        )
+    )
+    
+    bride_address = forms.CharField(
+        label=_("Address"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the address"),
+            }
+        )
+    )
+    
+    bride_nationality = forms.CharField(
+        label=_("Nationality"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the nationality"),
+                "placeholder": "Malagasy",
+            }
+        )
+    )
+    
+    # Informations des parents de la mariée
+    # Père de la mariée
+    father_bride_exist = forms.BooleanField(
+        label=_("Have a Father"),
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+    )
+
+    father_bride_last_name = forms.CharField(
+        label=_("Last Name"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "last_name",
+                "title": _("Insert her/his last name"),
+            }
+        )
+    )
+    
+    father_bride_first_name = forms.CharField(
+        label=_("First Name"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "first_name",
+                "title": _("Insert her/his first name"),
+            }
+        )
+    )
+    
+    father_bride_job = forms.CharField(
+        label=_("Address"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the job"),
+            }
+        )
+    )
+    
+    father_bride_address = forms.CharField(
+        label=_("Address"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the address"),
+            }
+        )
+    )
+
+    father_bride_was_alive = forms.BooleanField(
+        label=_("He is alive"),
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+    )
+
+    # Mère de la mariée
+    mother_bride_exist = forms.BooleanField(
+        label=_("Have a Mother"),
+        required=True,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+    )
+
+    mother_bride_last_name = forms.CharField(
+        label=_("Last Name"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "last_name",
+                "title": _("Insert her/his last name"),
+            }
+        )
+    )
+    
+    mother_bride_first_name = forms.CharField(
+        label=_("First Name"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "first_name",
+                "title": _("Insert her/his first name"),
+            }
+        )
+    )
+    
+    mother_bride_job = forms.CharField(
+        label=_("Address"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the job"),
+            }
+        )
+    )
+    
+    mother_bride_address = forms.CharField(
+        label=_("Address"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the address"),
+            }
+        )
+    )
+
+    mother_bride_was_alive = forms.BooleanField(
+        label=_("She is alive"),
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+    )
+
+    # Informations sur les témoins
+    # Témoin du marié
+    witness_groom_last_name = forms.CharField(
+        label=_("Last Name"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "last_name",
+                "title": _("Insert her/his last name"),
+            }
+        )
+    )
+    
+    witness_groom_first_name = forms.CharField(
+        label=_("First Name"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "first_name",
+                "title": _("Insert her/his first name"),
+            }
+        )
+    )
+    
+    witness_groom_birth_place = forms.CharField(
+        label=_("Place of Birth"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Wait for the declarer's place of birth"),
+            }
+        )
+    )
+    
+    witness_groom_birthday = forms.DateTimeField(
+        label=_("Birthday"), 
+        # initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
+                "title": _("Wait for the declarer's date of birth")
+            }
+        )
+    )
+    
+    witness_groom_job = forms.CharField(
+        label=_("Declarer's Job"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the declarer's job"),
+            }
+        )
+    )
+    
+    witness_groom_address = forms.CharField(
+        label=_("Declarer's Address"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the declarer's address"),
+            }
+        )
+    )
+
+    # Témoin de la mariée
+    witness_bride_last_name = forms.CharField(
+        label=_("Last Name"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "last_name",
+                "title": _("Insert her/his last name"),
+            }
+        )
+    )
+    
+    witness_bride_first_name = forms.CharField(
+        label=_("First Name"), 
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD + " searched_person", 
+                "type": "search",
+                "data-type": "first_name",
+                "title": _("Insert her/his first name"),
+            }
+        )
+    )
+    
+    witness_bride_birth_place = forms.CharField(
+        label=_("Place of Birth"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Wait for the declarer's place of birth"),
+            }
+        )
+    )
+    
+    witness_bride_birthday = forms.DateTimeField(
+        label=_("Birthday"), 
+        # initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
+                "title": _("Wait for the declarer's date of birth")
+            }
+        )
+    )
+    
+    witness_bride_job = forms.CharField(
+        label=_("Declarer's Job"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the declarer's job"),
+            }
+        )
+    )
+    
+    witness_bride_address = forms.CharField(
+        label=_("Declarer's Address"), 
+        widget=forms.TextInput(
+            attrs={
+                "class": CLASS_FIELD, 
+                "title": _("Insert the declarer's address"),
+            }
+        )
+    )
+
+    # Responsable
+    staff_direction = []
+    for staff in Staff.objects.filter(role__service__grade=1).order_by('role__grade'):
+        staff_direction.append((staff.pk, staff.full_name + ', ' + staff.role.title))
+    responsible = forms.ChoiceField(
+        label=_("Responsible"), 
+        choices = staff_direction,
+        initial = staff_direction[0],
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD + "text-lg cursor-pointer", 
+                "title": "Responsible",
+            }
+        )
+    )
+    
+    declaration_date = forms.DateTimeField(
+        label=_("Date of Declaration"),     
+        initial=(datetime.now() - timedelta(days=30)).__format__("%Y-%m-%d %H:%M"), 
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
+                "title": _("Wait for the date of declaration")
+            }
+        )
+    )
+    
+    register_date = forms.DateTimeField(
+        label=_("Date of Register"), 
+        initial=datetime.now().__format__("%Y-%m-%d %H:%M"),
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
+                "title": _("Wait for the date of register")
+            }
+        )
+    )
+
+    fieldsets = {
+        _("Matricule"): ["fokotany"],
+        _("Informations"): {
+            _("groom"): ["groom_birthday", "groom_birth_place", "groom_last_name", "groom_first_name", "groom_job", "groom_address", "groom_nationality"],
+            _("bride"): ["bride_birthday", "bride_birth_place", "bride_last_name", "bride_first_name", "bride_job", "bride_address", "bride_nationality"],
+        },
+        _("Parent Informations"): {
+            _("groom's father"): [ "father_groom_exist", "father_groom_last_name", "father_groom_first_name", "father_groom_address", "father_groom_was_alive"],
+            _("groom's mother"): ["mother_groom_exist", "mother_groom_last_name","mother_groom_first_name","mother_groom_address", "mother_groom_was_alive"],
+            _("bride's father"): [ "father_bride_exist", "father_bride_last_name", "father_bride_first_name", "father_bride_address", "father_bride_was_alive"],
+            _("bride's mother"): ["mother_bride_exist", "mother_bride_last_name","mother_bride_first_name","mother_bride_address", "mother_bride_was_alive"],
+        },
+        _("Witnesses Informations"): {
+            _("groom's witness"): ["witness_groom_last_name", "witness_groom_first_name", "witness_groom_birth_place", "witness_groom_birthday", "witness_groom_job", "witness_groom_address",],
+            _("bride's witness"): ["witness_bride_last_name", "witness_bride_first_name", "witness_bride_birth_place", "witness_bride_birthday", "witness_bride_job", "witness_bride_address",],
+        },
+        _("Register Informations"): ["responsible", "declaration_date","register_date",],
+    }
+
+    @property
+    def fieldsets_fields(self):
+        fs = {}
+        for title, fields in self.fieldsets.items():
+            # Cas 1 : la section est une simple liste de champs
+            if isinstance(fields, (list, tuple)):
+                fs[title] = [self[ch] for ch in fields]
+
+            # Cas 2 : la section contient des sous-groupes (dictionnaire imbriqué)
+            elif isinstance(fields, dict):
+                sub_fs = {}
+                for sub_title, sub_fields in fields.items():
+                    sub_fs[sub_title] = [self[ch] for ch in sub_fields]
+                fs[title] = sub_fs
+
+            # Cas 3 : si un autre type apparaît (sécurité)
+            else:
+                raise TypeError(f"Invalid type for fieldset '{title}': {type(fields).__name__}")
+
+        return fs

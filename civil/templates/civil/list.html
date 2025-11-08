@@ -50,12 +50,15 @@
                     {% for cell in data.row %}
                     {% if cell.header == "action" %}
                     <div class="peer table-cell sticky py-1 px-4 right-0 invisible peer-hover:visible hover:visible">
+                        {% translate "Are you sure want to delete this certificate ?" as delete_confirm_message %}
                         <div class="flex flex-row flex-nowrap justify-center gap-3">  
                             {% for button in cell.buttons %}                 
-                            <button 
+                            <a 
                             type="button"
-                            {% if data.pk %}
-                            onclick="clickButton('{{ menu_name|safe }}','{{ button.name|safe }}','{% url button.url 1 %}', Number.parseInt('{{ data.pk|safe }}'), Number.parseInt('{{ data.person_pk|safe }}'))"
+                            {% if button.name == "open" %}
+                            href="{{ data.certificate.person.url_detail }}"
+                            {% elif button.name == "delete" %}
+                            onclick="if(confirm('{{ delete_confirm_message }}')){document.location.assign('{{ data.certificate.get_delete_url }}')}"
                             {% endif %} 
                             class="px-3 py-1 text-white rounded-md ring-2 ring-white 
                             {% if button.style == 'green' %}
@@ -65,31 +68,31 @@
                             {% elif button.style == 'red' %}
                             bg-rose-600
                             {% endif %}
-                            ">{{ button.title|capfirst }}</button>
+                            ">{{ button.title|capfirst }}</a>
                             {% endfor %}
                         </div>
                     </div>
                     {% else %}
                     <a 
-                    {% if cell.header == "full name" and data.pk %}
-                    href="{% url data.detail_url data.person_pk %}"
-                    {% elif data.father_cert_pk and cell.header == "father" %}
-                    href="{% url data.detail_url data.father_cert_pk %}"
-                    {% elif data.mother_cert_pk and cell.header == "mother" %}
-                    href="{% url data.detail_url data.mother_cert_pk %}"
+                    {% if cell.header == "full name" %}
+                    href="{{ data.certificate.person.url_detail }}"
+                    {% elif cell.header == "father" %}
+                    href="{{ data.certificate.father.url_detail }}"
+                    {% elif cell.header == "mother" %}
+                    href="{{ data.certificate.mother.url_detail }}"
                     {% endif %}
                     class="peer table-cell px-4 py-2 
-                    {% if cell.header == 'full name' and data.pk %}
+                    {% if cell.header == 'full name' %}
                     hover:bg-sky-500 
-                    {% elif cell.header == 'father' and data.father_cert_pk %}
+                    {% elif cell.header == 'father' %}
                     hover:bg-sky-500 
-                    {% elif cell.header == 'mother' and data.mother_cert_pk %}
+                    {% elif cell.header == 'mother' %}
                     hover:bg-sky-500 
                     {% endif %}
                     {{ cell.style }}" title="{{ cell.title }}">
                     {% if cell.header == "status" %}
                     <p class="w-5 h-5 ring-2 rounded-full
-                        {%  if not data.is_alive %}
+                        {% if not data.certificate.person.is_alive %}
                         bg-gray-400 ring-gray-300
                         {%  elif cell.value %}
                         bg-sky-500 ring-sky-400
@@ -154,7 +157,7 @@
         console.log(e);
         console.log(headers.length <= 0);
 
-        if($(".table-row").length <= 0){
+        if('{{ is_searching }}' === 'None' & $(".table-row").length <= 0){
             $(e).prop("disabled", true);
             $('#id_search_filter').prop("disabled", true);
             $('#id_search_button').prop("disabled", true);
@@ -216,25 +219,5 @@
             }
         });
     });
-
-    function clickButton(menu, name, url, cert_pk, person_pk){
-        console.log(menu);
-        console.log(name);
-        console.log(url);
-        console.log(cert_pk);
-        console.log(person_pk);
-
-        if(name === 'open'){
-            if (['birth', 'death'].includes(menu)){
-                document.location.assign(url.replace('1', person_pk));
-            }
-        } else if (name === 'delete'){
-            if (['birth', 'death'].includes(menu)){
-                if (confirm('{% trans "Are you sure you want to delete this certificate ? This action will delete all documents that attached to it." %}')) {
-                    document.location.assign(url.replace('1', cert_pk));
-                }
-            }
-        }
-    }
 </script>
 {% endblock action %}

@@ -23,7 +23,7 @@ class IsaGasy:
         self.isa = isa
         # Isa Malagasy 
         self.__isa_boky = [
-            ["iraiky", "roa", "telo", "efatra", "dimy", "enina", "fito", "valo", "sivy"],
+            ["iray", "roa", "telo", "efatra", "dimy", "enina", "fito", "valo", "sivy"],
             ["folo","roapolo","telopolo","efapolo","dimampolo","enimpolo","fitopolo","valopolo","sivifolo",],
             ["zato","roanjato","telonjato","efajato","dimanjato","eninjato","fitonjato","valonjato","sivanjato",],
         ]
@@ -76,22 +76,22 @@ class IsaGasy:
         for c in str(self.isa):
             nombre_str = c + nombre_str
 
-        if nombre_str == "1":
-            resultat = 'iray'
-        else:
-            for index, isa in enumerate(nombre_str):  
-                if isa != "0":
-                    if index != 0 and int(nombre_str[:index]) != 0:
-                        if index in range(1, len(self.__isa_boky)):
-                            if index == 1 and isa == "1":
-                                resultat += " ambin'ny "
-                            # elif (self.__isa_boky[index][int(isa)-1] in self.__isa_boky + [self.__isa_boky[0]]):
-                            elif index == 1:
-                                resultat += " amby "
-                            else:
-                                resultat += " sy "
+        for index, isa in enumerate(nombre_str):  
+            if isa != "0":
+                if index == 0 and int(nombre_str[index]) == 1 and (len(nombre_str) > 1 and int(nombre_str[1]) != 0):
+                    resultat += 'iraiky'
+                    continue
+                if index != 0 and int(nombre_str[:index]) != 0:
+                    if index in range(1, len(self.__isa_boky)):
+                        if index == 1 and isa == "1":
+                            resultat += " ambin'ny "
+                        # elif (self.__isa_boky[index][int(isa)-1] in self.__isa_boky + [self.__isa_boky[0]]):
+                        elif index == 1 or (index == 2 and int(nombre_str[index]) == 1):
+                            resultat += " amby "
+                        else:
+                            resultat += " sy "
 
-                    resultat += self.__isa_boky[index][int(isa)-1]
+                resultat += self.__isa_boky[index][int(isa)-1]
 
         return resultat    
 

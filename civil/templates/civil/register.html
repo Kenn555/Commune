@@ -1,7 +1,7 @@
 {% extends "action_base.html" %}
 {% block action %}
 {% load i18n %}
-{% translate "Other Informations" as parents_information %}
+{% translate "Parent Informations" as parents_information %}
 {% translate 'Matricule' as matricule %}
 {% translate 'declarer' as declarer %}
 
@@ -18,12 +18,7 @@
     }
   </style>
 
-  <form action="
-  {% if menu_name == 'birth' %}
-    {% url 'civil:birth-save' %}
-  {% elif menu_name == 'death' %}
-    {% url 'civil:death-save' %}
-  {% endif %}" 
+  <form action="{{ url_save }}" 
   method="post" class="flex flex-col gap-y-8">
   {% csrf_token %}
   
@@ -162,6 +157,12 @@
                               }
                               else if (autocomplete_field.children("input, select").attr('id').search("birthday") != -1){
                                 autocomplete_field.children("input, select").val(data.birthday);
+                              }
+                              else if (autocomplete_field.children("input, select").attr('id').search("job") != -1){
+                                autocomplete_field.children("input, select").val(data.carreer);
+                              }
+                              else if (autocomplete_field.children("input, select").attr('id').search("address") != -1){
+                                autocomplete_field.children("input, select").val(data.address);
                               } else {
                                 console.log('Cette donnée n\'a pas de champ !!!');
                               }
@@ -261,7 +262,7 @@
             fieldset.children('div').each((index, element)=>{
               if(index > 0){
                 $(element).show();
-                $(element).children('[data-type="last_name"], [type="text"], [type="datetime-local"]').prop('required', true);
+                $(element).children('[data-type="last_name"]').prop('required', true);
                 console.log($(element).children('[type="search"], [type="text"], [type="datetime-local"]'));
               }
             });
@@ -269,7 +270,7 @@
             fieldset.children('div').each((index, element)=>{
               if(index > 0){
                 $(element).hide();
-                $(element).children('[data-type="last_name"], [type="text"], [type="datetime-local"]').prop('required', false);
+                $(element).children('[data-type="last_name"]').prop('required', false);
               }
             });
           }
@@ -279,9 +280,6 @@
         $('#id_have_parents').change((e)=>toggleFamilyFields(e.target));
         $('#id_father_exist').change((e)=>toggleFields(e.target));
         $('#id_mother_exist').change((e)=>toggleFields(e.target));
-        
-        toggleFields($('#id_father_exist'));
-        toggleFields($('#id_mother_exist'));
 });
     </script>
 

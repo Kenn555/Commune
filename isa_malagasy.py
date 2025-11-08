@@ -56,17 +56,22 @@ class IsaGasy:
 
         for c in str(self.isa):
             nombre_str = c + nombre_str
-        
+
         for index, isa in enumerate(nombre_str):  
             if isa != "0":
+                if index == 0 and int(nombre_str[index]) == 1 and int(nombre_str[1]) != 0:
+                    resultat += 'iraiky'
+                    continue
                 if index != 0 and int(nombre_str[:index]) != 0:
                     if index in range(1, len(self.__isa_boky)):
                         if index == 1 and isa == "1":
-                            resultat += " ambiny "
-                        elif index == 1:
+                            resultat += " ambin'ny "
+                        # elif (self.__isa_boky[index][int(isa)-1] in self.__isa_boky + [self.__isa_boky[0]]):
+                        elif index == 1 or (index == 2 and int(nombre_str[index]) == 1):
                             resultat += " amby "
                         else:
                             resultat += " sy "
+
                 resultat += self.__isa_boky[index][int(isa)-1]
 
         return resultat    
@@ -82,4 +87,4 @@ class IsaGasy:
                 valiny[laharana] += teny[faha]
         return valiny
     
-print(IsaGasy(2021).ho_teny())
+print(IsaGasy(299).ho_teny())

@@ -99,7 +99,7 @@ class Staff(models.Model):
         ]
 
     def __str__(self):
-        return _("%(first_name)s %(last_name)s, %(role)s,") % {"first_name": self.first_name, "last_name": self.last_name, "role": self.role or self.last_role}
+        return _("%(first_name)s %(last_name)s, %(role)s") % {"first_name": self.first_name, "last_name": self.last_name, "role": self.role or self.last_role}
 
     @property
     def full_name(self):
