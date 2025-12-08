@@ -1,7 +1,6 @@
 from datetime import date, datetime, timedelta
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from dal import autocomplete
 from django.db.models.functions import Concat
 from django.db import models
 
@@ -20,6 +19,7 @@ class PersonForm(forms.Form):
     # Informations personnelles
     last_name = forms.CharField(
         label=_("Last Name"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
@@ -32,6 +32,7 @@ class PersonForm(forms.Form):
     
     first_name = forms.CharField(
         label=_("First Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -56,6 +57,7 @@ class PersonForm(forms.Form):
     
     birth_place = forms.CharField(
         label=_("Place of Birth"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -81,6 +83,7 @@ class PersonForm(forms.Form):
     
     job = forms.CharField(
         label=_("Job"),
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -92,6 +95,7 @@ class PersonForm(forms.Form):
     
     address = forms.CharField(
         label=_("Address"),
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -151,6 +155,7 @@ class BirthCertificateForm(forms.Form):
     # Informations personnelles
     last_name = forms.CharField(
         label=_("Last Name"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
@@ -163,6 +168,7 @@ class BirthCertificateForm(forms.Form):
     
     first_name = forms.CharField(
         label=_("First Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -187,6 +193,7 @@ class BirthCertificateForm(forms.Form):
     
     birth_place = forms.CharField(
         label=_("Place of Birth"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -226,6 +233,7 @@ class BirthCertificateForm(forms.Form):
     
     father_last_name = forms.CharField(
         label=_("Father's Last Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -240,6 +248,7 @@ class BirthCertificateForm(forms.Form):
     
     father_first_name = forms.CharField(
         label=_("Father's First Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -254,6 +263,7 @@ class BirthCertificateForm(forms.Form):
     
     father_birth_place = forms.CharField(
         label=_("Place of Birth"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -279,6 +289,7 @@ class BirthCertificateForm(forms.Form):
     
     father_job = forms.CharField(
         label=_("Father's Job"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -290,6 +301,7 @@ class BirthCertificateForm(forms.Form):
 
     father_address = forms.CharField(
         label=_("Father's Address"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -316,6 +328,7 @@ class BirthCertificateForm(forms.Form):
     
     mother_last_name = forms.CharField(
         label=_("Mother's Last Name"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
@@ -329,6 +342,7 @@ class BirthCertificateForm(forms.Form):
     
     mother_first_name = forms.CharField(
         label=_("Mother's First Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -343,6 +357,7 @@ class BirthCertificateForm(forms.Form):
     
     mother_birth_place = forms.CharField(
         label=_("Place of Birth"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -366,6 +381,7 @@ class BirthCertificateForm(forms.Form):
     
     mother_job = forms.CharField(
         label=_("Mother's Job"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -376,6 +392,7 @@ class BirthCertificateForm(forms.Form):
     
     mother_address = forms.CharField(
         label=_("Mother's Address"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -401,6 +418,7 @@ class BirthCertificateForm(forms.Form):
 
     declarer_last_name = forms.CharField(
         label=_("Declarer's Last Name"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
@@ -413,6 +431,7 @@ class BirthCertificateForm(forms.Form):
     
     declarer_first_name = forms.CharField(
         label=_("Declarer's First Name"),
+        strip=True,
         required=False, 
         widget=forms.TextInput(
             attrs={
@@ -437,6 +456,7 @@ class BirthCertificateForm(forms.Form):
     
     declarer_birth_place = forms.CharField(
         label=_("Place of Birth"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -460,6 +480,7 @@ class BirthCertificateForm(forms.Form):
     
     declarer_relation = forms.CharField(
         label=_("Relationship"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -470,6 +491,7 @@ class BirthCertificateForm(forms.Form):
     
     declarer_job = forms.CharField(
         label=_("Declarer's Job"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -480,6 +502,7 @@ class BirthCertificateForm(forms.Form):
     
     declarer_address = forms.CharField(
         label=_("Declarer's Address"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -586,6 +609,7 @@ class DeathCertificateForm(forms.Form):
     # Informations personnelles
     last_name = forms.CharField(
         label=_("Last Name"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + ' searched_person', 
@@ -596,6 +620,7 @@ class DeathCertificateForm(forms.Form):
     
     first_name = forms.CharField(
         label=_("First Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -620,6 +645,7 @@ class DeathCertificateForm(forms.Form):
     
     birth_place = forms.CharField(
         label=_("Place of Birth"),
+        strip=True,
         required=False, 
         widget=forms.TextInput(
             attrs={
@@ -645,6 +671,7 @@ class DeathCertificateForm(forms.Form):
     
     death_place = forms.CharField(
         label=_("Place of Death"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -668,6 +695,7 @@ class DeathCertificateForm(forms.Form):
     
     dead_job = forms.CharField(
         label=_("Job"),
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -679,6 +707,7 @@ class DeathCertificateForm(forms.Form):
     
     dead_address = forms.CharField(
         label=_("Address"),
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -698,6 +727,7 @@ class DeathCertificateForm(forms.Form):
     
     father_last_name = forms.CharField(
         label=_("Father's Last Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -712,6 +742,7 @@ class DeathCertificateForm(forms.Form):
 
     father_first_name = forms.CharField(
         label=_("Father's first Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -726,6 +757,7 @@ class DeathCertificateForm(forms.Form):
     
     father_birth_place = forms.CharField(
         label=_("Place of Birth"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -751,6 +783,7 @@ class DeathCertificateForm(forms.Form):
     
     father_job = forms.CharField(
         label=_("Father's Job"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -762,6 +795,7 @@ class DeathCertificateForm(forms.Form):
 
     father_address = forms.CharField(
         label=_("Father's Address"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -788,6 +822,7 @@ class DeathCertificateForm(forms.Form):
     
     mother_last_name = forms.CharField(
         label=_("Mother's Last Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -802,6 +837,7 @@ class DeathCertificateForm(forms.Form):
     
     mother_first_name = forms.CharField(
         label=_("Mother's First Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -816,6 +852,7 @@ class DeathCertificateForm(forms.Form):
     
     mother_birth_place = forms.CharField(
         label=_("Place of Birth"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -841,6 +878,7 @@ class DeathCertificateForm(forms.Form):
     
     mother_job = forms.CharField(
         label=_("Mother's Job"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -852,6 +890,7 @@ class DeathCertificateForm(forms.Form):
     
     mother_address = forms.CharField(
         label=_("Mother's Address"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -878,6 +917,7 @@ class DeathCertificateForm(forms.Form):
 
     declarer_last_name = forms.CharField(
         label=_("Declarer's Last Name"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
@@ -890,6 +930,7 @@ class DeathCertificateForm(forms.Form):
     
     declarer_first_name = forms.CharField(
         label=_("Declarer's First Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -914,6 +955,7 @@ class DeathCertificateForm(forms.Form):
     
     declarer_birth_place = forms.CharField(
         label=_("Place of Birth"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -937,6 +979,7 @@ class DeathCertificateForm(forms.Form):
     
     declarer_relation = forms.CharField(
         label=_("Relationship"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -947,6 +990,7 @@ class DeathCertificateForm(forms.Form):
     
     declarer_job = forms.CharField(
         label=_("Declarer's Job"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -957,6 +1001,7 @@ class DeathCertificateForm(forms.Form):
     
     declarer_address = forms.CharField(
         label=_("Declarer's Address"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -964,7 +1009,24 @@ class DeathCertificateForm(forms.Form):
             }
         )
     )
-    
+
+    # Responsable
+    staff_direction = []
+    for staff in Staff.objects.filter(role__service__grade=1).order_by('role__grade'):
+        staff_direction.append((staff.pk, staff.full_name + ', ' + staff.role.title))
+    responsible = forms.ChoiceField(
+        label=_("Responsible"), 
+        choices = staff_direction,
+        initial = staff_direction[0],
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD + "text-lg cursor-pointer", 
+                "title": "Responsible",
+            }
+        )
+    )
+
+    # Enregistrement
     declaration_date = forms.DateTimeField(
         label=_("Date of Declaration"),     
         initial=(datetime.now() - timedelta(days=30)).__format__("%Y-%m-%d %H:%M"), 
@@ -1000,7 +1062,7 @@ class DeathCertificateForm(forms.Form):
             _("declarer"): ["declarer_present", "declarer_last_name", "declarer_first_name", "declarer_gender", "declarer_birthday", "declarer_birth_place", "declarer_job", "declarer_address", "declarer_relation",],
         },
         _("Register Informations"): {
-            _("register"): ["declaration_date", "register_date"],
+            _("register"): ["responsible", "declaration_date", "register_date"],
         },
     }
 
@@ -1044,11 +1106,13 @@ class MarriageCertificateForm(forms.Form):
     # Informations personnelles du marié
     groom_last_name = forms.CharField(
         label=_("Last Name"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
                 "data-type": "last_name",
+                "data-gender": "M",
                 "title": _("Insert her/his last name"),
             }
         )
@@ -1056,30 +1120,22 @@ class MarriageCertificateForm(forms.Form):
     
     groom_first_name = forms.CharField(
         label=_("First Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
                 "data-type": "first_name",
+                "data-gender": "M",
                 "title": _("Insert her/his first name"),
-            }
-        )
-    )
-    
-    groom_gender = forms.ChoiceField(
-        label=_("Gender"), 
-        choices=Person.GENDER_CHOICES,
-        widget=forms.Select(
-            attrs={
-                "class": CLASS_FIELD,
-                "title": _("Choose the gender")
             }
         )
     )
     
     groom_birth_place = forms.CharField(
         label=_("Place of Birth"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1102,7 +1158,8 @@ class MarriageCertificateForm(forms.Form):
     )
     
     groom_job = forms.CharField(
-        label=_("Place of Birth"), 
+        label=_("Job"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1113,6 +1170,7 @@ class MarriageCertificateForm(forms.Form):
     
     groom_address = forms.CharField(
         label=_("Address"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1123,102 +1181,12 @@ class MarriageCertificateForm(forms.Form):
     
     groom_nationality = forms.CharField(
         label=_("Nationality"), 
+        strip=True,
+        initial="Malagasy",
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
                 "title": _("Insert the nationality"),
-                "placeholder": "Malagasy",
-            }
-        )
-    )
-    
-    # Informations personnelles de la mariée
-    bride_last_name = forms.CharField(
-        label=_("Last Name"), 
-        widget=forms.TextInput(
-            attrs={
-                "class": CLASS_FIELD + " searched_person", 
-                "type": "search",
-                "data-type": "last_name",
-                "title": _("Insert her/his last name"),
-            }
-        )
-    )
-    
-    bride_first_name = forms.CharField(
-        label=_("First Name"), 
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                "class": CLASS_FIELD + " searched_person", 
-                "type": "search",
-                "data-type": "first_name",
-                "title": _("Insert her/his first name"),
-            }
-        )
-    )
-    
-    bride_gender = forms.ChoiceField(
-        label=_("Gender"), 
-        choices=Person.GENDER_CHOICES,
-        widget=forms.Select(
-            attrs={
-                "class": CLASS_FIELD,
-                "title": _("Choose the gender")
-            }
-        )
-    )
-    
-    bride_birth_place = forms.CharField(
-        label=_("Place of Birth"), 
-        widget=forms.TextInput(
-            attrs={
-                "class": CLASS_FIELD, 
-                "title": _("Insert the place of birth"),
-            }
-        )
-    )
-    
-    bride_birthday = forms.DateTimeField(
-        label=_("Birthday"), 
-        # initial=datetime.now().__format__("%Y-%m-%d %H:%M"), 
-        widget=forms.DateTimeInput(
-            attrs={
-                "class": CLASS_FIELD + " text-right", 
-                "type": "datetime-local",
-                "max": datetime.now().__format__("%Y-%m-%d %H:%M"),
-                "title": _("Enter/Choose the date of birth")
-            }
-        )
-    )
-    
-    bride_job = forms.CharField(
-        label=_("Place of Birth"), 
-        widget=forms.TextInput(
-            attrs={
-                "class": CLASS_FIELD, 
-                "title": _("Insert the place of birth"),
-            }
-        )
-    )
-    
-    bride_address = forms.CharField(
-        label=_("Address"), 
-        widget=forms.TextInput(
-            attrs={
-                "class": CLASS_FIELD, 
-                "title": _("Insert the address"),
-            }
-        )
-    )
-    
-    bride_nationality = forms.CharField(
-        label=_("Nationality"), 
-        widget=forms.TextInput(
-            attrs={
-                "class": CLASS_FIELD, 
-                "title": _("Insert the nationality"),
-                "placeholder": "Malagasy",
             }
         )
     )
@@ -1232,13 +1200,22 @@ class MarriageCertificateForm(forms.Form):
         widget=forms.CheckboxInput(attrs={"class": "mr-2"})
     )
 
+    father_groom_pk = forms.IntegerField(
+        show_hidden_initial=False,
+        localize=False,
+        required=False,
+        widget=forms.HiddenInput()
+    )
+
     father_groom_last_name = forms.CharField(
         label=_("Last Name"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
                 "data-type": "last_name",
+                "data-gender": "M",
                 "title": _("Insert her/his last name"),
             }
         )
@@ -1246,12 +1223,14 @@ class MarriageCertificateForm(forms.Form):
     
     father_groom_first_name = forms.CharField(
         label=_("First Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
                 "data-type": "first_name",
+                "data-gender": "M",
                 "title": _("Insert her/his first name"),
             }
         )
@@ -1259,6 +1238,7 @@ class MarriageCertificateForm(forms.Form):
     
     father_groom_address = forms.CharField(
         label=_("Address"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1282,13 +1262,22 @@ class MarriageCertificateForm(forms.Form):
         widget=forms.CheckboxInput(attrs={"class": "mr-2"})
     )
 
+    mother_groom_pk = forms.IntegerField(
+        show_hidden_initial=False,
+        localize=False,
+        required=False,
+        widget=forms.HiddenInput()
+    )
+
     mother_groom_last_name = forms.CharField(
         label=_("Last Name"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
                 "data-type": "last_name",
+                "data-gender": "F",
                 "title": _("Insert her/his last name"),
             }
         )
@@ -1296,12 +1285,14 @@ class MarriageCertificateForm(forms.Form):
     
     mother_groom_first_name = forms.CharField(
         label=_("First Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
                 "data-type": "first_name",
+                "data-gender": "F",
                 "title": _("Insert her/his first name"),
             }
         )
@@ -1309,6 +1300,7 @@ class MarriageCertificateForm(forms.Form):
     
     mother_groom_address = forms.CharField(
         label=_("Address"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1327,11 +1319,13 @@ class MarriageCertificateForm(forms.Form):
     # Informations personnelles de la mariée
     bride_last_name = forms.CharField(
         label=_("Last Name"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
                 "data-type": "last_name",
+                "data-gender": "F",
                 "title": _("Insert her/his last name"),
             }
         )
@@ -1339,30 +1333,22 @@ class MarriageCertificateForm(forms.Form):
     
     bride_first_name = forms.CharField(
         label=_("First Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
                 "data-type": "first_name",
+                "data-gender": "F",
                 "title": _("Insert her/his first name"),
-            }
-        )
-    )
-    
-    bride_gender = forms.ChoiceField(
-        label=_("Gender"), 
-        choices=Person.GENDER_CHOICES,
-        widget=forms.Select(
-            attrs={
-                "class": CLASS_FIELD,
-                "title": _("Choose the gender")
             }
         )
     )
     
     bride_birth_place = forms.CharField(
         label=_("Place of Birth"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1385,7 +1371,8 @@ class MarriageCertificateForm(forms.Form):
     )
     
     bride_job = forms.CharField(
-        label=_("Place of Birth"), 
+        label=_("Job"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1396,6 +1383,7 @@ class MarriageCertificateForm(forms.Form):
     
     bride_address = forms.CharField(
         label=_("Address"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1406,11 +1394,12 @@ class MarriageCertificateForm(forms.Form):
     
     bride_nationality = forms.CharField(
         label=_("Nationality"), 
+        strip=True,
+        initial="Malagasy",
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
                 "title": _("Insert the nationality"),
-                "placeholder": "Malagasy",
             }
         )
     )
@@ -1424,13 +1413,23 @@ class MarriageCertificateForm(forms.Form):
         widget=forms.CheckboxInput(attrs={"class": "mr-2"})
     )
 
+    father_bride_pk = forms.IntegerField(
+        show_hidden_initial=False,
+        localize=False,
+        required=False,
+        widget=forms.HiddenInput()
+    )
+
     father_bride_last_name = forms.CharField(
         label=_("Last Name"), 
+        strip=True,
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
                 "data-type": "last_name",
+                "data-gender": "M",
                 "title": _("Insert her/his last name"),
             }
         )
@@ -1438,19 +1437,23 @@ class MarriageCertificateForm(forms.Form):
     
     father_bride_first_name = forms.CharField(
         label=_("First Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
                 "data-type": "first_name",
+                "data-gender": "M",
                 "title": _("Insert her/his first name"),
             }
         )
     )
     
     father_bride_job = forms.CharField(
-        label=_("Address"), 
+        label=_("Job"), 
+        strip=True,
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1461,6 +1464,8 @@ class MarriageCertificateForm(forms.Form):
     
     father_bride_address = forms.CharField(
         label=_("Address"), 
+        strip=True,
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1479,18 +1484,28 @@ class MarriageCertificateForm(forms.Form):
     # Mère de la mariée
     mother_bride_exist = forms.BooleanField(
         label=_("Have a Mother"),
-        required=True,
+        required=False,
         initial=True,
         widget=forms.CheckboxInput(attrs={"class": "mr-2"})
     )
 
+    mother_bride_pk = forms.IntegerField(
+        show_hidden_initial=False,
+        localize=False,
+        required=False,
+        widget=forms.HiddenInput()
+    )
+
     mother_bride_last_name = forms.CharField(
         label=_("Last Name"), 
+        strip=True,
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
                 "data-type": "last_name",
+                "data-gender": "F",
                 "title": _("Insert her/his last name"),
             }
         )
@@ -1498,19 +1513,23 @@ class MarriageCertificateForm(forms.Form):
     
     mother_bride_first_name = forms.CharField(
         label=_("First Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
                 "type": "search",
                 "data-type": "first_name",
+                "data-gender": "F",
                 "title": _("Insert her/his first name"),
             }
         )
     )
     
     mother_bride_job = forms.CharField(
-        label=_("Address"), 
+        label=_("Job"), 
+        strip=True,
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1521,6 +1540,8 @@ class MarriageCertificateForm(forms.Form):
     
     mother_bride_address = forms.CharField(
         label=_("Address"), 
+        strip=True,
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1540,6 +1561,7 @@ class MarriageCertificateForm(forms.Form):
     # Témoin du marié
     witness_groom_last_name = forms.CharField(
         label=_("Last Name"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
@@ -1552,6 +1574,7 @@ class MarriageCertificateForm(forms.Form):
     
     witness_groom_first_name = forms.CharField(
         label=_("First Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -1563,8 +1586,20 @@ class MarriageCertificateForm(forms.Form):
         )
     )
     
+    witness_groom_gender = forms.ChoiceField(
+        label=_("Gender"), 
+        choices=Person.GENDER_CHOICES,
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD,
+                "title": _("Choose the gender")
+            }
+        )
+    )
+    
     witness_groom_birth_place = forms.CharField(
         label=_("Place of Birth"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1588,6 +1623,7 @@ class MarriageCertificateForm(forms.Form):
     
     witness_groom_job = forms.CharField(
         label=_("Declarer's Job"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1598,6 +1634,7 @@ class MarriageCertificateForm(forms.Form):
     
     witness_groom_address = forms.CharField(
         label=_("Declarer's Address"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1609,6 +1646,7 @@ class MarriageCertificateForm(forms.Form):
     # Témoin de la mariée
     witness_bride_last_name = forms.CharField(
         label=_("Last Name"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD + " searched_person", 
@@ -1621,6 +1659,7 @@ class MarriageCertificateForm(forms.Form):
     
     witness_bride_first_name = forms.CharField(
         label=_("First Name"), 
+        strip=True,
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -1632,8 +1671,20 @@ class MarriageCertificateForm(forms.Form):
         )
     )
     
+    witness_bride_gender = forms.ChoiceField(
+        label=_("Gender"), 
+        choices=Person.GENDER_CHOICES,
+        widget=forms.Select(
+            attrs={
+                "class": CLASS_FIELD,
+                "title": _("Choose the gender")
+            }
+        )
+    )
+    
     witness_bride_birth_place = forms.CharField(
         label=_("Place of Birth"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1657,6 +1708,7 @@ class MarriageCertificateForm(forms.Form):
     
     witness_bride_job = forms.CharField(
         label=_("Declarer's Job"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1667,6 +1719,7 @@ class MarriageCertificateForm(forms.Form):
     
     witness_bride_address = forms.CharField(
         label=_("Declarer's Address"), 
+        strip=True,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -1687,6 +1740,17 @@ class MarriageCertificateForm(forms.Form):
             attrs={
                 "class": CLASS_FIELD + "text-lg cursor-pointer", 
                 "title": "Responsible",
+            }
+        )
+    )
+    
+    wedding_day = forms.DateTimeField(
+        label=_("Date of Wedding"),      
+        widget=forms.DateTimeInput(
+            attrs={
+                "class": CLASS_FIELD + " text-right", 
+                "type": "datetime-local",
+                "title": _("Wait for the date of wedding")
             }
         )
     )
@@ -1724,16 +1788,16 @@ class MarriageCertificateForm(forms.Form):
             _("bride"): ["bride_birthday", "bride_birth_place", "bride_last_name", "bride_first_name", "bride_job", "bride_address", "bride_nationality"],
         },
         _("Parent Informations"): {
-            _("groom's father"): [ "father_groom_exist", "father_groom_last_name", "father_groom_first_name", "father_groom_address", "father_groom_was_alive"],
-            _("groom's mother"): ["mother_groom_exist", "mother_groom_last_name","mother_groom_first_name","mother_groom_address", "mother_groom_was_alive"],
-            _("bride's father"): [ "father_bride_exist", "father_bride_last_name", "father_bride_first_name", "father_bride_address", "father_bride_was_alive"],
-            _("bride's mother"): ["mother_bride_exist", "mother_bride_last_name","mother_bride_first_name","mother_bride_address", "mother_bride_was_alive"],
+            _("groom's father"): ["father_groom_exist", "father_groom_pk", "father_groom_last_name", "father_groom_first_name", "father_groom_address", "father_groom_was_alive"],
+            _("groom's mother"): ["mother_groom_exist", "mother_groom_pk", "mother_groom_last_name","mother_groom_first_name","mother_groom_address", "mother_groom_was_alive"],
+            _("bride's father"): [ "father_bride_exist", "father_bride_pk", "father_bride_last_name", "father_bride_first_name", "father_bride_address", "father_bride_was_alive"],
+            _("bride's mother"): ["mother_bride_exist", "mother_bride_pk", "mother_bride_last_name","mother_bride_first_name","mother_bride_address", "mother_bride_was_alive"],
         },
         _("Witnesses Informations"): {
-            _("groom's witness"): ["witness_groom_last_name", "witness_groom_first_name", "witness_groom_birth_place", "witness_groom_birthday", "witness_groom_job", "witness_groom_address",],
-            _("bride's witness"): ["witness_bride_last_name", "witness_bride_first_name", "witness_bride_birth_place", "witness_bride_birthday", "witness_bride_job", "witness_bride_address",],
+            _("groom's witness"): ["witness_groom_last_name", "witness_groom_first_name", "witness_groom_gender", "witness_groom_birth_place", "witness_groom_birthday", "witness_groom_job", "witness_groom_address",],
+            _("bride's witness"): ["witness_bride_last_name", "witness_bride_first_name", "witness_bride_gender", "witness_bride_birth_place", "witness_bride_birthday", "witness_bride_job", "witness_bride_address",],
         },
-        _("Register Informations"): ["responsible", "declaration_date","register_date",],
+        _("Register Informations"): ["responsible", "declaration_date","register_date", "wedding_day"],
     }
 
     @property

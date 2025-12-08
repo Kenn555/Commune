@@ -1,15 +1,25 @@
 {% extends "base.html" %}
 {% block article %}
 {% load isa_gasy %}
+{% load text_format %}
+{% load date_filter %}
 {% load static %}
 {% load humanize %}
 {% load i18n %}
     
     <style>
+        @font-face {
+            font-family: 'EdwardianScript';
+            src: url('{% static "fonts/ITCEDSCR.TTF" %}') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         .zoom-container {
             transform-origin: top center;
             transition: transform 0.2s ease;
         }
+
         @media print {
             body * {
                 visibility: hidden !important;
@@ -42,7 +52,6 @@
         .a4-page {
             width: 210mm;
             min-height: 297mm;
-            padding: 8mm 12mm;
             background: white;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             margin: 0px auto;
@@ -54,9 +63,8 @@
         }
         
         .handwriting-title {
-            font-family: 'Edwardian Script ITC', cursive;
+            font-family: 'EdwardianScript';
             font-size: 36pt;
-            font-weight: 600;
             text-align: center;
         }
         
@@ -79,12 +87,16 @@
             <div class="flex flex-wrap flex-1 gap-4 justify-between items-center">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-800">
-                        {{ document.person_full_name }}
+                        {{ document.type_str }}
                     </h1>
                     <p class="text-sm text-gray-600">
                         {{ document.type_str }} - N° {{ document.numero }} - {{ document.num_copy }} pages
                         <span class="ml-2 px-2 py-1 text-xs rounded-full bg-orange-400 text-white">
-                            {{ document.get_total_price|intcomma }} Ar
+                            {% if document.is_original %}
+                                Original
+                            {% else %}
+                                {{ document.get_total_price|intcomma }} Ar
+                            {% endif %}
                         </span>
                     </p>
                 </div>
@@ -147,10 +159,18 @@
         {% language 'mg' %}
         <div class="flex flex-col" id="print-area">
             {% for index in many_document %}
-            <div class="a4-page flex flex-col items-end text-[12pt] font-['Times_New_Roman']">
+            <div class="a4-page
+            {% if type_cert != 'marriage' %}
+            py-[8mm]
+            px-[12mm]
+            {% else %}
+            py-[6mm]
+            px-[6mm]
+            {% endif %}
+            flex flex-col items-end text-[12pt] font-['Times_New_Roman']">
                 <!-- Watermark -->
                 {% if document.status == 'V' %}
-                <div class="relative text-[1pt] font-black top-[100%] left-[0%] z-[9] transform scale-[100] -rotate-45 -translate-x-[3600%] translate-y-[30600%] print:top-[50%] print:translate-y-0 print:hidden text-rose-200/20"/>VALIDATED</div>
+                <div class="relative text-[1pt] font-black top-[100%] left-[0%] z-[1] transform scale-[100] -rotate-45 -translate-x-[3600%] translate-y-[30600%] print:top-[50%] print:translate-y-0 print:hidden text-rose-200/20"/>VALIDATED</div>
                 {% endif %}
                     
                 <!-- Note en haut à droite (filigrane) -->
@@ -161,7 +181,12 @@
                     sy Mpitahiry ny Kasem-panjakana
                 </div>
                 
-                <div class="grid  grid-cols-10 mt-[8px] gap-y-8 gap-x-4">
+                <div class="grid
+                    {% if type_cert != 'marriage' %}
+                    grid-cols-10 gap-y-8
+                    {% else %}
+                    grid-cols-12 gap-y-6
+                    {% endif %} mt-[8px] gap-x-4">
                     <!-- Informations administratives -->
                     <div class="flex text-[11pt] col-span-3 flex-col items-start mt-[138px] gap-y-2.5 leading-tight">
                         <p class="indent-8 underline">N° {{ document.numero }}/</p>
@@ -169,17 +194,44 @@
                         <p class="indent-1 uppercase">
                             {{ document.type_str }}
                         </p>
-                        <p class="pr-2"><a {% if certificate.person %}href="{{ certificate.person.url_detail }}" title="{{ certificate.person.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.person_full_name }}</a></p>
-                        <p class="indent-8">{% if type_cert == 'birth' %}{{ document.person_birthday|date:"d-m-y" }}{% elif type_cert == 'death' %}{{  document.death_day|date:"d-m-y" }}{% endif %}</p>
+                        {% if not type_cert == 'marriage' %}
+                        <p class="pr-2">
+                        <a {% if certificate.person %}href="{{ certificate.person.url_detail }}" title="{{ certificate.person.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.person_last_name|full_name:document.person_first_name }}</a>
+                        </p>
+                        {% else %}
+                        <div class="flex flex-col gap-y-1.5">
+                        <p class="w-full"><a {% if certificate.groom %}href="{{ certificate.groom.url_detail }}" title="{{ certificate.groom.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.groom_last_name|full_name:document.groom_first_name }}</a></p>
+                        <p class="indent-16">SY</p>
+                        <p class="w-full"><a {% if certificate.bride %}href="{{ certificate.bride.url_detail }}" title="{{ certificate.bride.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.bride_last_name|full_name:document.bride_first_name }}</a></p>
+                        </div>
+                        {% endif %}
+                        <p class="indent-8">
+                            {% if type_cert == 'birth' %}
+                            {{ document.person_birthday|date:"d-m-y" }}
+                            {% elif type_cert == 'recognization' %}
+                            {{  document.person_birthday|date:"d-m-y" }}
+                            {% elif type_cert == 'marriage' %}
+                            {{  document.wedding_day|date:"d-m-y" }}
+                            {% elif type_cert == 'death' %}
+                            {{  document.death_day|date:"d-m-y" }}
+                            {% endif %}</p>
                         <p class="font-semibold indent-7 tracking-widest">---------------</p>
                     </div>
                     
                     <!-- Corps du texte en malgache -->
-                    <div class="flex flex-col col-span-7 gap-y-10 leading-tight text-justify" style="position: relative; z-index: 1;">
+                    <div class="flex flex-col 
+                    {% if type_cert != 'marriage' %}
+                    col-span-7
+                    gap-y-10
+                    {% else %}
+                    col-span-9
+                    gap-y-6
+                    {% endif %}
+                    leading-tight text-justify" style="position: relative; z-index: 1;">
                         
                         <!-- Titre en écriture manuscrite -->
                         <div class="">
-                            <h1 class="handwriting-title
+                            <h1 class="handwriting-title font-semibold
                             relative inline-block
                             after:content-[''] after:absolute
                             after:border-b-2 after:border-dashed after:border-black
@@ -199,12 +251,13 @@
                             <p class="inline">-------------------------------------------------------------------------------------------</p>
                         </div>
 
+                        {% if document.type_cert != "marriage_doc" %}
                         <div class="relative 
                             after:content-[''] after:absolute
                             after:bg-white
                             after:left-0 after:w-full after:h-[20px]"
                         >
-                        {% if document.type_cert == 'birth_doc' %}
+                            {% if document.type_cert == 'birth_doc' %}
                             <p class="inline text-justify">
                                 _________Tamin'ny
                                 {% if document.person_birthday|date:"d" == "01" %}
@@ -227,14 +280,14 @@
                                 {% else %}
                                 {{ common_name }}:
                                 {% endif %}
-                                <a {% if certificate.person %}href="{{ certificate.person.url_detail }}" title="{{ certificate.person.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.person_full_name }}</a>,
+                                <a {% if certificate.person %}href="{{ certificate.person.url_detail }}" title="{{ certificate.person.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.person_last_name|full_name:document.person_first_name }}</a>,
                                 {% if document.person_gender == 'M' %}
                                 zazalahy{% else %}zazavavy{% endif %},
                                 zanak'i
-                                {% if document.father_full_name and document.date_recognization == document.date_register %}
-                                <a {% if certificate.father %}href="{{ certificate.father.url_detail }}" title="{{ certificate.father.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.father_full_name }}</a>{% if document.father_birthday %},
+                                {% if document.father_last_name and not document.is_recognized %}
+                                <a {% if certificate.father %}href="{{ certificate.father.url_detail }}" title="{{ certificate.father.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.father_last_name|full_name:document.father_first_name }}</a>{% if document.father_birthday %},
                                     teraka tamin'ny
-                                        {% if document.father_birthday_is_date %}
+                                        {% if document.father_birthday|is_date %}
                                             {% if document.father_birthday|date:"d" == "01" %}
                                             voalohany volana
                                             {% else %}
@@ -253,9 +306,9 @@
                                     {% endif %}
                                 sy
                                 {% endif %}
-                                <a {% if certificate.mother %}href="{{ certificate.mother.url_detail }}" title="{{ certificate.mother.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.mother_full_name }}</a>{% if document.mother_birthday %}, 
+                                <a {% if certificate.mother %}href="{{ certificate.mother.url_detail }}" title="{{ certificate.mother.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.mother_last_name|full_name:document.mother_first_name }}</a>{% if document.mother_birthday %}, 
                                 teraka tamin'ny
-                                    {% if document.mother_birthday_is_date %}
+                                    {% if document.mother_birthday|is_date %}
                                         {% if document.mother_birthday|date:"d" == "01" %}
                                         voalohany volana
                                         {% else %}
@@ -267,13 +320,70 @@
                                     tao {{ document.mother_birth_place }}{% endif %}{% endif %}{% if document.mother_is_alive %}{% if document.father_carreer|lower != document.mother_carreer|lower or not document.father_is_alive %},
                                     {{document.mother_carreer|lower}}{% endif %}{% if document.father_address != document.mother_address or not document.father_is_alive %},
                                     monina ao {{document.mother_address}}{% endif %}{% else %},
-                                maty teo ampiterahana{% endif %}{% if document.father_is_alive and document.father_carreer|lower == document.mother_carreer|lower and document.date_recognization == document.date_register %},
-                                samy {{document.father_carreer|lower }}{% endif %}{% if document.father_is_alive and document.father_carreer|lower == document.mother_carreer|lower and document.father_address == document.mother_address and document.date_recognization == document.date_register %}
-                                sy monina ao {{document.mother_address}}{% elif document.father_is_alive and document.father_address == document.mother_address and document.date_recognization == document.date_register %},
+                                maty teo ampiterahana{% endif %}{% if document.father_is_alive and document.father_carreer|lower == document.mother_carreer|lower and not document.is_recognized %},
+                                samy {{document.father_carreer|lower }}{% endif %}{% if document.father_is_alive and document.father_carreer|lower == document.mother_carreer|lower and document.father_address == document.mother_address and not document.is_recognized %}
+                                sy monina ao {{document.mother_address}}{% elif document.father_is_alive and document.father_address == document.mother_address and not document.is_recognized %},
                                 samy monina ao {{document.mother_address}}{% if not ' - ' in document.mother_address %},
                                 Commune ao {{ common_name }}{% endif %}{% endif %}.
                             </p>
-                        {% elif document.type_cert == "death_doc" %}
+                            {% elif document.type_cert == 'recognization_doc' %}
+                            <p class="inline text-justify">
+                                _________Androany
+                                {% if document.date_register|date:"d" == "01" %}
+                                voalohany volana
+                                {% else %}
+                                {{ document.date_register|date:"d"|isa_gasy }}
+                                {% endif %}
+                                {{ document.date_register|date:"m"|volana_gasy|capfirst }}, taona {{ document.date_register|date:"Y"|isa_gasy }}, tamin'ny {{ document.date_register|date:"h"|isa_gasy }} ora
+                                {% if document.date_register|date:"i" != "00" %}
+                                sy {{ document.date_register|date:"i"|isa_gasy }} minitra
+                                {% endif %}
+                                {{ document.date_register|date:"h"|ora_gasy }},
+                                dia tonga teto anatrehanay:
+                                {{ document.responsible_staff_name }}, {{ document.responsible_staff_role }},
+                                mpiandraikitra sora-piankohonana ao Betsiaka:
+                                <a {% if certificate.father %}href="{{ certificate.father.url_detail }}" title="{{ certificate.father.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.father_last_name|full_name:document.father_first_name }}</a>,
+                                teraka tamin'ny
+                                {% if document.father_birthday|is_date %}
+                                    {% if document.father_birthday|date:"d" == "01" %}
+                                    voalohany volana
+                                    {% else %}
+                                    {{ document.father_birthday|date:"d"|isa_gasy }}
+                                    {% endif %}
+                                {{ document.father_birthday|date:"m"|volana_gasy|capfirst }},
+                                {% endif %}
+                                taona {{ document.father_birthday|date:"Y"|isa_gasy }}{% if document.father_birth_place %},
+                                tao {{ document.father_birth_place }}{% endif %}{% if document.father_carreer %},
+                                {{document.father_carreer|lower}}{% endif %}{% if document.father_address %},
+                                monina ao {{document.father_address}}{% endif %},
+                                ka nampanoratra anay ny fanjanahana an'i
+                                <a {% if certificate.person %}href="{{ certificate.person.url_detail }}" title="{{ certificate.person.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.person_last_name|full_name:document.person_first_name }}</a>,
+                                {% if document.person_gender == 'M' %}
+                                zazalahy{% else %}zazavavy{% endif %}, teraka tamin'ny
+                                {% if document.person_birthday|date:"d" == "01" %}
+                                voalohany volana
+                                {% else %}
+                                {{ document.person_birthday|date:"d"|isa_gasy }}
+                                {% endif %}
+                                {{ document.person_birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.person_birthday|date:"Y"|isa_gasy }},
+                                tao {{ document.person_birth_place }}, zanak'i
+                                <a {% if certificate.mother %}href="{{ certificate.mother.url_detail }}" title="{{ certificate.mother.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.mother_last_name|full_name:document.mother_first_name }}</a>{% if document.mother_birthday %}, 
+                                teraka tamin'ny
+                                    {% if document.mother_birthday|is_date %}
+                                        {% if document.mother_birthday|date:"d" == "01" %}
+                                        voalohany volana
+                                        {% else %}
+                                        {{ document.mother_birthday|date:"d"|isa_gasy }}
+                                        {% endif %}
+                                    {{ document.mother_birthday|date:"m"|volana_gasy|capfirst }},
+                                    {% endif %}
+                                    taona {{ document.mother_birthday|date:"Y"|isa_gasy }}{% if document.mother_birth_place %},
+                                    tao {{ document.mother_birth_place }}{% endif %}{% endif %}{% if document.mother_is_alive %}{% if document.father_carreer|lower != document.mother_carreer|lower or not document.father_is_alive %},
+                                    {{document.mother_carreer|lower}}{% endif %}{% if document.father_address != document.mother_address or not document.father_is_alive %},
+                                    monina ao {{document.mother_address}}{% endif %}{% else %},
+                                efa maty{% endif %}; Miara manao Sonia aminay, ny mpanao fanambarana, rehefa novakina taminy ity soratra ity.
+                            </p>
+                            {% elif document.type_cert == "death_doc" %}
                             <p class="inline text-justify">
                                 _________Tamin'ny
                                 {% if document.death_day|date:"d" == "01" %}
@@ -291,7 +401,7 @@
                                 {% else %}
                                 {{ common_name }}:
                                 {% endif %} 
-                                <a {% if certificate.person %}href="{{ certificate.person.url_detail }}" title="{{ certificate.person.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.person_full_name }}</a>,
+                                <a {% if certificate.person %}href="{{ certificate.person.url_detail }}" title="{{ certificate.person.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.person_last_name|full_name:document.person_first_name }}</a>,
                                 {% if document.person_gender == "M" %}
                                 lehilahy
                                 {% else %}
@@ -302,12 +412,12 @@
                                 {{ document.person_birthday|date:"m"|volana_gasy|capfirst }}, taona {{ document.person_birthday|date:"Y"|isa_gasy }}{% if document.person_birth_place %},
                                     tao {{ document.person_birth_place }}{% endif %}{% endif %}{% if document.person_carreer %},
                                 {{ document.person_carreer|lower }}{% endif %}{% if document.person_address %},
-                                monina ao {{ document.person_address }}{% endif %}{% if '' %}{{ document.father_full_name }}{{ document.father_full_name }}{% endif %}{% if document.father_full_name or document.mother_full_name %},
+                                monina ao {{ document.person_address }}{% endif %}{% if document.father_last_name or document.mother_last_name %},
                                 zanak'i 
-                                {% endif %}{% if document.father_full_name %}
-                                <a {% if certificate.father %}href="{{ certificate.father.url_detail }}" title="{{ certificate.father.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.father_full_name }}</a>{% if document.father_birthday %},
+                                {% endif %}{% if document.father_last_name %}
+                                <a {% if certificate.father %}href="{{ certificate.father.url_detail }}" title="{{ certificate.father.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.father_last_name|full_name:document.father_first_name }}</a>{% if document.father_birthday %},
                                     teraka tamin'ny
-                                        {% if document.father_birthday_is_date %}
+                                        {% if document.father_birthday|is_date %}
                                             {% if document.father_birthday|date:"d" == "01" %}
                                             voalohany volana
                                             {% else %}
@@ -319,11 +429,11 @@
                                 tao {{ document.father_birth_place }}{% endif %}{% endif %}{% if document.father_is_alive %}{% if document.father_carreer|lower != document.mother_carreer|lower or not document.mother_is_alive %},
                                         {{document.father_carreer|lower}}{% endif %}{% if document.father_address != document.mother_address or not document.mother_is_alive %},
                                         monina ao {{document.father_address}}{% endif %}{% elif document.mother_is_alive %},
-                                    efa maty{% endif %}{% endif %}{% if document.father_full_name and document.mother_full_name %}
+                                    efa maty{% endif %}{% endif %}{% if document.father_last_name and document.mother_last_name %}
                                 sy 
-                                {%endif%}{% if document.mother_full_name %}
-                                <a {% if certificate.mother %}href="{{ certificate.mother.url_detail }}" title="{{ certificate.mother.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.mother_full_name }}</a>{% if document.mother_birthday %},
-                                    teraka tamin'ny{% if document.mother_birthday_is_date %}{% if document.mother_birthday|date:"d" == "01" %}
+                                {%endif%}{% if document.mother_last_name %}
+                                <a {% if certificate.mother %}href="{{ certificate.mother.url_detail }}" title="{{ certificate.mother.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.mother_last_name|full_name:document.mother_first_name }}</a>{% if document.mother_birthday %},
+                                    teraka tamin'ny{% if document.mother_birthday|is_date %}{% if document.mother_birthday|date:"d" == "01" %}
                                             voalohany volana{% else %}
                                             {{ document.mother_birthday|date:"d"|isa_gasy }}{% endif %}
                                         {{ document.mother_birthday|date:"m"|volana_gasy|capfirst }},{% endif %}
@@ -332,19 +442,18 @@
                                         {{document.mother_carreer|lower}}{% endif %}{% if document.father_address != document.mother_address or not document.father_is_alive %},
                                         monina ao {{document.mother_address}}{% endif %}{% elif document.father_is_alive %},
                                     efa maty{% else %},
-                                    samy efa maty{% endif %}{% if document.father_full_name and document.mother_full_name %}{% if document.father_is_alive and document.father_carreer|lower == document.mother_carreer|lower %},
-                                        samy {{document.father_carreer|lower }}
-                                        {% endif %}
-                                        {% if document.father_is_alive and document.father_carreer|lower == document.mother_carreer|lower and document.father_address == document.mother_address %}
+                                    samy efa maty{% endif %}{% if document.father_last_name and document.mother_last_name %}{% if document.father_is_alive and document.father_carreer|lower == document.mother_carreer|lower %},
+                                        samy {{document.father_carreer|lower }}{% endif %}{% if document.father_is_alive and document.father_carreer|lower == document.mother_carreer|lower and document.father_address == document.mother_address %}
                                         sy{% else %},
                                         {% endif %}{% if document.father_is_alive and document.father_address == document.mother_address %}
                                         samy monina ao {{document.mother_address}}{% if not ' - ' in document.mother_address %},
                                             Commune ao {{ common_name }}{% endif %}{% endif %}{% endif %}{% endif %}.
                             </p>
-                        {% endif %}
+                            {% endif %}
                             <p class="inline">-------------------------------------------------------------------------------------------</p>
                         </div>
 
+                        {% if document.type_cert != 'recognization_doc' %}
                         <div class="relative space-y-1">
                             <div class="
                                 after:content-[''] after:absolute
@@ -356,13 +465,13 @@
                                     taona {{ document.date_register|date:"Y"|isa_gasy }},
                                     tamin'ny {{ document.date_register|date:"h"|isa_gasy }} ora {{ document.date_register|date:"h"|ora_gasy }},
                                     araky ny fanambarana nataon'i
-                                    {% if document.declarer_full_name == document.father_full_name %}
+                                    {% if document.declarer_last_name == document.father_last_name %}
                                     <a {% if certificate.father %}href="{{ certificate.father.url_detail }}" title="{{ certificate.father.full_name }}" class="hover:border-b-2 border-black"{% endif %}>rainy</a> izay 
-                                    {% elif document.declarer_full_name == document.mother_full_name %}
+                                    {% elif document.declarer_last_name == document.mother_last_name %}
                                     <a {% if certificate.person %}href="{{ certificate.person.url_detail }}" title="{{ certificate.person.full_name }}" class="hover:border-b-2 border-black"{% endif %}>reniny</a> izay
                                     {% else %}
-                                    <a {% if certificate.declarer %}href="{{ certificate.declarer.url_detail }}" title="{{ certificate.declarer.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.declarer_full_name }}</a>, teraka tamin'ny
-                                        {% if document.declarer_birthday_is_date %}
+                                    <a {% if certificate.declarer %}href="{{ certificate.declarer.url_detail }}" title="{{ certificate.declarer.full_name }}" class="hover:border-b-2 border-black"{% endif %}>{{ document.declarer_last_name|full_name:document.declarer_first_name }}</a>, teraka tamin'ny
+                                        {% if document.declarer_birthday|is_date %}
                                             {% if document.declarer_birthday|date:"d" == "01" %}
                                             voalohany volana
                                             {% else %}
@@ -382,7 +491,7 @@
                                 <div class="flex flex-1">
                                     <div class="mx-4">-</div>
                                     <div>
-                                        Nozanahan'i Atoa {{ document.father_full_name }}, tamin'ny {{ document.date_recognization|date:'d' }} {{ document.date_recognization|date:'m'|volana_gasy|capfirst }} {{ document.date_recognization|date:'Y' }}, laharana faha 02 tao Betsiaka.
+                                        Nozanahan'i Atoa {{ document.recognized_by_last_name|full_name:document.recognized_by_first_name }}, tamin'ny {{ document.date_recognization|date:'d' }} {{ document.date_recognization|date:'m'|volana_gasy|capfirst }} {{ document.date_recognization|date:'Y' }}, laharana faha {{ document.recognization_numero }} tao Betsiaka.
                                     </div>
                                 </div>
                                 {% endif %}
@@ -396,21 +505,207 @@
                                 {% endif %}
                             {% endif %}
                         </div>
+                        {% endif %}
+                    {% else %}
+                    <div class="col-span-7 -space-y-3">
+                        <div class="relative 
+                            after:content-[''] after:absolute
+                            after:bg-white
+                            after:left-0 after:w-full after:h-[20px]"
+                        >
+                            <p class="inline text-justify">
+                                _________Androany
+                                {% if document.date_register|date:"d" == "01" %}
+                                voalohany volana
+                                {% else %}
+                                {{ document.date_register|date:"d"|isa_gasy }}
+                                {% endif %}
+                                {{ document.date_register|date:"m"|volana_gasy|capfirst }}, taona {{ document.date_register|date:"Y"|isa_gasy }}, tamin'ny {{ document.date_register|date:"h"|isa_gasy }} ora
+                                {% if document.date_register|date:"i" != "00" %}
+                                sy {{ document.date_register|date:"i"|isa_gasy }} minitra
+                                {% endif %}
+                                {{ document.date_register|date:"h"|ora_gasy }},
+                                dia tonga teto anatrehanay:
+                                {{ document.responsible_staff_name }}, {{ document.responsible_staff_role }},
+                                mpiandraikitra sora-piankohonana ao Betsiaka.
+                            </p>
+                            <p class="inline">-------------------------------------------------------------------------------------------</p>
+                        </div>
+                        <div class="relative 
+                            after:content-[''] after:absolute
+                            after:bg-white
+                            after:left-0 after:w-full after:h-[20px]"
+                        >
+                            <p class="inline text-justify">
+                                _________1°) {{ document.groom_last_name|full_name:document.groom_first_name }},
+                                {{ document.groom_carreer|lower }},
+                                monina ao {{ document.groom_address|capfirst }},
+                                Commune
+                                {% if common_name|lower in document.groom_address|lower %}
+                                io ihany{% else %}
+                                ao {{ common_name }}{% endif %},
+                                mizaka ny zom-pirenena {{ document.groom_nationality }},
+                                teraka tamin'ny
+                                {% if document.groom_birthday|is_date %}
+                                    {% if document.groom_birthday|date:"d" == "01" %}
+                                    voalohany volana
+                                    {% else %}
+                                    {{ document.groom_birthday|date:"d"|isa_gasy }}
+                                    {% endif %}
+                                {{ document.groom_birthday|date:"m"|volana_gasy|capfirst }},
+                                {% endif %}
+                                taona {{ document.groom_birthday|date:"Y"|isa_gasy }}{% if document.groom_birth_place %},
+                                tao {{ document.groom_birth_place }}{% endif %}{% if document.father_groom_last_name or document.mother_groom_last_name %},
+                                zanak’i
+                                    {% if document.father_groom_last_name %}
+                                    {{ document.father_groom_last_name|full_name:document.father_groom_first_name }}{% if document.father_groom_is_alive %}{% if document.father_groom_address and document.father_groom_address != document.mother_groom_address %},
+                                        monina ao {{ document.father_groom_address }}{% endif %}{% elif not document.father_groom_is_alive and document.mother_groom_is_alive %},
+                                        efa maty{% endif %}{% endif %}
+                                    sy
+                                    {{ document.mother_groom_last_name|full_name:document.mother_groom_first_name }}{% if document.mother_groom_is_alive %}{% if document.mother_groom_address and document.father_groom_address != document.mother_groom_address %},
+                                        monina ao {{ document.mother_groom_address }}{% elif document.father_groom_address == document.mother_groom_address %},
+                                        samy monina ao {{ document.mother_groom_address }}{% endif %}{% elif not document.mother_groom_is_alive and document.father_groom_is_alive %},
+                                        efa maty{% else %},
+                                        samy efa maty{% endif %}{% endif %}.
+                            </p>
+                            <p class="inline">-------------------------------------------------------------------------------------------</p>
+                        </div>
+                        <div class="relative 
+                            after:content-[''] after:absolute
+                            after:bg-white
+                            after:left-0 after:w-full after:h-[20px]"
+                        >
+                            <p class="inline text-justify">
+                                _________2°) {{ document.bride_last_name|full_name:document.bride_first_name }},
+                                {{ document.bride_carreer|lower }},
+                                monina ao {{ document.bride_address|capfirst }},
+                                Commune
+                                {% if common_name|lower in document.bride_address|lower %}
+                                io ihany{% else %}
+                                ao {{ common_name }}{% endif %},
+                                mizaka ny zom-pirenena {{ document.bride_nationality }},
+                                teraka tamin'ny
+                                {% if document.bride_birthday|is_date %}
+                                    {% if document.bride_birthday|date:"d" == "01" %}
+                                    voalohany volana
+                                    {% else %}
+                                    {{ document.bride_birthday|date:"d"|isa_gasy }}
+                                    {% endif %}
+                                {{ document.bride_birthday|date:"m"|volana_gasy|capfirst }},
+                                {% endif %}
+                                taona {{ document.bride_birthday|date:"Y"|isa_gasy }}{% if document.bride_birth_place %},
+                                tao {{ document.bride_birth_place }}{% endif %}{% if document.father_bride_last_name or document.mother_bride_last_name %},
+                                zanak’i
+                                    {% if document.father_bride_last_name %}
+                                    {{ document.father_bride_last_name|full_name:document.father_bride_first_name }}{% if document.father_bride_is_alive %}{% if document.father_bride_address and document.father_bride_address != document.mother_bride_address %},
+                                        monina ao {{ document.father_bride_address }}{% endif %}{% elif document.mother_bride_is_alive %},
+                                        efa maty{% endif %}{% endif %}
+                                    sy
+                                    {{ document.mother_bride_last_name|full_name:document.mother_bride_first_name }}{% if document.mother_bride_is_alive %}{% if document.mother_bride_address and document.father_bride_address != document.mother_bride_address %},
+                                        monina ao {{ document.mother_bride_address }}{% elif document.father_bride_address == document.mother_bride_address %},
+                                        samy monina ao {{ document.mother_bride_address }}{% endif %}{% elif not document.mother_bride_is_alive and document.father_bride_is_alive %},
+                                        efa maty{% else %},
+                                        samy efa maty{% endif %}{% endif %}.
+                            </p>
+                            <p class="inline">-------------------------------------------------------------------------------------------</p>
+                        </div>
+                        <div class="relative 
+                            after:content-[''] after:absolute
+                            after:bg-white
+                            after:left-0 after:w-full after:h-[20px]"
+                        >
+                            <p class="inline text-justify">
+                                __________Samy milaza izy ireo fa mifanaiky ny hifampakatra ka dia nambaranay tamin’ny anaran’ny lalàna fa mpivady izy ireo hatramin’izao.
+                            </p>
+                            <p class="inline">-------------------------------------------------------------------------------------------</p>
+                        </div>
+                        <div class="relative 
+                            after:content-[''] after:absolute
+                            after:bg-white
+                            after:left-0 after:w-full after:h-[20px]"
+                        >
+                            <p class="inline text-justify">
+                                __________Ny fanoratana dia natao teo anatrehan’ireto vavolombelona ireto: {{ document.witness_groom_last_name|full_name:document.witness_groom_first_name }},
+                                teraka tamin’ny
+                                {% if document.witness_groom_birthday|is_date %}
+                                    {% if document.witness_groom_birthday|date:"d" == "01" %}
+                                    voalohany volana
+                                    {% else %}
+                                    {{ document.witness_groom_birthday|date:"d"|isa_gasy }}
+                                    {% endif %}
+                                {{ document.witness_groom_birthday|date:"m"|volana_gasy|capfirst }},
+                                {% endif %}
+                                taona {{ document.witness_groom_birthday|date:"Y"|isa_gasy }}{% if document.witness_groom_birth_place %},
+                                tao {{ document.witness_groom_birth_place }}{% endif %}{% if document.witness_groom_carreer and document.witness_groom_carreer != document.witness_bride_carreer %},
+                                {{ document.witness_groom_carreer|lower }}{% endif %}{% if document.witness_groom_address and document.witness_groom_address != document.witness_bride_address %},
+                                monina ao {{ document.witness_groom_address }}
+                                {% endif %}
+                                sy {{ document.witness_bride_last_name|full_name:document.witness_bride_first_name }},
+                                teraka tamin’ny
+                                {% if document.witness_bride_birthday|is_date %}
+                                    {% if document.witness_bride_birthday|date:"d" == "01" %}
+                                    voalohany volana
+                                    {% else %}
+                                    {{ document.witness_bride_birthday|date:"d"|isa_gasy }}
+                                    {% endif %}
+                                {{ document.witness_bride_birthday|date:"m"|volana_gasy|capfirst }},
+                                {% endif %}
+                                taona {{ document.witness_bride_birthday|date:"Y"|isa_gasy }}{% if document.witness_bride_birth_place %},
+                                tao {{ document.witness_bride_birth_place }}{% endif %}{% if document.witness_bride_carreer != document.witness_groom_carreer %},
+                                {{ document.witness_bride_carreer|lower }}{% else %},
+                                samy {{ document.witness_groom_carreer|lower }}{% endif %}{% if document.witness_groom_address != document.witness_bride_address %},
+                                monina ao {{ document.witness_bride_address }}{% else %}{% if document.witness_bride_carreer != document.witness_groom_carreer and document.witness_groom_address == document.witness_bride_address %}
+                                sy {% else %},
+                                samy{% endif %}
+                                monina {{ document.witness_bride_address }}{% endif %}.
+                            </p>
+                            <p class="inline">-------------------------------------------------------------------------------------------</p>
+                        </div>
+                        <div class="relative 
+                            after:content-[''] after:absolute
+                            after:bg-white
+                            after:left-0 after:w-full after:h-[20px]"
+                        >
+                            <p class="inline text-justify">
+                                __________Rehefa novakina tamin’izy ireo ity soratra ity ka miara manao Sonia aminay, izy mivady sy ny vavolombelona.
+                            </p>
+                            <p class="inline">-------------------------------------------------------------------------------------------</p>
+                        </div>
                     </div>
-                    
-                    <p class="col-span-3 text-[11pt] underline mt-4 indent-4">SARANY : 1000 Ariary</p>
+                    {% endif %}
+                    </div>
 
-                    <div class="col-span-7 space-y-1 leading-relaxed text-justify">
+                    {% if document.is_original %}
+                        <p class="col-span-3 text-[11pt] underline mt-4 indent-4">{% translate 'first copy'|upper %}</p>
+                    {% else %}
+                        <p class="col-span-3 text-[11pt] underline mt-4 indent-4">SARANY : 1000 Ariary</p>
+                    {% endif %}
+
+                    <div class="
+                    {% if type_cert != 'marriage' %}
+                    col-span-7
+                    {% else %}
+                    col-span-9
+                    {% endif %}
+                    space-y-1 leading-relaxed text-justify">
                         <p class="indent-20">= MANARAKA NY SONIA =</p>
                         <div class="pl-32">
                             <p class="indent-10"> = </p>
+                            {% if not type_cert == "marriage" %}
                             <p class="indent-16"> = </p>
                             <p class="indent-24"> = </p>
+                            {% endif %}
                         </div>
                         
                         <div class="flex items-end mt-12">                        
                             <div class="flex w-full flex-col gap-y-8">
-                                <p class="indent-8 leading-tight">Kopia manontolo nadika tamin'ny boky androany 
+                                <p class="
+                                {% if document.type_cert == 'marriage_doc' %}
+                                indent-16
+                                {% else %}
+                                indent-8
+                                {% endif %}
+                                leading-tight">Kopia manontolo nadika tamin'ny boky androany 
                                     {{ document.date_created|date:"d" }} {{ document.date_created|date:"m"|volana_gasy|capfirst }} {{ document.date_created|date:"Y" }}{% if document.notes %}, ary nomena{% if "Atoa" in document.notes %} an'{% else %} an-d{% endif %}{{ document.notes }}{% endif %}.</p>
                                 
                                 <p class="font-bold uppercase mb-2 text-center">NY MPIANDRAIKITRA SORA-PIANKOHONANA</p>
@@ -473,24 +768,12 @@
         }
 
         function back_or_list(){
-            // if("{{ document.status }}" === "D"){
-            //     // Requête AJAX pour supprimer le document du certificate en brouillon avant de quitter
-            //     $.ajax({
-            //         url: "{% url 'civil:certificate-delete' 0 1 %}"
-            //         .replace('0', documentType) // Ajustez l'URL selon votre configuration
-            //         .replace('1', documentId), // Ajustez l'URL selon votre configuration
-            //         method: 'GET',
-            //         success: function(data) {
-            //             console.log('✅ Le document est supprimé avec succès');
-            //         },
-            //         error: function(xhr, status, error) {
-            //             console.error('❌ Erreur lors de la suppression du document:', error);
-            //             alert("Erreur lors de la suppression du document.\nRecharger la page et faites une nouvelle tentative.\nSi l'erreur persiste, contactez le service technique.");
-            //         }
-            //     });
-            // }
             console.log("SORTIR !!!!!!!!!!!!!!!!")
-            window.location.assign('{{ certificate.person.url_detail }}');
+            if('{{ type_cert }}' != "marriage"){
+                window.location.assign('{{ certificate.person.url_detail }}');
+            } else {
+                history.back();
+            }
         }
 
         function print_documents(e){

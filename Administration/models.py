@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from gettext import ngettext
 from django.db import models
 
@@ -107,15 +107,20 @@ class Staff(models.Model):
 
     @property
     def since(self):
-        if datetime.now().year - self.date_joined.year > 0:
-            since = int(datetime.now().year - self.date_joined.year)
-            return ngettext("%(since)d year", "%(since)d years", since) % {"since": since}
-        elif datetime.now().month - self.date_joined.month > 0:
+        if (datetime.today().date() - self.date_joined).days <= 30:
+            since = (datetime.today().date() - self.date_joined).days
+            return ngettext("%(since)d day", "%(since)d days", since) % {"since": since}
+        elif 30 < (datetime.today().date() - self.date_joined).days <= 360:
             since = int(datetime.now().month - self.date_joined.month)
             return ngettext("%(since)d month", "%(since)d months", since) % {"since": since}
-        elif datetime.now().day - self.date_joined.day > 0:
-            since = int(datetime.now().day - self.date_joined.day)
-            return ngettext("%(since)d day", "%(since)d days", since) % {"since": since}
+        else:
+            since = int(datetime.now().year - self.date_joined.year)
+            return ngettext("%(since)d year", "%(since)d years", since) % {"since": since}
+
+    @property
+    def since_day(self):
+        since = datetime.today().date() - self.date_joined
+        return ngettext("%(since)d day", "%(since)d days", since) % {"since": since.days}
 
 class Common(models.Model):
     name = models.CharField(max_length=50)

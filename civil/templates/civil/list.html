@@ -34,7 +34,7 @@
             <button type="submit" id="id_search_button" disabled class="py-2 px-6 rounded-lg bg-blue-600 text-white disabled:bg-gray-400">{% translate "Valid" %}</button>
         </div>
     </div>
-    <div class="overflow-auto max-h-[500px]">
+    <div class="overflow-auto max-h-[500px] min-h-[200px]">
         <div class="table w-full">
             <div class="table-header-group sticky top-0 z-10 text-md text-white font-semibold border-b">
                 <input type="hidden" name="order" value="">
@@ -74,32 +74,32 @@
                     </div>
                     {% else %}
                     <a 
-                    {% if cell.header == "full name" %}
-                    href="{{ data.certificate.person.url_detail }}"
-                    {% elif cell.header == "father" %}
-                    href="{{ data.certificate.father.url_detail }}"
-                    {% elif cell.header == "mother" %}
-                    href="{{ data.certificate.mother.url_detail }}"
+                    {% if cell.value.url_detail %}
+                    href="{{ cell.value.url_detail }}"
                     {% endif %}
                     class="peer table-cell px-4 py-2 
-                    {% if cell.header == 'full name' %}
-                    hover:bg-sky-500 
-                    {% elif cell.header == 'father' %}
-                    hover:bg-sky-500 
-                    {% elif cell.header == 'mother' %}
+                    {% if cell.value.url_detail %}
                     hover:bg-sky-500 
                     {% endif %}
                     {{ cell.style }}" title="{{ cell.title }}">
                     {% if cell.header == "status" %}
-                    <p class="w-5 h-5 ring-2 rounded-full
                         {% if not data.certificate.person.is_alive %}
-                        bg-gray-400 ring-gray-300
-                        {%  elif cell.value %}
-                        bg-sky-500 ring-sky-400
-                        {% else %}
-                        bg-red ring-orange-400
+                        <p title="{% translate 'dead'|capfirst %}" 
+                        class="w-5 h-5 ring-2 rounded-full
+                        bg-gray-400 ring-gray-300"></p>
+                        {% elif data.certificate.person.is_married %}
+                        <p title="{% translate 'married'|capfirst %}" 
+                        class="w-5 h-5 ring-2 rounded-full
+                        bg-rose-500 ring-rose-400"></p>
+                        {% elif data.certificate.is_recognized %}
+                        <p title="{% translate 'recognized'|capfirst %}" 
+                        class="w-5 h-5 ring-2 rounded-full
+                        bg-orange-500 ring-orange-400"></p>
+                        {% elif cell.value %}
+                        <p title="{% translate 'alive'|capfirst %}" 
+                        class="w-5 h-5 ring-2 rounded-full
+                        bg-green-500 ring-green-400"></p>
                         {% endif %}
-                        "></p>
                     {% else %}
                         {{ cell.value }}
                     {% endif %}

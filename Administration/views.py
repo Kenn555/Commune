@@ -515,7 +515,7 @@ def role_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerman
                         {"header": "app", "value": role.app, "style": "text-center w-4 text-nowrap", "title": role.app},
                         {"header": "status", "value": "✅" if Staff.objects.filter(role=role) else "❌", "style": "text-center w-4 text-nowrap", "title": "Is active" if Staff.objects.filter(role=role) else "Is not active"},
                         {"header": "occupant", "value": Staff.objects.get(role=role).full_name if Staff.objects.filter(role=role) else "No one", "style": "text-center w-4 text-nowrap", "title": Staff.objects.get(role=role).full_name if Staff.objects.filter(role=role) else "No one"},
-                        {"header": "since", "value": Staff.objects.get(role=role).since if Staff.objects.filter(role=role) else "No one", "style": "text-center w-4 text-nowrap", "title": Staff.objects.get(role=role).since if Staff.objects.filter(role=role) else "No one"},
+                        {"header": "since", "value": Staff.objects.get(role=role).since if Staff.objects.filter(role=role) else "No one", "style": "text-center w-4 text-nowrap", "title": Staff.objects.get(role=role).since_day if Staff.objects.filter(role=role) else "No one"},
                         {"header": "action", "style": "bg-rose-600", "title": "", "buttons": [
                             {"name": _("open"), "url": __package__+":role", "style": "green"},
                             {"name": _("delete"), "url": __package__+":role", "style": "red"},

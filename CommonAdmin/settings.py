@@ -105,9 +105,6 @@ ALLOWED_HOSTS = ['*'] if CHECKED_ENV else []
 # Application definition
 
 INSTALLED_APPS = [
-    # Autocomplete
-    "dal",
-    "dal_select2",
     # Applications par défaut
     "django.contrib.admin",
     "django.contrib.auth",
@@ -119,6 +116,8 @@ INSTALLED_APPS = [
     # Fonctions template personnalisées
     "civil.templatetags.isa_gasy",
     "civil.templatetags.iterator",
+    "civil.templatetags.text_format",
+    "civil.templatetags.date_filter",
     # Applications
     "account.apps.AccountConfig",
     *[service['name'] for service in SERVICES_APP],

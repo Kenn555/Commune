@@ -4,6 +4,23 @@
 {% load i18n %}
 
 <div class="flex flex-initial flex-col">
+    <div class="flex gap-x-4 ml-4">
+        <a onclick="history.back()" class="text-sm text-gray-500 hover:text-gray-800 cursor-pointer"
+        title="{% translate 'Back' %}"
+        >
+            {% translate "Back" %}
+        </a>
+        <a href="{{ person.url_modify }}" class="text-sm text-gray-500 hover:text-blue-600 cursor-pointer"
+        title="{% translate 'Modify' %}"
+        >
+            {% translate "Modify" %}
+        </a>
+        <button type="button" onclick="supprimCertificate()" class="text-sm text-gray-500 hover:text-rose-600 cursor-pointer"
+        title="{% translate 'Delete' %}"
+        >
+            {% translate "Delete" %}
+        </button>
+    </div>
     <div class="flex flex-row max-md:flex-wrap rounded-t-3xl px-5 py-4 min-h-80 gap-4
     {% if person.gender == 'M' %}{% if person.is_alive %} bg-blue-200 {% else %} bg-gray-300 hover:bg-blue-200 {% endif %}{% else %}{% if person.is_alive %} bg-rose-200 {% else %} bg-gray-300 hover:bg-rose-200 {% endif %}{% endif %}
     ">
@@ -31,84 +48,112 @@
                         {% endif %}
                     </div>
                     <div class="flex flex-row  flex-wrap gap-x-10 gap-y-4 w-full">
-                        {% if birth_certificate.father %}
+                        {% if person.father %}
                         <div class="flex flex-col">
                             <a 
-                            href="{{ birth_certificate.father.url_detail }}" title="{% trans 'clic here'|capfirst %}" 
-                            {% if birth_certificate.father == birth_certificate.declarer %} 
-                            class="text-lg underline underline-offset-2 {% if father_certificated %} cursor-pointer {% endif %}" 
-                            {% else %} class="text-lg {% if father_certificated %} cursor-pointer {% endif %}" {% endif %}><b>{% if person.is_recognized %}⬇ {% endif %}{% trans 'father'|capfirst %} :</b> {{ birth_certificate.father.full_name }} ({{ birth_certificate.father.status }})</a>
-                            {% if birth_certificate.father.birthday %}
-                            <p class="text-sm ml-5"><b>{% trans 'birthday'|capfirst %} :</b> {{ birth_certificate.father.birthday|date:'d-m-Y' }}</p>
+                            href="{{ person.father.url_detail }}" title="{{ person.father.full_name }} ({{ person.father.status }})" 
+                            class="flex flex-nowrap items-center cursor-pointer hover:text-gray-700">
+                                <span class="text-lg {% if person.father == birth_certificate.declarer %}underline underline-offset-2{% endif %}"><b>{% if person.is_recognized %}⬇ {% endif %}{% trans 'father'|capfirst %}: </b> {{ person.father.full_name }}</span>
+                                <div class="ml-2 w-3 h-3 ring-2 rounded-full
+                                    {% if not person.father.is_alive %}
+                                    bg-gray-400 ring-gray-300
+                                    {% else %}
+                                    bg-green-500 ring-green-400
+                                    {% endif %}">
+                                </div>
+                            </a>
+                            {% if person.father.birthday %}
+                            <p class="text-sm ml-5"><b>{% trans 'birthday'|capfirst %} :</b> {{ person.father.birthday|date:'d-m-Y' }}</p>
                             {% endif %}
 
-                            {% if birth_certificate.father.address %}
-                            <p class="text-sm ml-5"><b>{% trans 'address'|capfirst %} :</b> {{ birth_certificate.father.address }}</p>
+                            {% if person.father.address %}
+                            <p class="text-sm ml-5"><b>{% trans 'address'|capfirst %} :</b> {{ person.father.address }}</p>
                             {% endif %}
 
-                            {% if birth_certificate.father.carreer %}
-                            <p class="text-sm ml-5"><b>{% trans 'carreer'|capfirst %} :</b> {{ birth_certificate.father.carreer }}</p>
+                            {% if person.father.carreer %}
+                            <p class="text-sm ml-5"><b>{% trans 'carreer'|capfirst %} :</b> {{ person.father.carreer }}</p>
                             {% endif %}
 
                         </div>
                         {% endif %}
-                        {% if birth_certificate.mother %}
+                        {% if person.mother %}
                         <div class="flex flex-col">
                             <a 
-                            href="{{ birth_certificate.mother.url_detail }}" title="{% trans 'clic here'|capfirst %}" 
-                            {% if birth_certificate.mother == birth_certificate.declarer %} 
-                            class="text-lg underline underline-offset-2 {% if mother_certificated %} cursor-pointer {% endif %}" 
-                            {% else %}class="text-lg {% if mother_certificated %} cursor-pointer {% endif %}"{% endif %}><b>{% trans 'mother'|capfirst %} :</b> {{ birth_certificate.mother.full_name }} ({{ birth_certificate.mother.status }})</a>
-                            {% if birth_certificate.mother.birthday %}
-                            <p class="text-sm ml-5"><b>{% trans 'birthday'|capfirst %} :</b> {{ birth_certificate.mother.birthday|date:'d-m-Y' }}</p>
+                            href="{{ person.mother.url_detail }}" title="{{ person.mother.full_name }} ({{ person.mother.status }})" 
+                            class="flex flex-nowrap items-center cursor-pointer hover:text-gray-700"> 
+                                <span class=" text-lg {% if person.mother == birth_certificate.declarer %}underline underline-offset-2{% endif %}"><b>{% trans 'mother'|capfirst %}: </b> {{ person.mother.full_name }}</span>
+                                <div class="ml-2 w-3 h-3 ring-2 rounded-full
+                                    {% if not person.mother.is_alive %}
+                                    bg-gray-400 ring-gray-300
+                                    {% else %}
+                                    bg-green-500 ring-green-400
+                                    {% endif %}">
+                                </div>
+                            </a>
+                            {% if person.mother.birthday %}
+                            <p class="text-sm ml-5"><b>{% trans 'birthday'|capfirst %} :</b> {{ person.mother.birthday|date:'d-m-Y' }}</p>
                             {% endif %}
-                            {% if birth_certificate.mother.address %}
-                            <p class="text-sm ml-5"><b>{% trans 'address'|capfirst %} :</b> {{ birth_certificate.mother.address }}</p>
+                            {% if person.mother.address %}
+                            <p class="text-sm ml-5"><b>{% trans 'address'|capfirst %} :</b> {{ person.mother.address }}</p>
                             {% endif %}
-                            {% if birth_certificate.mother.carreer %}
-                            <p class="text-sm ml-5"><b>{% trans 'carreer'|capfirst %} :</b> {{ birth_certificate.mother.carreer }}</p>
-                            {% endif %}
-                        </div>  
-                        {% endif %}                  
-                        {% if birth_certificate.father != birth_certificate.declarer and birth_certificate.mother != birth_certificate.declarer %}
-                        <div class="flex flex-col">
-                            <a 
-                            href="{{ birth_certificate.declarer.url_detail }}" title="{% trans 'clic here'|capfirst %}" 
-                            class="text-lg {% if declarer_certificated %} cursor-pointer {% endif %}"><b>{% trans 'declarer'|capfirst %} :</b> {{ birth_certificate.declarer.full_name }} ({{ birth_certificate.declarer.status }})</a>
-                            {% if birth_certificate.declarer.birthday %}
-                            <p class="text-sm ml-5"><b>{% trans 'birthday'|capfirst %} :</b> {{ birth_certificate.declarer.birthday|date:'d-m-Y' }}</p>
-                            {% endif %}
-                            {% if birth_certificate.declarer.address %}
-                            <p class="text-sm ml-5"><b>{% trans 'address'|capfirst %} :</b> {{ birth_certificate.declarer.address }}</p>
-                            {% endif %}
-                            {% if birth_certificate.declarer.carreer %}
-                            <p class="text-sm ml-5"><b>{% trans 'carreer'|capfirst %} :</b> {{ birth_certificate.declarer.carreer }}</p>
+                            {% if person.mother.carreer %}
+                            <p class="text-sm ml-5"><b>{% trans 'carreer'|capfirst %} :</b> {{ person.mother.carreer }}</p>
                             {% endif %}
                         </div>  
                         {% endif %}
                     </div>
-                    <div>
-                        {% if birth_certificate.date_declaration %}
-                        <p><b>{% trans 'declaration date'|capfirst %} :</b> {{ birth_certificate.date_declaration|date:'d-m-Y H:i' }}</p>
+                    <div class="w-fit">
+                        {% if birth_certificate.declarer and birth_certificate.declarer != person.father and birth_certificate.declarer != person.mother %}
+                        <a href="{{ birth_certificate.declarer.url_detail }}" title="{{ birth_certificate.declarer.full_name }} ({{ birth_certificate.declarer.status }})"  class="flex items-center gap-1 flex-nowrap hover:text-gray-700"><b>{% trans 'declarer'|capfirst %} :</b> {{ birth_certificate.declarer }}
+                            <div class="ml-1 w-3 h-3 ring-2 rounded-full
+                                {% if not birth_certificate.declarer.is_alive %}
+                                bg-gray-400 ring-gray-300
+                                {% else %}
+                                bg-green-500 ring-green-400
+                                {% endif %}">
+                            </div>
+                        </a>
                         {% endif %}
-                        {% if birth_certificate.date_recognization and  birth_certificate.date_recognization != birth_certificate.date_register %}
-                        <p><b>{% trans 'Recognization date'|capfirst %} :</b> {{ birth_certificate.date_recognization|date:'d-m-Y H:i' }}</p>
+                        {% if marriage_certificate.groom == person %}
+                        <a href="{{ marriage_certificate.bride.url_detail }}" title="{{ marriage_certificate.bride.full_name }} ({{ marriage_certificate.bride.status }})"  class="flex items-center gap-1 flex-nowrap hover:text-gray-700"><b>{% trans 'wife'|capfirst %} :</b> {{ marriage_certificate.bride }}
+                            <div class="ml-1 w-3 h-3 ring-2 rounded-full
+                                {% if not marriage_certificate.bride.is_alive %}
+                                bg-gray-400 ring-gray-300
+                                {% else %}
+                                bg-green-500 ring-green-400
+                                {% endif %}">
+                            </div>
+                        </a>
+                        {% elif marriage_certificate.bride == person %}
+                        <a href="{{ marriage_certificate.groom.url_detail }}" title="{{ marriage_certificate.groom.full_name }} ({{ marriage_certificate.groom.status }})"  class="flex items-center gap-1 flex-nowrap hover:text-gray-700"><b>{% trans 'husband'|capfirst %} :</b> {{ marriage_certificate.groom }}
+                            <div class="ml-1 w-3 h-3 ring-2 rounded-full
+                                {% if not marriage_certificate.groom.is_alive %}
+                                bg-gray-400 ring-gray-300
+                                {% else %}
+                                bg-green-500 ring-green-400
+                                {% endif %}">
+                            </div>
+                        </a>
                         {% endif %}
                     </div>
                 </div>
             </div>
         </div>
-        <div class="flex flex-col gap-4 justify-between whitespace-nowrap w-full">
+        <div class="flex flex-col gap-4 justify-between whitespace-nowrap w-fit">
             <div class="space-y-2 text-end">
                 <p class="text-xl text-right tracking-widest"><b>PK :</b> {{ person.pk_str }}</p>
-                {% if birth_certificate.date_register %}
-                <p><b>{% trans 'register date'|capfirst %} :</b> {{ birth_certificate.date_register|date:'d-m-Y H:i' }}</p>
-                {% endif %}
             </div>
             <div class="flex gap-x-7 justify-end whitespace-nowrap">
                 <div class="flex justify-center items-center h-full">{{ age }}</div>
-                <div class="flex justify-center items-center h-full">Not married</div>
-                <div class="flex justify-center items-center h-full">{{ person.status|capfirst }}</div>
+                <div class="flex justify-center items-center h-full">{{ person.is_married_str|capfirst }}</div>
+                <div class="ml-2 w-5 h-5 ring-2 rounded-full
+                    {% if not person.is_alive %}
+                    bg-gray-400 ring-gray-300
+                    {% else %}
+                    bg-green-500 ring-green-400
+                    {% endif %}"
+                    title="{{ person.status }}">
+                </div>
             </div>
         </div>
     </div>
@@ -118,37 +163,70 @@
             <p class="text-sm">Date modified : {{ person.date_modified|date:'d-m-Y H:i' }}</p>
         </div>
         <div class="flex flex-wrap justify-center gap-7">
-            <a href="" class="flex items-center p-4 gap-4 rounded-xl shadow-md w-80">
+            {% if birth_certificate %}
+            <a href="" class="flex items-center p-4 gap-4 rounded-xl shadow-md w-fit">
                 <div class="flex rounded-full min-w-16 min-h-16 items-center justify-center border-4 border-blue-500 text-xl font-semibold">
                     {{ birth_doc.count }}
                 </div>
                 <div class="flex flex-col">
                     <p class="text-md font-semibold">{% trans "Copies de Naissance"|upper %}</p>
-                    <p class="text-blue-400"><b>N°</b> {{ birth_certificate.numero }}</p>
-                    <p class="text-blue-400">{% trans 'last at'|capfirst %} {{ birth_doc.last.date_created|date:'d-m-Y H:i'|default:'0-0-0000 0:0' }}</p>
+                    <p class="text-gray-600"><b class="text-blue-400">N°</b> {{ birth_certificate.numero }}</p>
+                    <div class="text-sm">
+                        <p title="{{ birth_certificate.person.birthday|date:'d-m-Y H:i' }}" class="text-gray-600"><b class="text-blue-400">{% trans 'date'|capfirst %} :</b> {{ birth_certificate.person.birthday|date:'d/m/Y' }}</p>
+                        <p title="{{ birth_certificate.date_declaration|date:'d-m-Y H:i' }} --- {{ birth_certificate.declarer}}" class="text-gray-600"><b class="text-blue-400">{% trans 'declaration date'|capfirst %} :</b> {{ birth_certificate.date_declaration|date:'d/m/Y' }}</p>
+                        <p title="{{ birth_certificate.date_register|date:'d-m-Y H:i' }}" class="text-gray-600"><b class="text-blue-400">{% trans 'register date'|capfirst %} :</b> {{ birth_certificate.date_register|date:'d/m/Y' }}</p>
+                    </div>
                 </div>
             </a>
-            {% if not person.is_alive %}
-            <a href="" class="disabled:cursor-not-allowed flex items-center p-4 gap-4 rounded-xl shadow-md w-80">
+            {% endif %}
+            {% if birth_certificate.is_recognized %}
+            <a href="" class="flex items-center p-4 gap-4 rounded-xl shadow-md w-fit">
+                <div class="flex rounded-full min-w-16 min-h-16 items-center justify-center border-4 border-orange-500 text-xl font-semibold">
+                    {{ recognization_doc.count }}
+                </div>
+                <div class="flex flex-col">
+                    <p class="text-md font-semibold">{% trans "Copies de Reconnaissance"|upper %}</p>
+                    <p class="text-gray-600"><b class="text-orange-400">N°</b> {{ recognization_certificate.numero }}</p>
+                    <div class="text-sm">
+                        <p title="{{ recognization_certificate.date_register|date:'d-m-Y H:i' }} --- {{ recognization_certificate.recognized_by }}" class="text-gray-600"><b class="text-orange-400">{% trans 'date'|capfirst %} :</b> {{ recognization_certificate.date_register|date:'d/m/Y' }}</p>
+                        <p title="{{ recognization_certificate.date_declaration|date:'d-m-Y H:i' }} --- {{ recognization_certificate.declarer}}" class="text-gray-600"><b class="text-orange-400">{% trans 'declaration date'|capfirst %} :</b> {{ recognization_certificate.date_declaration|date:'d/m/Y' }}</p>
+                        <p title="{{ recognization_certificate.date_register|date:'d-m-Y H:i' }}" class="text-gray-600"><b class="text-orange-400">{% trans 'register date'|capfirst %} :</b> {{ recognization_certificate.date_register|date:'d/m/Y' }}</p>
+                    </div>
+                </div>
+            </a>
+            {% endif %}
+            {% if person.has_marriage_certificate %}
+            <a href="" class="flex items-center p-4 gap-4 rounded-xl shadow-md w-fit">
+                <div class="flex rounded-full min-w-16 min-h-16 items-center justify-center border-4 border-rose-500 text-xl font-semibold">
+                    {{ marriage_doc.count }}
+                </div>
+                <div class="flex flex-col">
+                    <p class="text-md font-semibold">{% trans "Copies de Mariage"|upper %}</p>
+                    <p class="text-gray-600"><b class="text-rose-400">N°</b> {{ marriage_certificate.numero }}</p>
+                    <div class="text-sm">
+                        <p title="{{ marriage_certificate.wedding_day|date:'d-m-Y H:i' }}" class="text-gray-600"><b class="text-rose-400">{% trans 'date'|capfirst %} :</b> {{ marriage_certificate.wedding_day|date:'d/m/Y' }}</p>
+                        <p title="{{ marriage_certificate.date_declaration|date:'d-m-Y H:i' }} --- {{ marriage_certificate.witness_groom }} & {{ marriage_certificate.witness_bride }}" class="text-gray-600"><b class="text-rose-400">{% trans 'declaration date'|capfirst %} :</b> {{ marriage_certificate.date_declaration|date:'d/m/Y' }}</p>
+                        <p title="{{ marriage_certificate.date_register|date:'d-m-Y H:i' }}" class="text-gray-600"><b class="text-rose-400">{% trans 'register date'|capfirst %} :</b> {{ marriage_certificate.date_register|date:'d/m/Y' }}</p>
+                    </div>
+                </div>
+            </a>
+            {% endif %}
+            {% if person.has_death_certificate %}
+            <a href="" class="disabled:cursor-not-allowed flex items-center p-4 gap-4 rounded-xl shadow-md w-fit">
                 <div class="flex rounded-full min-w-16 min-h-16 items-center justify-center border-4 border-gray-500 text-xl font-semibold">
                     {{ death_doc.count }}
                 </div>
                 <div class="flex flex-col">
                     <p class="text-md font-semibold">{% trans "Copies de Décès"|upper %}</p>
-                    <p class="text-gray-400"><b>N°</b> {{ death_certificate.numero }}</p>
-                    <p class="text-gray-400">{% trans 'last at'|capfirst %} {{ death_doc.last.date_created|date:'d-m-Y H:i'|default:'0-0-0000 0:0' }}</p>
+                    <p class="text-gray-600"><b class="text-gray-400">N°</b> {{ death_certificate.numero }}</p>
+                    <div class="text-sm">
+                        <p title="{{ death_certificate.death_day|date:'d-m-Y H:i' }}" class="text-gray-600"><b class="text-gray-400">{% trans 'date'|capfirst %} :</b> {{ death_certificate.death_day|date:'d/m/Y' }}</p>
+                        <p title="{{ death_certificate.date_declaration|date:'d-m-Y H:i' }} --- {{ death_certificate.declarer}}" class="text-gray-600"><b class="text-gray-400">{% trans 'declaration date'|capfirst %} :</b> {{ death_certificate.date_declaration|date:'d/m/Y' }}</p>
+                        <p title="{{ death_certificate.date_register|date:'d-m-Y H:i' }}" class="text-gray-600"><b class="text-gray-400">{% trans 'register date'|capfirst %} :</b> {{ death_certificate.date_register|date:'d/m/Y' }}</p>
+                    </div>
                 </div>
             </a>
             {% endif %}
-            <a href="" class="flex items-center p-4 gap-4 rounded-xl shadow-md w-80">
-                <div class="flex rounded-full min-w-16 min-h-16 items-center justify-center border-4 border-rose-500 text-xl font-semibold">
-                    {{ 0 }}
-                </div>
-                <div class="flex flex-col">
-                    <p class="text-md font-semibold">{% trans "Copies de Mariage"|upper %}</p>
-                    <p class="text-rose-400">{% trans 'last at ' %}</p>
-                </div>
-            </a>
         </div>
 
         <!-- Liste de Copies de Naissance -->
@@ -156,14 +234,36 @@
             {% for doc in document %}
             <form method="get" action="{{ doc.get_absolute_url }}"
             class="w-fit shadow-md rounded-lg bg-white hover:bg-blue-50"
-            title="{{ doc.date_created|date:'d-m-Y H:i' }} --- N° {{ doc.numero }} --- {{ doc.birth_type_str }} --- {{ doc.get_price|intcomma }} Ar --- x{{ doc.num_copy }} --- {{ doc.get_total_price|intcomma }} Ar"
+            title="N° {{ doc.numero }} --- {{ doc.type_str }} --- 
+            {% if doc.is_original %}
+            Original
+            {% else %}
+            {{ doc.get_price|intcomma }} Ar --- x{{ doc.num_copy }} --- {{ doc.get_total_price|intcomma }} Ar
+            {% endif %}
+            {% if doc.notes %} --- {{ doc.notes }}{% endif %}"
             >
                 <input type="hidden" name="client_detail" value="{{ doc.notes }}">
                 <input type="hidden" name="many_cp" value="{{ doc.num_copy }}">
                 <input type="hidden" name="type_cert" value="{{ doc.type_cert }}">
                 <button class="p-4 space-x-2 whitespace-nowrap h-full">
-                <span class="text-blue-400">{{ doc.date_created|date:"d-m-Y H:i" }} </span>
-                --- N° {{ doc.numero }} --- {{ doc.type_str }} --- {{ doc.get_price|intcomma }} Ar --- x{{ doc.num_copy }} --- {{ doc.get_total_price|intcomma }} Ar
+                <span class="
+                font-semibold
+                {% if doc.type_cert == 'birth_doc' %}
+                text-blue-400
+                {% elif doc.type_cert == 'recognization_doc' %}
+                text-orange-400
+                {% elif doc.type_cert == 'marriage_doc' %}
+                text-rose-400
+                {% elif doc.type_cert == 'death_doc' %}
+                text-gray-400
+                {% endif %}
+                ">{{ doc.date_created|date:"d-m-Y H:i" }} </span>
+                --- N° {{ doc.numero }} --- {{ doc.type_str }} --- 
+                {% if doc.is_original %}
+                Original
+                {% else %}
+                {{ doc.get_total_price|intcomma }} Ar
+                {% endif %}
                 <span class="px-2 py-1 text-xs rounded-full text-white
                 {% if doc.status == 'V' %}
                 bg-orange-400
@@ -180,7 +280,7 @@
          <div class="flex flex-col items-center fixed gap-2 rounded-xl bg-white shadow-md max-w-72 p-4 right-10 bottom-7 max-md:right-5 max-md:bottom-5 transform animate-out duration-300">
             <input type="checkbox" name="" id="show-action" class="hidden peer">
             <label for="show-action" class="hidden max-2xl:block peer-checked:hidden text-3xl font-extralight px-2 rounded-lg cursor-pointer w-full h-full text-center">+</label>
-            <a class="hidden max-2xl:hidden peer-checked:block px-4 py-2 border border-white text-white shadow-md bg-gray-300 rounded-lg w-full text-center cursor-not-allowed"
+            {% comment %} <a class="hidden max-2xl:hidden peer-checked:block px-4 py-2 border border-white text-white shadow-md bg-gray-300 rounded-lg w-full text-center cursor-not-allowed"
             title="En construction"
             >
                 {% translate "Arbre de Famille" %}
@@ -189,7 +289,7 @@
             title="En construction"
             >
                 {% translate "Arbre Généalogique" %}
-            </a>
+            </a> {% endcomment %}
             <form action="{{ person.url_preview }}" method="get" class="max-2xl:hidden peer-checked:flex flex flex-col gap-1">
                 <div class="flex flex-wrap gap-x-2 justify-center">
                     <button type="button" onclick="downManyCp()" class="px-4 text-xl bg-gray-100 rounded-lg">-</button>
@@ -204,31 +304,43 @@
                         placeholder="{% translate 'About the client' %}"
                         class="w-full border-0 border-b-2 focus:ring-0">
                     </div>
+                    <select name="responsible" id="id-responsible" class="flex w-full border-0 border-b-2 focus:ring-0">
+                        {% for staff in responsible_staffs %}
+                        <option value="{{ staff.pk }}">{{ staff.full_name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                {% if person.have_birth %}
+                {% if person.has_birth_certificate %}
                 <button name="type_cert" value="birth" class="px-4 py-2 border border-white text-white shadow-md bg-green-600 hover:bg-green-500 rounded-lg w-full text-center cursor-pointer"
                 title="{% translate 'Make Cp. Birth' %}"
                 >
                     {% translate "Make Cp. Birth" %}
                 </button>
                 {% endif %}
-                {% if person.have_death %}
+                {% if person.has_recognization_certificate %}
+                <button name="type_cert" value="recognization" class="px-4 py-2 border border-white text-white shadow-md bg-green-600 hover:bg-green-500 rounded-lg w-full text-center cursor-pointer"
+                title="{% translate 'Make Cp. Recognization' %}"
+                >
+                    {% translate "Make Cp. Recognization" %}
+                </button>
+                {% endif %}
+                {% if person.has_marriage_certificate %}
+                <button name="type_cert" value="marriage" class="px-4 py-2 border border-white text-white shadow-md bg-green-600 hover:bg-green-500 rounded-lg w-full text-center cursor-pointer"
+                title="{% translate 'Make Cp. Marriage' %}"
+                >
+                    {% translate "Make Cp. Marriage" %}
+                </button>
+                {% endif %}
+                {% if person.has_death_certificate %}
                 <button name="type_cert" value="death" class="px-4 py-2 border border-white text-white shadow-md bg-green-600 hover:bg-green-500 rounded-lg w-full text-center cursor-pointer"
                 title="{% translate 'Make Cp. Death' %}"
                 >
                     {% translate "Make Cp. Death" %}
                 </button>
                 {% endif %}
-                {% if person.is_married %}
-                <a href="" class="px-4 py-2 border border-white text-white shadow-md bg-green-600 hover:bg-green-500 rounded-lg w-full text-center cursor-pointer"
-                title="{% translate 'Make Cp. Marriage' %}"
-                >
-                    {% translate "Make Cp. Marriage" %}
-                </a>
-                {% endif %}
             </form>
             <div class="max-2xl:hidden peer-checked:flex flex flex-col w-full gap-1">
-                {% if not person.have_birth %}
+                {% if not person.has_birth_certificate %}
                 <form method='post' action="{% url 'civil:birth-register' %}">
                     {% csrf_token %}
                     <button name="person_pk" value="{{ person.pk }}" class="px-4 py-2 border border-white text-white shadow-md bg-yellow-500 hover:bg-yellow-400 rounded-lg w-full text-center cursor-pointer"
@@ -238,24 +350,7 @@
                     </button>
                 </form>
                 {% endif %}
-                {% if not person.have_death %}
-                <form method='post' action="{% url 'civil:death-register' %}">
-                    {% csrf_token %}
-                    <button name="person_pk" value="{{ person.pk }}" class="px-4 py-2 border border-white text-white shadow-md bg-yellow-500 hover:bg-yellow-400 rounded-lg w-full text-center cursor-pointer"
-                    title="{% translate 'Death Certificate' %}"
-                    >
-                    {% translate "Death Certificate" %}
-                    </button>
-                </form>
-                {% endif %}
-                {% if not person.is_married %}
-                <a href="" class="px-4 py-2 border border-white text-white shadow-md bg-yellow-500 hover:bg-yellow-400 rounded-lg w-full text-center cursor-pointer"
-                title="{% translate 'Marriage Certificate' %}"
-                >
-                    {% translate "Marriage Certificate" %}
-                </a>
-                {% endif %}
-                {% if not birth_certificate.date_recognization %}
+                {% if birth_certificate.can_recognize %}
                 <form method='post' action="{% url 'civil:birth-register' %}">
                     {% csrf_token %}
                     <button name="cert_pk" value="{{ birth_certificate.pk }}" class="px-4 py-2 border border-white text-white shadow-md bg-yellow-500 hover:bg-yellow-400 rounded-lg w-full text-center cursor-pointer"
@@ -265,22 +360,27 @@
                     </button>
                 </form>
                 {% endif %}
+                {% if not marriage_certificate %}
+                <form method='post' action="{% url 'civil:marriage-register' %}">
+                    {% csrf_token %}
+                    <button name="cert_pk" value="{{ person.pk }}" class="px-4 py-2 border border-white text-white shadow-md bg-yellow-500 hover:bg-yellow-400 rounded-lg w-full text-center cursor-pointer"
+                    title="{% translate 'Marriage Certificate' %}"
+                    >
+                        {% translate "Marriage Certificate" %}
+                    </button>
+                </form>
+                {% endif %}
+                {% if not person.has_death_certificate %}
+                <form method='post' action="{% url 'civil:death-register' %}">
+                    {% csrf_token %}
+                    <button name="person_pk" value="{{ person.pk }}" class="px-4 py-2 border border-white text-white shadow-md bg-yellow-500 hover:bg-yellow-400 rounded-lg w-full text-center cursor-pointer"
+                    title="{% translate 'Death Certificate' %}"
+                    >
+                    {% translate "Death Certificate" %}
+                    </button>
+                </form>
+                {% endif %}
             </div>
-            <a href="{{ person.url_modify }}" class="max-2xl:hidden peer-checked:block px-4 py-2 border border-white text-white shadow-md bg-blue-600 hover:bg-blue-500 rounded-lg w-full text-center cursor-pointer"
-            title="{% translate 'Modify' %}"
-            >
-                {% translate "Modify" %}
-            </a>
-            <button type="button" onclick="supprimCertificate()" class="max-2xl:hidden peer-checked:block px-4 py-2 border border-white text-white shadow-md bg-rose-600 hover:bg-rose-500 rounded-lg w-full text-center cursor-pointer"
-            title="{% translate 'Delete' %}"
-            >
-                {% translate "Delete" %}
-            </button>
-            <a onclick="history.back()" class="max-2xl:hidden peer-checked:block px-4 py-2 border border-white text-white shadow-md bg-gray-600 hover:bg-gray-500 rounded-lg w-full text-center cursor-pointer"
-            title="{% translate 'Back' %}"
-            >
-                {% translate "Back" %}
-            </a>
          </div>
     </div>
 </div>
@@ -298,8 +398,8 @@
         }
     }
     function supprimCertificate(){
-        if (confirm('{% trans "Are you sure you want to delete this birth_certificate ? This action will delete all documents that attached to it." %}')) {
-            document.location.assign("{% url 'civil:birth-delete' 1 %}".replace('1', Number.parseInt('{{ birth_certificate.pk|safe }}')));
+        if (confirm('{% trans "Are you sure you want to delete this person ? This action will delete all documents that attached to it." %}')) {
+            document.location.assign("{% url 'civil:person-delete' 1 %}".replace('1', Number.parseInt('{{ person.pk|safe }}')));
         }
     }
 </script>
