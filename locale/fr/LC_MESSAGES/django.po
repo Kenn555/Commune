@@ -49,20 +49,20 @@ msgstr "acte de mariage"
 #: .\CommonAdmin\settings.py:57 .\CommonAdmin\settings.py:90
 #: .\administration\views.py:360
 msgid "staff"
-msgstr ""
+msgstr "personnel"
 
 #: .\CommonAdmin\settings.py:58 .\CommonAdmin\settings.py:91
 msgid "user"
-msgstr ""
+msgstr "utilisateur"
 
 #: .\CommonAdmin\settings.py:59 .\CommonAdmin\settings.py:92
 #: .\administration\templates\administration\dashboard.html:33
 msgid "role"
-msgstr ""
+msgstr "rôle"
 
 #: .\CommonAdmin\settings.py:60 .\CommonAdmin\settings.py:93
 msgid "settings"
-msgstr ""
+msgstr "paramètres"
 
 #: .\CommonAdmin\settings.py:64
 msgid "home"
@@ -94,7 +94,7 @@ msgstr "administration"
 
 #: .\administration\forms.py:17 .\administration\forms.py:109
 msgid "Number"
-msgstr "Novembre"
+msgstr "Nombre"
 
 #: .\administration\forms.py:30 .\administration\forms.py:121
 #: .\civil\forms.py:34 .\civil\forms.py:170 .\civil\forms.py:622
@@ -130,7 +130,7 @@ msgstr "Insérez le nom"
 
 #: .\administration\forms.py:50 .\administration\forms.py:210
 msgid "Username"
-msgstr ""
+msgstr "Nom d’utilisateur"
 
 #: .\administration\forms.py:54 .\administration\forms.py:214
 msgid "Insert her/his username"
@@ -139,7 +139,7 @@ msgstr "Insérez le nom"
 #: .\administration\forms.py:60 .\administration\forms.py:220
 #: .\administration\views.py:369
 msgid "Password"
-msgstr ""
+msgstr "Mot de passe"
 
 #: .\administration\forms.py:64 .\administration\forms.py:224
 msgid "Insert her/his password"

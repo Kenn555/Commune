@@ -61,7 +61,7 @@ msgstr "asa"
 
 #: .\CommonAdmin\settings.py:60 .\CommonAdmin\settings.py:93
 msgid "settings"
-msgstr "rafitra"
+msgstr "fanamboarana"
 
 #: .\CommonAdmin\settings.py:64
 msgid "home"
@@ -77,7 +77,7 @@ msgstr "hetsika"
 
 #: .\CommonAdmin\settings.py:76
 msgid "finances"
-msgstr "toebola"
+msgstr "fitantanam-bola"
 
 #: .\CommonAdmin\settings.py:80
 msgid "mines"
@@ -85,11 +85,11 @@ msgstr "fitrandrahana"
 
 #: .\CommonAdmin\settings.py:84
 msgid "social business"
-msgstr "sosialy mahoka"
+msgstr "sosialy mbahoka"
 
 #: .\CommonAdmin\settings.py:88
 msgid "administration"
-msgstr "fandaminana"
+msgstr "fitantanana"
 
 #: .\administration\forms.py:17 .\administration\forms.py:109
 msgid "Number"
@@ -214,7 +214,7 @@ msgstr "Ampidiro ny laharana faharoa"
 
 #: .\administration\forms.py:199 .\administration\forms.py:261
 msgid "Title"
-msgstr "Fanajana"
+msgstr "Lohateny"
 
 #: .\administration\forms.py:204 .\administration\forms.py:309
 msgid "Select a Application..."
@@ -234,7 +234,7 @@ msgstr "Mombamomba azy"
 
 #: .\administration\forms.py:275
 msgid "Insert her/his title"
-msgstr "Ampidiro ny voninahiny"
+msgstr "Ampidiro ny lohateny"
 
 #: .\administration\forms.py:281
 msgid "Service"
@@ -254,7 +254,7 @@ msgstr ""
 
 #: .\administration\forms.py:304
 msgid "Application"
-msgstr "Fitaovana"
+msgstr "Rindranasa"
 
 #: .\administration\models.py:73 .\civil\models.py:11 .\civil\models.py:185
 #: .\civil\models.py:369 .\civil\models.py:682 .\civil\views.py:41
@@ -316,7 +316,7 @@ msgstr "Asa vaovao"
 #: .\administration\templates\administration\user_register.html:70
 #: .\civil\templates\civil\register.html:80
 msgid "Submit"
-msgstr "Aroso"
+msgstr "Alefa"
 
 #: .\administration\templates\administration\role_list.html:32
 #: .\administration\templates\administration\user_register.html:71
@@ -326,7 +326,7 @@ msgstr "Averina"
 
 #: .\administration\templates\administration\role_list.html:37
 msgid "roles list"
-msgstr "lisitrin'ny asa"
+msgstr "lisitry ny asa"
 
 #: .\administration\templates\administration\user_list.html:13
 #: .\civil\templates\civil\list.html:13
@@ -359,7 +359,7 @@ msgstr "anarana feno"
 
 #: .\administration\views.py:152 .\administration\views.py:504
 msgid "title"
-msgstr "Fanajana"
+msgstr "lohateny"
 
 #: .\administration\views.py:152 .\civil\views.py:617 .\civil\views.py:1621
 msgid "gender"
@@ -418,11 +418,11 @@ msgstr "afindra"
 
 #: .\administration\views.py:360
 msgid "username"
-msgstr "solon'anarana"
+msgstr "anaran'ny mpampiasa"
 
 #: .\administration\views.py:360
 msgid "password"
-msgstr "teny fanalahidy"
+msgstr "Kaody miafina"
 
 #: .\administration\views.py:360
 msgid "email"
@@ -730,7 +730,7 @@ msgstr "Mombamomba ny fampidirana"
 
 #: .\civil\forms.py:570 .\civil\forms.py:1048 .\civil\views.py:81
 msgid "register"
-msgstr "fampidirana"
+msgstr "hisoratra"
 
 #: .\civil\forms.py:673
 msgid "Place of Death"
@@ -787,11 +787,11 @@ msgstr "Ampidiro ny asany"
 
 #: .\civil\forms.py:1731
 msgid "Date of Wedding"
-msgstr "Andro fampakarana"
+msgstr "Andro nampakarana"
 
 #: .\civil\forms.py:1736
 msgid "Wait for the date of wedding"
-msgstr "Andraso ny fivoahan'ny daty fampakarana"
+msgstr "Andraso ny fivoahan'ny daty nampakarana"
 
 #: .\civil\forms.py:1770 .\civil\views.py:2073
 msgid "groom"
@@ -1190,75 +1190,75 @@ msgstr "Person \"%(name)s\" Modification Error !"
 
 #: .\civil\views.py:979
 msgid "Recognization Certificate Created Successfully !"
-msgstr ""
+msgstr "Voavita soa aman-tsara ny famoronanataratasy"
 
 #: .\civil\views.py:981
 msgid "Recognization Certificate Creation Error !"
-msgstr ""
+msgstr "Nisy olana tamin’ny famoronana ny taratasy"
 
 #: .\civil\views.py:1093
 msgid "Father's Birthday Is Younger Than The Person."
-msgstr ""
+msgstr "Tsy mety ny daty nahaterahan’ny ray, vao haingana noho ny an’ilay olona"
 
 #: .\civil\views.py:1096
 msgid "Mother's Birthday Is Younger Than The Person."
-msgstr ""
+msgstr "Tsy mety ny daty nahaterahan’ny reny, vao haingana noho ny an’ilay olona"
 
 #: .\civil\views.py:1258
 msgid "Birth Document created successfully."
-msgstr ""
+msgstr "Voavita soa aman-tsara ny taratasy mpahaterahana."
 
 #: .\civil\views.py:1259
 msgid "Birth Document Creation Errors."
-msgstr ""
+msgstr "Nisy olana tamin’ny famoronana ny taratasy mpahaterahana."
 
 #: .\civil\views.py:1301
 msgid "Recognization Document created successfully."
-msgstr ""
+msgstr "Voavita soa aman-tsara ny famoronanataratasy"
 
 #: .\civil\views.py:1302
 msgid "Recognization Document Creation Errors."
-msgstr ""
+msgstr "Nisy olana tamin’ny famoronana ny taratasy"
 
 #: .\civil\views.py:1388
 msgid "Marriage Document created successfully."
-msgstr ""
+msgstr "Voavita soa aman-tsara ny taratasy fanambadiana."
 
 #: .\civil\views.py:1389
 msgid "Marriage Document Creation Errors."
-msgstr ""
+msgstr "Nisy olana tamin’ny famoronana ny taratasy fanambadiana."
 
 #: .\civil\views.py:1445
 msgid "Death Document Created Successfully."
-msgstr ""
+msgstr "Voavita soa aman-tsara ny taratasy fahafatesana."
 
 #: .\civil\views.py:1446
 msgid "Death Document Creation Errors."
-msgstr ""
+msgstr "Nisy olana tamin’ny famoronana ny taratasy fahafatesana."
 
 #: .\civil\views.py:1508
 msgid "Birth Certificate created successfully."
-msgstr ""
+msgstr "Voavita soa aman-tsara ny taratasy mpahaterahana."
 
 #: .\civil\views.py:1511
 msgid "This birth certificate cannot be created."
-msgstr ""
+msgstr "Tsy azo atao ny mamorona ity taratasy mpahaterahana ity."
 
 #: .\civil\views.py:1526
 msgid "Death Certificate created successfully."
-msgstr ""
+msgstr "Voavita soa aman-tsara ny taratasy mpahafatesana."
 
 #: .\civil\views.py:1529
 msgid "This death certificate cannot be created."
-msgstr ""
+msgstr "Tsy azo atao ny mamorona ity taratasy mpahafatesana ity."
 
 #: .\civil\views.py:1532
 msgid "This certificate cannot be created."
-msgstr ""
+msgstr "Tsy azo atao ny mamorona ity taratasy ity."
 
 #: .\civil\views.py:1602
 msgid "Certificate deleted successfully."
-msgstr ""
+msgstr "Voafafa soa aman-tsara ny taratasy."
 
 #: .\civil\views.py:1622
 msgid "lived"
@@ -1270,7 +1270,7 @@ msgstr "andro nahafatesana"
 
 #: .\civil\views.py:2075
 msgid "wedding day"
-msgstr "andro fampakarana"
+msgstr "andro nampakarana"
 
 #: .\civil\views.py:2076
 msgid "father of groom"
@@ -1306,11 +1306,11 @@ msgstr "tsy miasa"
 
 #: .\civil\views.py:2364
 msgid "Groom's Mother Is Younger Than The Person."
-msgstr ""
+msgstr "Ny renin’ny ilay lehilahy dia vao haingana kokoa noho ny an’ilay olona."
 
 #: .\civil\views.py:2382
 msgid "Groom's Father Is Younger Than The Person."
-msgstr ""
+msgstr "Ny rain’ny ilay lehilahy dia vao haingana kokoa noho ny an’ilay olona."
 
 #: .\civil\views.py:2400
 msgid "Bride's Mother Is Younger Than The Person."
