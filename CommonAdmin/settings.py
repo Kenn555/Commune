@@ -61,31 +61,31 @@ MENU_SERVICES = {
         ]
 }
 SERVICES_APP = [
-    {"name": "dashboard", "title": _("home"), "url": "dashboard:index", "submenus": [
+    {"name": "dashboard", "title": _("home"), "url": "dashboard:index", "icon1": "..\static\icons\house-blank_9243280.svg", "icon2": "..\static\icons\house-blank_9243857.svg",  "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "dashboard:index"},
         ]},
-    {"name": "civil", "title": _("civil status"), "url": "civil:index", "submenus": [
+    {"name": "civil", "title": _("civil status"), "url": "civil:index", "icon1": "", "icon2": "", "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "civil:index"}, 
         {"name": "birth", "title": _("birth certificate"), "url": "civil:birth"},
         {"name": "death", "title": _("death certificate"), "url": "civil:death"},
         {"name": "marriage", "title": _("marriage certificate"), "url": "civil:marriage"},
         ]},
-    {"name": "events", "title": _("events"), "url": "events:index", "submenus": [
+    {"name": "events", "title": _("events"), "url": "events:index", "icon1": "", "icon2": "", "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "events:index"}, 
         ]},
-    {"name": "finances", "title": _("finances"), "url": "finances:index", "submenus": [
+    {"name": "finances", "title": _("finances"), "url": "finances:index", "icon1": "", "icon2": "", "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "finances:index"}, 
         {"name": "", "title": "", "url": ""}
         ]},
-    {"name": "mines", "title": _("mines"), "url": "mines:index", "submenus": [
+    {"name": "mines", "title": _("mines"), "url": "mines:index", "icon1": "", "icon2": "", "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "mines:index"}, 
         {"name": "", "title": "", "url": ""}
         ]},
-    {"name": "social", "title": _("social business"), "url": "social:index", "submenus": [
+    {"name": "social", "title": _("social business"), "url": "social:index", "icon1": "", "icon2": "", "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "social:index"}, 
         {"name": "", "title": "", "url": ""}
         ]},
-    {"name": "administration", "title": _("administration"), "url": "administration:index", "submenus": [
+    {"name": "administration", "title": _("administration"), "url": "administration:index", "icon1": "", "icon2": "", "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "administration:index"},  
         {"name": "staff", "title": _("staff"), "url": "administration:staff"},
         {"name": "user", "title": _("user"), "url": "administration:user"},

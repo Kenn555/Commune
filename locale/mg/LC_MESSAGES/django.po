@@ -871,12 +871,12 @@ msgstr "Fahaterahana sy Fanjanahana"
 #: .\civil\models.py:135
 #, python-format
 msgid "%(person)s person at %(birthday)s son of %(father)s%(mother)s declared by %(declarer)s, %(relationship)s, at %(date_register)s"
-msgstr ""
+msgstr "%(person)s, teraka tamin’ny %(birthday)s, zanakalahin’i %(father)s%(mother)s, nambara tamin’i %(declarer)s, %(relationship)s, tamin’ny %(date_register)s"
 
 #: .\civil\models.py:137
 #, python-format
 msgid "%(person)s person at %(birthday)s daughter of %(father)s%(mother)s declared by %(declarer)s, %(relationship)s, at %(date_register)s"
-msgstr ""
+msgstr "%(person)s, teraka tamin’ny %(birthday)s, zanakavavin’i %(father)s%(mother)s, nambara tamin’i %(declarer)s, %(relationship)s, tamin’ny %(date_register)s"
 
 #: .\civil\models.py:138
 msgid " and "
@@ -885,7 +885,7 @@ msgstr " sy i "
 #: .\civil\models.py:194 .\civil\models.py:373 .\civil\models.py:522
 #: .\civil\models.py:687
 msgid "Draft"
-msgstr ""
+msgstr "Volavola"
 
 #: .\civil\models.py:195 .\civil\models.py:374 .\civil\models.py:523
 #: .\civil\models.py:688
@@ -895,7 +895,7 @@ msgstr "vita sonia"
 #: .\civil\models.py:196 .\civil\models.py:375 .\civil\models.py:524
 #: .\civil\models.py:689
 msgid "Cancelled"
-msgstr ""
+msgstr "Nanafoana"
 
 #: .\civil\models.py:264 .\civil\models.py:422 .\civil\models.py:582
 #: .\civil\models.py:780
@@ -1063,11 +1063,11 @@ msgstr "Taratasy: Fahafatesana"
 
 #: .\civil\templates\civil\details.html:414
 msgid "Are you sure you want to delete this person ? This action will delete all documents that attached to it."
-msgstr ""
+msgstr "Azonao antoka ve fa tianao fafana ity olona ity? Ity hetsika ity dia hamafa avokoa ny antontan-taratasy rehetra mifandray aminy."
 
 #: .\civil\templates\civil\list.html:20
 msgid "Column"
-msgstr ""
+msgstr "Tsanganana"
 
 #: .\civil\templates\civil\list.html:34
 msgid "Valid"
@@ -1118,7 +1118,7 @@ msgstr "kopia voalohany"
 
 #: .\civil\templates\civil\preview.html:727
 msgid "Issued on"
-msgstr ""
+msgstr "Natao tamin’ny"
 
 #: .\civil\templates\civil\preview.html:728
 msgid "Document"
@@ -1126,7 +1126,7 @@ msgstr "Taratasy"
 
 #: .\civil\templates\civil\preview.html:758
 msgid "Are you sure you want to delete this certificate?"
-msgstr ""
+msgstr "Azonao antoka ve fa tianao fafana ity taratasy ity?"
 
 #: .\civil\views.py:78
 msgid "list"
@@ -1141,21 +1141,21 @@ msgstr "tsy fantatra"
 
 #: .\civil\views.py:585
 msgid "Person Modificated Successfully !"
-msgstr ""
+msgstr "Vita soa aman-tsara ny fanovana ny mombamomba ny olona !"
 
 #: .\civil\views.py:587
 msgid "Person Modification Error !"
-msgstr ""
+msgstr "Nisy olana tamin’ny fanovana ny mombamomba ny olona !"
 
 #: .\civil\views.py:599 .\civil\views.py:1146 .\civil\views.py:2057
 #, python-format
 msgid "The Certificate of %(name)s deleted successfully."
-msgstr ""
+msgstr "Voafafa soa aman-tsara ny taratasy an’i %(name)s."
 
 #: .\civil\views.py:601 .\civil\views.py:1148 .\civil\views.py:1604
 #: .\civil\views.py:2059 .\civil\views.py:2509
 msgid "This certificate cannot be deleted."
-msgstr ""
+msgstr "Tsy azo fafana ity taratasy ity."
 
 #: .\civil\views.py:622
 msgid "birth"
@@ -1174,13 +1174,13 @@ msgstr "olona"
 #: .\civil\views.py:2344 .\civil\views.py:2439 .\civil\views.py:2453
 #, python-format
 msgid "Person \"%(name)s\" Created Successfully !"
-msgstr ""
+msgstr "Noforonina soa aman-tsara ny mombamomba an’i \"%(name)s\" !"
 
 #: .\civil\views.py:963 .\civil\views.py:1007 .\civil\views.py:1035
 #: .\civil\views.py:1060 .\civil\views.py:2331 .\civil\views.py:2352
 #, python-format
 msgid "Person \"%(name)s\" Updated Successfully !"
-msgstr ""
+msgstr "Nohavaozina soa aman-tsara ny mombamomba an’i \"%(name)s\" !"
 
 #: .\civil\views.py:965 .\civil\views.py:1009 .\civil\views.py:1037
 #: .\civil\views.py:1062 .\civil\views.py:2333 .\civil\views.py:2354

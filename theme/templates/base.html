@@ -139,7 +139,8 @@
                     <a 
                     href="{% url service.url %}" 
                     class="link flex items-center justify-start px-4 py-2 mt-2 rounded-sm gap-2 hover:bg-sky-800 {% if service.name == app_name %}font-semibold bg-sky-700 pointer-events-none{% endif %}">
-                        <div class="min-h-6 min-w-6 bg-white"></div>
+                        <div>{{service.icon2}}</div>
+                        <img src="{{ service.icon2 }}" class="w-6 h-6" alt="{% translate service.title|title %}">
                         <span class="ml-3 max-lg:hidden text-nowrap">
                             {% translate service.title|title %}
                         </span>
