@@ -13,6 +13,7 @@
     {% tailwind_css %}
     <title>{{ the_title|capfirst }}</title>
     <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'js/chart.js' %}"></script>
 
     <link rel="stylesheet" href="{% static 'chart.js/Chart.css' %}">
     <script src="{% static 'chart.js/Chart.bundle.js' %}"></script>
@@ -59,7 +60,7 @@
         </div>
     {% endif %}
     <div class="bg-gray-200 h-screen">
-        <div class="absolute flex z-50 text-white text-3xl font-bold justify-self-center">
+        <div class="absolute flex z-50 text-[#1f2933] text-3xl font-bold justify-self-center">
             <span class="sm:hidden">SM</span>
             <span class="hidden sm:max-md:inline">MD</span>
             <span class="hidden md:max-lg:inline">LG</span>
@@ -68,63 +69,59 @@
             <span class="hidden 2xl:inline"> > 2XL</span>
         </div>
         <!-- Menu principal Horizontal -->
-        <div class="fixed flex justify-between items-center bg-gradient-to-r from-blue-800 to-sky-900 px-8 py-4 z-40 top-0 w-full h-16 shadow-lg">
-            <div class="flex">
-                <h3 class="text-2xl font-bold text-white tracking-wide">{{ the_common }}</h3>
+        <div class="fixed flex justify-between items-center bg-white px-8 py-4 z-40 top-0 w-full h-16 shadow-lg border-b-8 border-[#fc3d32]">
+            <div class="flex items-center">
+                <a href="{% url app_home %}" class="my-4 mx-2">
+                    <img src="{% static 'img/logo.png' %}" class="justify-self-center w-10" alt="logo commune betsiaka" sizes="" srcset="">
+                </a>
+                <h3 class="text-2xl font-bold text-[#1f2933] tracking-wide">{{ the_common }}</h3>
             </div>
             <div class="flex items-center space-x-12">
             <!-- Sélecteur de langue -->
-            <div class="relative">
-                <input type="checkbox" id="language-toggle" class="hidden peer">
-                <label for="language-toggle" class="flex items-center w-28 justify-center space-x-2 hover:opacity-80 transition-all duration-300 cursor-pointer bg-sky-700 px-4 py-2 rounded-md border-2 border-white/30">
-                    {% get_current_language as LANGUAGE_CODE %}
-                    {% get_available_languages as LANGUAGES %}
-                    {% for lang_code, lang_name in LANGUAGES %}
-                        {% if lang_code == LANGUAGE_CODE %}
-                            <span class="text-white">{{ lang_name }}</span>
-                        {% endif %}
-                    {% endfor %}
-                </label>
-                <form action="{% url 'set_language' %}" method="post" class="invisible peer-checked:visible absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-1 transform opacity-0 scale-95 transition-all duration-200 peer-checked:opacity-100 peer-checked:scale-100">
-                    {% csrf_token %}
-                    <input class="w-12 w-4 w-36 w-1 text-gray-500" name="next" type="hidden" value="{{ request.path }}">
-                    {% for lang_code, lang_name in LANGUAGES %}
-                    <button type="submit" name="language" value="{{ lang_code }}" 
-                            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200">
-                        {{ lang_name }}
-                    </button>
-                    {% endfor %}
-                </form>
-            </div>
-            <!-- Option du profil -->
-            <div class="relative">
-                <input type="checkbox" id="profile-toggle" class="hidden peer">
-                <label for="profile-toggle" class="flex items-center space-x-2 hover:opacity-80 transition-all duration-300 cursor-pointer">
-                <img 
-                {% if user.photo %}
-                    src="" 
-                {% else %}
-                    src="" 
-                {% endif %}
-                alt="{{ user.username }}" 
-                class="w-10 h-10 rounded-full object-cover ring-2 ring-white/30">
-                </label>
-                <div class="invisible peer-checked:visible absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-1 transform opacity-0 scale-95 transition-all duration-200 peer-checked:opacity-100 peer-checked:scale-100">
-                <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200" href="#">
-                    <span class="ml-2">{% trans "profil"|capfirst %}</span>
-                </a>
-                <a class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition-colors duration-200" href="{% url 'account:logout' %}">
-                    <span class="ml-2">{% trans "logout"|capfirst %}</span>
-                </a>
+                <div class="relative">
+                    <input type="checkbox" id="language-toggle" class="hidden peer">
+                    <label for="language-toggle" class="flex items-center w-28 justify-center space-x-2 hover:opacity-80 transition-all duration-300 cursor-pointer bg-white px-4 py-2 rounded-md border-2 border-[#007e3a]">
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% get_available_languages as LANGUAGES %}
+                        {% for lang_code, lang_name in LANGUAGES %}
+                            {% if lang_code == LANGUAGE_CODE %}
+                                <span class="text-[#007e3a]">{{ lang_name }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </label>
+                    <form action="{% url 'set_language' %}" method="post" class="invisible peer-checked:visible absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-1 transform opacity-0 scale-95 transition-all duration-200 peer-checked:opacity-100 peer-checked:scale-100">
+                        {% csrf_token %}
+                        <input class="w-12 w-4 w-36 w-1 text-gray-500" name="next" type="hidden" value="{{ request.path }}">
+                        {% for lang_code, lang_name in LANGUAGES %}
+                        <button type="submit" name="language" value="{{ lang_code }}" 
+                                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+                            {{ lang_name }}
+                        </button>
+                        {% endfor %}
+                    </form>
                 </div>
-            </div>
+                <!-- Option du profil -->
+                <div class="relative">
+                    <input type="checkbox" id="profile-toggle" class="hidden peer">
+                    <label for="profile-toggle" title="{{ user.username|capfirst }}" class="flex items-center justify-center space-x-2 hover:opacity-80 transition-all duration-300 cursor-pointer w-10 h-10 rounded-full bg-gray-600 text-white font-bold text-sm ring-2 ring-[#007e3a]">
+                        {{ user.username|slice:":2"|upper }}
+                    </label>
+                    <div class="invisible peer-checked:visible absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-1 transform opacity-0 scale-95 transition-all duration-200 peer-checked:opacity-100 peer-checked:scale-100">
+                        <a class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200" href="#">
+                            <span class="ml-2">{% trans "profil"|capfirst %}</span>
+                        </a>
+                        <a class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition-colors duration-200" href="{% url 'account:logout' %}">
+                            <span class="ml-2">{% trans "logout"|capfirst %}</span>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="flex pt-16 h-full w-full">
             <!-- Menu principal Vertical -->
             <aside class=" flex flex-col
-            w-60 text-white bg-sky-900 
+            w-60 text-white bg-[#007e3a] 
             transform transition-all duration-300 ease-in-out 
             max-lg:w-16
             max-sm:-translate-x-64 max-sm:w-0
@@ -138,10 +135,9 @@
                 <nav class="mt-4" title="{% translate service.title|title %}">
                     <a 
                     href="{% url service.url %}" 
-                    class="link flex items-center justify-start px-4 py-2 mt-2 rounded-sm gap-2 hover:bg-sky-800 {% if service.name == app_name %}font-semibold bg-sky-700 pointer-events-none{% endif %}">
-                        <div>{{service.icon2}}</div>
-                        <img src="{{ service.icon2 }}" class="w-6 h-6" alt="{% translate service.title|title %}">
-                        <span class="ml-3 max-lg:hidden text-nowrap">
+                    class="link flex items-stretch justify-start px-4 py-2 mt-2 rounded-sm gap-2 hover:bg-green-400 {% if service.name == app_name %}font-semibold bg-[#fc3d32] pointer-events-none{% endif %}">
+                        <img src="{% if service.name == app_name %}{% static service.icon1 %}{% else %}{% static service.icon2 %}{% endif %}" class="w-5 h-5 invert brightness-0" alt="{% translate service.title|title %}">
+                        <span class="max-lg:hidden text-nowrap">
                             {% translate service.title|title %}
                         </span>
                     </a>

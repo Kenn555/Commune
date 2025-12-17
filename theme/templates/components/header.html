@@ -1,12 +1,16 @@
 {% load i18n %}
+{% load static %}
 <header 
 class="flex flex-row justify-between items-center shadow-lg bg-white px-6 py-4 h-12 gap-10 z-20">
     <!-- Titre de page -->
-    <div class="flex items-center gap-2">
+    <div class="flex items-stretch gap-3">
         <div>
             <!-- Icône -->
-            <h3>Icon</h3>
-            <img src="" alt="">
+            {% for service in services %}
+                {% if service.name == app_name %}
+                <img src="{% static service.icon2 %}" class="w-7 h-7 brightness-0" alt="{% translate service.title|title %}">
+                {% endif %}
+            {% endfor %}
         </div>
         <!-- Titre d'entête -->
         {% if app_name != "dashboard" %}
@@ -22,7 +26,7 @@ class="flex flex-row justify-between items-center shadow-lg bg-white px-6 py-4 h
     <div class="flex items-center justify-start overflow-x-auto min-w-52 h-10 text-white gap-4">
         {% for submenu in submenus %}
             <a href="{% url submenu.url %}" title="{% trans submenu.title|capfirst %}"
-            class="peer text-black p-1 border-b-4 hover:border-gray-200 {% if menu_name == submenu.name %}font-semibold border-blue-600{% else %} font-medium border-white{% endif %}"><span class="text-nowrap">{% trans submenu.title|capfirst %}</span></a>
+            class="peer text-[#1f2933] p-1 border-b-4 hover:border-[#f4f6f8] {% if menu_name == submenu.name %}font-semibold border-[#fc3d32] {% else %} font-medium border-white{% endif %}"><span class="text-nowrap">{% trans submenu.title|capfirst %}</span></a>
         {% endfor %}
     </div>
     {% endif %}

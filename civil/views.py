@@ -178,6 +178,8 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
         date_created__lte=year__last_day,
     )
 
+    print(request.session['urls'])
+
     context = {
         "accessed": __package__ in request.session['app_accessed'],
         "app_home": __package__ + ":index",

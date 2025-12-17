@@ -61,31 +61,28 @@ MENU_SERVICES = {
         ]
 }
 SERVICES_APP = [
-    {"name": "dashboard", "title": _("home"), "url": "dashboard:index", "icon1": "..\static\icons\house-blank_9243280.svg", "icon2": "..\static\icons\house-blank_9243857.svg",  "submenus": [
+    {"name": "dashboard", "title": _("home"), "url": "dashboard:index", "icon1": "icons/house-blank_9243280.svg", "icon2": "icons/house-blank_9243857.svg",  "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "dashboard:index"},
         ]},
-    {"name": "civil", "title": _("civil status"), "url": "civil:index", "icon1": "", "icon2": "", "submenus": [
+    {"name": "civil", "title": _("civil status"), "url": "civil:index", "icon1": "icons/legal-aid_18998906.svg", "icon2": "icons/legal-aid_18998847.svg", "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "civil:index"}, 
         {"name": "birth", "title": _("birth certificate"), "url": "civil:birth"},
         {"name": "death", "title": _("death certificate"), "url": "civil:death"},
         {"name": "marriage", "title": _("marriage certificate"), "url": "civil:marriage"},
         ]},
-    {"name": "events", "title": _("events"), "url": "events:index", "icon1": "", "icon2": "", "submenus": [
+    {"name": "events", "title": _("events"), "url": "events:index", "icon1": "icons/calendar-day_9586160.svg", "icon2": "icons/calendar-day_9586165.svg", "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "events:index"}, 
         ]},
-    {"name": "finances", "title": _("finances"), "url": "finances:index", "icon1": "", "icon2": "", "submenus": [
+    {"name": "finances", "title": _("finances"), "url": "finances:index", "icon1": "icons/coins_7928150.svg", "icon2": "icons/coins_7928113.svg", "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "finances:index"}, 
-        {"name": "", "title": "", "url": ""}
         ]},
-    {"name": "mines", "title": _("mines"), "url": "mines:index", "icon1": "", "icon2": "", "submenus": [
+    {"name": "mines", "title": _("mines"), "url": "mines:index", "icon1": "icons/mine_pickaxe_12435141.svg", "icon2": "icons/mine_pickaxe_12435310.svg", "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "mines:index"}, 
-        {"name": "", "title": "", "url": ""}
         ]},
-    {"name": "social", "title": _("social business"), "url": "social:index", "icon1": "", "icon2": "", "submenus": [
+    {"name": "social", "title": _("social business"), "url": "social:index", "icon1": "icons/social_hr-group_13794313.svg", "icon2": "icons/social_hr-group_13794441.svg", "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "social:index"}, 
-        {"name": "", "title": "", "url": ""}
         ]},
-    {"name": "administration", "title": _("administration"), "url": "administration:index", "icon1": "", "icon2": "", "submenus": [
+    {"name": "administration", "title": _("administration"), "url": "administration:index", "icon1": "icons/settings_3917051.svg", "icon2": "icons/settings_3917058.svg", "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "administration:index"},  
         {"name": "staff", "title": _("staff"), "url": "administration:staff"},
         {"name": "user", "title": _("user"), "url": "administration:user"},

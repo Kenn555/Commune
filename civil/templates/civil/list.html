@@ -12,9 +12,9 @@
             </select>
             <label for="id_line_select" class="text-md font-semibold">{% translate "Lines" %}</label>
         </div>
-        <div class="flex flex-row flex-wrap gap-2">
+        <div class="flex flex-row flex-wrap">
             <select name="search_filter" disabled id="id_search_filter"
-            class="text-center font-semibold focus:ring-0 border-0 border-b-2 border-gray-400"
+            class="text-start font-semibold focus:ring-0 border-2 border-r-0 border-gray-200 rounded-l-lg"
             >
             <optgroup>
                 <legend>{% translate 'Column' %}</legend>
@@ -26,20 +26,20 @@
                 </optgroup>
             </select>
             <div class="w-56" id="id_search_fields">
-                <input type="date" name="q" disabled class="border-0 border-b-2 rounded-lg w-full" style="display: none;">
-                <input type="number" name="q" placeholder="0" disabled class="border-0 border-b-2 rounded-lg w-full text-right" style="display: none;">
-                <input type="search" name="q" id="id_query" placeholder="Rechercher..." disabled class="border-0 border-b-2 rounded-lg w-full" {% if request.GET.q %}value="{{ request.GET.q }}"{% endif %}>
-                <select name="q" id="id_query_select" disabled class="border-0 border-b-2 rounded-lg w-full text-center" style="display: none;"></select>
+                <input type="date" name="q" disabled class="border-2 rounded-r-lg w-full border-gray-200" style="display: none;">
+                <input type="number" name="q" placeholder="0" disabled class="border-2 rounded-r-lg w-full border-gray-200 text-right" style="display: none;">
+                <input type="search" name="q" id="id_query" placeholder="Rechercher..." disabled class="border-2 rounded-r-lg w-full border-gray-200" {% if request.GET.q %}value="{{ request.GET.q }}"{% endif %}>
+                <select name="q" id="id_query_select" disabled class="border-2 rounded-r-lg w-full border-gray-200 text-center" style="display: none;"></select>
             </div>
-            <button type="submit" id="id_search_button" disabled class="py-2 px-6 rounded-lg bg-blue-600 text-white disabled:bg-gray-400">{% translate "Valid" %}</button>
+            <button type="submit" id="id_search_button" disabled class="py-2 px-6 ml-3 rounded-lg bg-[#007e3a] text-white disabled:bg-gray-400">{% translate "Valid" %}</button>
         </div>
     </div>
     <div class="overflow-auto max-h-[500px] min-h-[200px]">
         <div class="table w-full">
-            <div class="table-header-group sticky top-0 z-10 text-md text-white font-semibold border-b">
+            <div class="table-header-group sticky top-0 z-10 text-md text-white font-semibold border-b bg-[#007e3a]">
                 <input type="hidden" name="order" value="">
                 {% for header in table.headers %}
-                <div title="{% translate 'click for sorting' %}" class="table-cell bg-sky-900 hover:bg-sky-800 px-4 py-2 text-center text-nowrap border-b-2 border-gray-200 cursor-pointer">
+                <div title="{% translate 'click for sorting' %}" class="table-cell hover:bg-green-600 px-4 py-2 text-center text-nowrap border-b-2 border-gray-300 cursor-pointer {% if forloop.first %} rounded-tl-lg {% elif forloop.last %} rounded-tr-lg {% endif %}">
                     <button type="button" onclick="changeOrder(this)" value="{{ header.name }}" class="inline-block w-full">{% if header.name != "status" %} {{ header.header|title }} {% endif %}</button> {% if header.name != "action" and order_name == header.name %}{% if not request.session.order_asc %}⬇{% else %}⬆{% endif %}{% endif %}
                 </div>
                 {% endfor %}
