@@ -1,19 +1,157 @@
 {% extends "base.html" %} {% block article %}
+{% load static %}
+{% load i18n %}
+<style>
+    @font-face {
+        font-family: 'EurostarBlackExtended';
+        src: url('{% static "fonts/eurostarblackextended.TTF" %}') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+</style>
 <!-- Contenus -->
-<div class="h-[200px] container   px-4 py-8 bg-white rounded-lg ">
+<div class="flex flex-wrap justify-evenly min-h-[200px] container px-4 py-8 gap-y-10 bg-white rounded-lg ">
+    <!-- Republique de Madagascar -->
+    <div class="flex flex-col items-center -space-y-1">
+        <img class="h-32 w-40 items-center" src="{% static 'img/flag_sealled.png' %}" alt="">
+        <div class="flex flex-col -space-y-2 mt-4 text-yellow-500">
+            <p class="text-nowrap text-center text-xl font-semibold font-[EurostarBlackExtended]">{% trans "Repoblikan'i Madagascar"|upper %}</p>
+            <p class="text-nowrap text-center">Fitiavana - Tanindrazana - Fandrosoana</p>
+        </div>
+    </div>
+    <!-- Logo Commune -->
+    <div class="flex flex-col items-center gap-y-1">
+        <img class="w-32 h-32 items-center" src="{% static 'img/logo.png' %}" alt="">
+        <p class="text-nowrap text-lg text-center font-serif font-bold leading-tight">COMMUNE RURALE D'AMBILOBE<br>BETSIAKA</p>
+    </div>
 </div>
-<div class="h-[200px] container mx-auto px-4 py-8 bg-white rounded-lg">
+<div class="">
+    <h3 class="text-xl font-semibold mb-2">{% trans 'Monograph on the town and its surroundings'|upper %}</h3>
+    <div class="border-l-8 border-[#007e3a] min-h-[200px] container px-8 py-6 space-y-4 bg-white rounded-lg text-justify">
+        <p class="indent-8">
+            {% blocktranslate %}
+            The rural commune of Betsiaka is one of the 15 communes of the Fivondronana of Ambilobe. It can be accessed by following national road number 5 (RN5a), a road which connects Ambilobe to Vohemar.
+            {% endblocktranslate %}
+        </p>
+        <p class="indent-8">
+            {% blocktranslate %}
+            The landscapes that unfold before the traveler crossing the Betsiaka commune along the RN5a are a desert-like, rocky terrain with savannah, some scrubland, mostly thorny bushes, and a fine dust that easily turns into mud during the rainy season. In the inhabited areas (Mantalimaro, Ankatoko, Betsiaka, etc.), craters and terraces, reminiscent of a lunar landscape, serve as a reminder of the inhabitants' primary source of income: gold mining.
+            {% endblocktranslate %}
+        </p>
+        <p class="indent-8">
+            {% blocktranslate %}
+            Indeed, one of the essential characteristics of this town is the extreme richness of its subsoil, which seems to be teeming with various mineral resources, the most exploited of which, and certainly not the least, is gold. As a result, the majority of the population derives its income primarily from gold mining.
+            {% endblocktranslate %}
+        </p>
+    </div>
 </div>
-<div class="h-[200px] container   px-4 py-8 bg-white rounded-lg">
+<div class="">
+    <h3 class="text-xl font-semibold mb-2">{% trans 'Organizational chart'|upper %}</h3>
+    <div class="container px-4 py-8 space-y-8 bg-white rounded-lg">
+        <img class="object-fill" src="{% static 'img/betsiaka_org.jpg' %}" alt="">
+    </div>
 </div>
-<div class="h-[200px] container mx-auto px-4 py-8 bg-white rounded-lg">
+<div class="">
+    <h3 class="text-xl font-semibold mb-2">{% trans 'The origin of the village and its inhabitants'|upper %}</h3>
+    <div class="border-l-8 border-[#007e3a] min-h-[200px] container px-8 py-6 space-y-4 bg-white rounded-lg text-justify">
+        <p class="indent-8">
+            {% blocktranslate %}
+            Betsiaka was originally called Betsiakahely, as opposed to Betsiakabe, and it was created by JAOSORATRA and SINIGARA in the late 1880s. Everything suggests that this village of Betsiakahely was under the jurisdiction of the canton of Mosorobe since, according to oral tradition, the two pioneers could only settle in Betsiakahely after obtaining the authorization of MAHABARY, chief of the Mosorobe Canton.
+            {% endblocktranslate %}
+        </p>
+        <p class="indent-8">
+            {% blocktranslate %}
+            As for the village of Betsiakabe, it was founded by a herdsman named Jaobitrano (Jao with the big house). This village of Betsiakabe was later abandoned, and the name Betsiakahely was simplified to Betsiaka.
+            {% endblocktranslate %}
+        </p>
+        <p class="indent-8">
+            {% blocktranslate %}
+            Today, there are two main families who claim descent from those who founded the village: the MAROLAHY (of the Tsimihety people) and the MAROMENA (of the Sakalava people). These two main families, along with other ethnic groups, make up the current inhabitants of the commune.
+            {% endblocktranslate %}
+        </p>
+    </div>
 </div>
-<div class="h-[200px] container mx-auto px-4 py-8 bg-white rounded-lg">
+
+<div class="">
+    <h3 class="text-xl font-semibold mb-2">{% trans 'Localization'|upper %}</h3>
+    <div id="map" class="min-h-[500px] container px-4 py-8 bg-white border-white border-8 rounded-lg">
+    </div>
 </div>
-<div class="h-[200px] container mx-auto px-4 py-8 bg-white rounded-lg">
+<div class="min-h-[200px] container px-4 py-8 bg-white rounded-lg">
 </div>
-<div class="h-[200px] container mx-auto px-4 py-8 bg-white rounded-lg">
+<div class="min-h-[200px] container px-4 py-8 bg-white rounded-lg">
 </div>
-<div id="3" class="h-[200px] container mx-auto px-4 py-8 bg-white rounded-lg">
+<div id="3" class="min-h-[200px] container px-4 py-8 bg-white rounded-lg">
 </div>
+
+
+<script>
+    // Initialisation de la carte
+    var map = L.map('map', {
+        // attributionControl: false,
+        // zoomControl: false,
+        // dragging: false,
+        // touchZoom: false,
+        // scrollWheelZoom: false,
+        // doubleClickZoom: false,
+        // boxZoom: false,
+        // keyboard: false,
+        // minZoom: 17,
+        // maxZoom: 17
+    }).setView([
+          -13.157038718777045,
+          49.2365893970549], 17);
+
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 17,
+        attribution: ''
+    }).addTo(map);
+
+    var geojson = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+            "type": "Feature",
+            "properties": {
+                "name": "Commune Rurale : Betsiaka",
+                "description": "Betsiaka — commune rurale riche en ressources minières, accessible via la RN5a."
+            },
+            "geometry": {
+                "coordinates": [
+                49.2365893970549,
+                -13.157038718777045
+                ],
+                "type": "Point"
+            }
+            }
+        ]
+    };
+
+    var geoLayer = L.geoJSON(geojson, {
+        style: { color: '#007e3a', weight: 2, fillColor: '#a6f3c8', fillOpacity: 0.45 },
+        onEachFeature: function (feature, layer) {
+            if (feature.properties && (feature.properties.name || feature.properties.description)) {
+                var content = (feature.properties.name ? '<strong>' + feature.properties.name + '</strong>' : '') +
+                              (feature.properties.description ? '<br/>' + feature.properties.description : '');
+                layer.bindTooltip(content, {
+                    direction: 'top',
+                    offset: [0, -10],
+                    permanent: false,
+                    opacity: 0.9,
+                    className: 'leaflet-tooltip-custom'
+                });
+                layer.on('mouseover', function () { this.openTooltip(); });
+                layer.on('mouseout', function () { this.closeTooltip(); });
+            }
+        },
+        pointToLayer: function (feature, latlng) {
+            return L.marker(latlng);
+        }
+    }).addTo(map);
+
+    // recentre la carte sur la couche GeoJSON
+    if (geoLayer.getBounds().isValid()) {
+        map.fitBounds(geoLayer.getBounds());
+    }
+</script>
 {% endblock article %}

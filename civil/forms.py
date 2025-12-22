@@ -11,7 +11,7 @@ from civil.models import BirthCertificate, DeathCertificate, Person
 CLASS_FIELD = """
         w-full bg-transparent border-0 border-b-2 border-b-gray-300
         outline-none font-medium text-base tracking-wider
-        focus:outline-none focus:border-b-blue-400
+        focus:outline-none focus:border-b-[#007e3a]
         focus:ring-0 focus:ring-offset-0
     """
 
@@ -110,7 +110,7 @@ class PersonForm(forms.Form):
         required=False,
         initial=True,
         label_suffix="",
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
 
     fieldsets = {
@@ -220,7 +220,7 @@ class BirthCertificateForm(forms.Form):
         required=False,
         initial=True,
         label_suffix="",
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
 
     # Informations sur les parents avec autocomplete
@@ -228,7 +228,7 @@ class BirthCertificateForm(forms.Form):
         label=_("Have a Father"),
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
     
     father_last_name = forms.CharField(
@@ -315,7 +315,7 @@ class BirthCertificateForm(forms.Form):
         label=_("He is alive"),
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
 
     # Mère
@@ -323,7 +323,7 @@ class BirthCertificateForm(forms.Form):
         label=_("Have a Mother"),
         required=True,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
     
     mother_last_name = forms.CharField(
@@ -405,7 +405,7 @@ class BirthCertificateForm(forms.Form):
         label=_("She is alive"),
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
 
     # Déclarant  
@@ -413,7 +413,7 @@ class BirthCertificateForm(forms.Form):
         label=_("Was Present"),
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
 
     declarer_last_name = forms.CharField(
@@ -547,7 +547,7 @@ class BirthCertificateForm(forms.Form):
         initial = staff_direction[0],
         widget=forms.Select(
             attrs={
-                "class": CLASS_FIELD + "text-lg cursor-pointer", 
+                "class": CLASS_FIELD + "cursor-pointer", 
                 "title": "Responsible",
             }
         )
@@ -722,7 +722,7 @@ class DeathCertificateForm(forms.Form):
         label=_("Have a Father"),
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
     
     father_last_name = forms.CharField(
@@ -809,7 +809,7 @@ class DeathCertificateForm(forms.Form):
         label=_("He is alive"),
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
 
     # Mère
@@ -817,7 +817,7 @@ class DeathCertificateForm(forms.Form):
         label=_("Have a Mother"),
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
     
     mother_last_name = forms.CharField(
@@ -904,7 +904,7 @@ class DeathCertificateForm(forms.Form):
         label=_("She is alive"),
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
 
     # Déclareur
@@ -912,7 +912,7 @@ class DeathCertificateForm(forms.Form):
         label=_("Was Present"),
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
 
     declarer_last_name = forms.CharField(
@@ -1020,7 +1020,7 @@ class DeathCertificateForm(forms.Form):
         initial = staff_direction[0],
         widget=forms.Select(
             attrs={
-                "class": CLASS_FIELD + "text-lg cursor-pointer", 
+                "class": CLASS_FIELD + "cursor-pointer", 
                 "title": "Responsible",
             }
         )
@@ -1197,7 +1197,7 @@ class MarriageCertificateForm(forms.Form):
         label=_("Have a Father"),
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
 
     father_groom_pk = forms.IntegerField(
@@ -1251,7 +1251,7 @@ class MarriageCertificateForm(forms.Form):
         label=_("He is alive"),
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
 
     # Mère du marié
@@ -1259,7 +1259,7 @@ class MarriageCertificateForm(forms.Form):
         label=_("Have a Mother"),
         required=True,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
 
     mother_groom_pk = forms.IntegerField(
@@ -1313,7 +1313,7 @@ class MarriageCertificateForm(forms.Form):
         label=_("She is alive"),
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
     
     # Informations personnelles de la mariée
@@ -1410,7 +1410,7 @@ class MarriageCertificateForm(forms.Form):
         label=_("Have a Father"),
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
 
     father_bride_pk = forms.IntegerField(
@@ -1478,7 +1478,7 @@ class MarriageCertificateForm(forms.Form):
         label=_("He is alive"),
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
 
     # Mère de la mariée
@@ -1486,7 +1486,7 @@ class MarriageCertificateForm(forms.Form):
         label=_("Have a Mother"),
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
 
     mother_bride_pk = forms.IntegerField(
@@ -1554,7 +1554,7 @@ class MarriageCertificateForm(forms.Form):
         label=_("She is alive"),
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={"class": "mr-2"})
+        widget=forms.CheckboxInput(attrs={"class": "mr-2 accent-[#007e3a]"})
     )
 
     # Informations sur les témoins
@@ -1738,7 +1738,7 @@ class MarriageCertificateForm(forms.Form):
         initial = staff_direction[0],
         widget=forms.Select(
             attrs={
-                "class": CLASS_FIELD + "text-lg cursor-pointer", 
+                "class": CLASS_FIELD + "cursor-pointer", 
                 "title": "Responsible",
             }
         )

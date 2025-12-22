@@ -6,7 +6,7 @@
 {% translate 'declarer' as declarer %}
 
   <style>
-    div > label {
+    div.min-w-20.w-full > label {
       font-weight: 600;
       font-family: sans-serif;
     }
@@ -16,6 +16,23 @@
         height: 1.25rem;
         cursor: pointer;
     }
+    /* Style de la checkbox */
+    [type="checkbox"] {
+      accent-color: #007e3a;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      width: 1.25rem;
+      height: 1.25rem;
+      border: 2px solid #007e3a;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      background-color: white;
+    }
+    
+    [type="checkbox"]:checked {
+      background-color: #007e3a;
+    }
   </style>
 
   <form action="{{ url_save }}" 
@@ -24,7 +41,7 @@
   
   {% for title, fields in form.fieldsets_fields.items %}
     {% if title == matricule %}
-      <fieldset class="flex justify-between gap-x-8 items-end 
+      <fieldset class="flex justify-between gap-x-8 items-end
                       max-sm:flex-wrap max-sm:flex-col-reverse max-sm:gap-y-4">
         {% for field in fields %}
           <div>{{ field }}</div>
@@ -42,17 +59,27 @@
       {# -- Si le champ est un dictionnaire (comme Informations about Parents) -- #}
       {% if fields.items %}
       <fieldset class="">
-        <label for="id_have_parents" class="text-xl font-semibold text-sky-800">{{ title }}</label>
+        <label for="id_have_parents" class="text-xl uppercase font-black text-[#007e3a]">{{ title }}</label>
         {% if title == parents_information %}
           <input type="checkbox" name="do_certificate" id="id_have_parents"
                 class="peer ml-2" checked title="{% translate 'Do a Certificate' %}">
         {% endif %}
         {% for sub_title, sub_fields in fields.items %}
           <fieldset class="grid  {% if title == parents_information %}hidden peer-checked:grid {% endif %}grid-cols-4 max-xl:grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1 gap-8 mb-5">
-            <legend class="text-lg font-semibold text-sky-600 mb-2">{{ sub_title|capfirst }}</legend>
-                
+            <legend class="text-lg font-semibold text-[#fc3d32] mb-2">{{ sub_title|capfirst }}</legend>
               {% for field in sub_fields %}
-                <div class="min-w-20 w-full {% if title == parents_information %} parents_information{% if 'pk' in field.label %} hidden {% endif %}{% if forloop.first %} col-span-full{% endif %}{% endif %}">
+              
+                <div class="
+                min-w-20 w-full
+                {% if title == parents_information %} 
+                parents_information
+                  {% if 'pk' in field.label %} 
+                  hidden 
+                  {% endif %}
+                  {% if forloop.first %} 
+                  col-span-full
+                  {% endif %}
+                {% endif %}">
                   {{ field.label_tag }} {{ field }}
                 </div>
               {% endfor %}
@@ -65,7 +92,7 @@
         <fieldset class="grid grid-cols-5 max-2xl:grid-cols-4 
                           max-xl:grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1 
                           justify-evenly gap-x-8 gap-y-10 items-start search_person">
-          <legend class="text-xl font-semibold text-sky-800 mb-4">{{ title|capfirst }}</legend>
+          <legend class="text-xl uppercase font-black text-[#007e3a] mb-4">{{ title|capfirst }}</legend>
           
           {% for field in fields %}
             <div class="min-w-20 w-full">
@@ -77,9 +104,9 @@
     {% endif %}
   {% endfor %}
   <div class="flex justify-end gap-8 text-white">
-    <input type="submit" value="{% trans 'Submit' %}" class="bg-primary px-4 py-3 rounded-lg w-32 cursor-pointer hover:bg-blue-500">
+    <input type="submit" value="{% trans 'Submit' %}" class="bg-[#007e3a] px-4 py-3 rounded-lg w-32 cursor-pointer hover:bg-[#029245]">
     <input type="reset" value="{% trans 'Reset' %}" class="bg-gray-600 px-4 py-3 rounded-lg w-32 cursor-pointer hover:bg-gray-500">
-    <button type="button" onclick="history.back()" class="bg-gray-800 px-4 py-3 rounded-lg w-32 cursor-pointer hover:bg-gray-700">{% translate "Back" %}</button>
+    <button type="button" onclick="history.back()" class="bg-[#1f2933] px-4 py-3 rounded-lg w-32 cursor-pointer hover:bg-gray-700">{% translate "Back" %}</button>
   </div>
 </form>
 

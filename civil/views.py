@@ -37,11 +37,6 @@ CERTIFICATE = {
     "marriage": MarriageCertificateForm,
 }
 
-GENDER_CHOICES = {
-    'M': _("Male"),
-    'F': _("Female")
-}
-
 GENDER_CLIENT = {
     'M': "Atoa",
     'F': "Rtoa"
@@ -398,7 +393,10 @@ def person_detail(request: WSGIRequest, person_id) -> HttpResponseRedirect | Htt
 
     menu_name = 'person'
 
-    person = Person.objects.get(pk=person_id)
+    persons = Person.objects.all()
+    person = persons.get(pk=person_id)
+    prev_person = persons.filter(pk__lt=person_id).exclude(pk=person_id).last()
+    next_person = persons.filter(pk__gt=person_id).exclude(pk=person_id).first()
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
@@ -417,6 +415,8 @@ def person_detail(request: WSGIRequest, person_id) -> HttpResponseRedirect | Htt
         "responsible_staffs": Staff.objects.filter(role__service__grade=1).order_by('role__grade'),
         "mother_certificated": False,
         "person": person,
+        "prev_person": prev_person,
+        "next_person": next_person,
     }
     
     birth = BirthCertificate.objects.get(person_id=person_id) if BirthCertificate.objects.filter(person_id=person_id) else None
@@ -612,6 +612,11 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
 
     menu_name = "birth"
 
+    GENDER_CHOICES = {
+        'M': _("Male"),
+        'F': _("Female")
+    }
+
     headers = [
             {"name": "status", "header": _("status"), "db_col_name": "person__birthday", "type": "select", "query": ["person__birthday__lte"]},
             {"name": "date", "header": _("date"), "db_col_name": "date_register", "type": "date", "query": ["date_register__date"]},
@@ -651,24 +656,34 @@ def birth_list(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                         else request.GET['q']
         )
 
-        certificates_data = certificates_data.filter(
-                    Q(**{f"{headers[index_search]['query'][0]}":request.GET['q']}) |
-                    Q(**{f"{headers[index_search]['query'][1]}":request.GET['q']})
-                    if len(headers[index_search]['query']) == 2
-                    else
-                    Q(
-                        **{
-                            f"{headers[index_search]['query'][0]}": 
-                            date.today() - timedelta(days=int(request.GET['q'])*365) 
-                            if headers[index_search]['name'] == 'age'
-                            else date(int(request.GET['q'].split('-')[0]), int(request.GET['q'].split('-')[1]), int(request.GET['q'].split('-')[2]))
-                            if headers[index_search]['name'] == 'date' 
-                            else True if request.GET['q'] == '0' else False
-                            if headers[index_search]['name'] == 'birth'
-                            else request.GET['q']
-                           }
-                        )
-                )
+        header = headers[index_search]
+        queries = header['query']
+        q = request.GET['q']
+
+        if len(queries) == 2:
+            certificates_data = certificates_data.filter(
+            Q(**{queries[0]: q}) | Q(**{queries[1]: q})
+            )
+        else:
+            key = queries[0]
+            name = header['name']
+            # Préparer la valeur en fonction du type de colonne
+            try:
+                if name in ('age',):
+                    value = date.today() - timedelta(days=int(q) * 365)
+                elif name == 'date':
+                    y, m, d = map(int, q.split('-'))
+                    value = date(y, m, d)
+                    print(value)
+                elif name == 'birth':
+                    # comportement existant : '0' => True, sinon False
+                    value = True if q == '0' else False
+                else:
+                    value = q
+            except Exception:
+                # en cas d'erreur de parsing, utiliser la valeur brute
+                value = q
+            certificates_data = certificates_data.filter(Q(**{key: value}))
 
     # Ordre
     ordered = 'order' in list(request.GET) and request.GET['order'] != ''
@@ -905,7 +920,6 @@ def birth_register(request: WSGIRequest) -> HttpResponseRedirect | HttpResponseP
         form.fields['register_date'].initial = datetime.now(TIMEZONE_MGA).__format__("%Y-%m-%d %H:%M")
 
         print("THAT'S OK")
-
 
     context = {
         "accessed": __package__ in request.session['app_accessed'],
@@ -1623,6 +1637,11 @@ def death(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
     """  """
 
     menu_name = "death"
+
+    GENDER_CHOICES = {
+        'M': _("Male"),
+        'F': _("Female")
+    }
 
     headers = [
             {"name": "date", "header": _("date"), "db_col_name": "date_created", "type": "date", "query": ["date_created__date"]},

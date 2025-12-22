@@ -92,8 +92,11 @@ activate('mg')
 # print(BirthCertificate.objects.all().filter(date_created=))
 
 # print(_(views.actions[0]['title']))
+from django.db.models.functions import ExtractYear, ExtractMonth, ExtractDay
 
-certificate = BirthCertificate.objects.get(pk=5)
+certificate = BirthCertificate.objects.all()
+certificate.iterator
+
 # print((certificate.date_register + timedelta(hours=3)).__format__('%d'))
 # father = certificate.father
 # mother = certificate.mother
@@ -124,12 +127,12 @@ certificate = BirthCertificate.objects.get(pk=5)
 # print("Kenn Keren ".strip() + "Keren ".strip())
 
 
-combined = sorted(
-    chain(BirthCertificate.objects.all(), DeathCertificate.objects.all()),
-    key=attrgetter('date_register'),
-    reverse=True
-)
-print(combined)
+# combined = sorted(
+#     chain(BirthCertificate.objects.all(), DeathCertificate.objects.all()),
+#     key=attrgetter('date_register'),
+#     reverse=True
+# )
+# print(combined)
 
 # births = BirthCertificate.objects.annotate(cert_type=models.Value('birth', output_field=models.CharField())).values('id', 'date_declaration')
 # deaths = DeathCertificate.objects.annotate(cert_type=models.Value('death', output_field=models.CharField())).values('id', 'date_declaration')

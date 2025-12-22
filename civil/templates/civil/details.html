@@ -4,22 +4,42 @@
 {% load i18n %}
 
 <div class="flex flex-initial flex-col">
-    <div class="flex gap-x-4 ml-4">
-        <a onclick="history.back()" class="text-sm text-gray-500 hover:text-gray-800 cursor-pointer"
-        title="{% translate 'Back' %}"
-        >
-            {% translate "Back" %}
-        </a>
-        <a href="{{ person.url_modify }}" class="text-sm text-gray-500 hover:text-blue-600 cursor-pointer"
-        title="{% translate 'Modify' %}"
-        >
-            {% translate "Modify" %}
-        </a>
-        <button type="button" onclick="supprimCertificate()" class="text-sm text-gray-500 hover:text-rose-600 cursor-pointer"
-        title="{% translate 'Delete' %}"
-        >
-            {% translate "Delete" %}
-        </button>
+    <div class="flex justify-between text-gray-500">
+        <div class="flex gap-x-4 ml-4">
+            <a onclick="history.back()" class="text-sm hover:text-gray-800 cursor-pointer"
+            title="{% translate 'Back' %}"
+            >
+                {% translate "Back" %}
+            </a>
+            <a href="{{ person.url_modify }}" class="text-sm hover:text-blue-600 cursor-pointer"
+            title="{% translate 'Modify' %}"
+            >
+                {% translate "Modify" %}
+            </a>
+            <button type="button" onclick="supprimCertificate()" class="text-sm hover:text-rose-600 cursor-pointer"
+            title="{% translate 'Delete' %}"
+            >
+                {% translate "Delete" %}
+            </button>
+        </div>
+        <div class="flex gap-10 mr-4">
+            {% if prev_person.pk %}
+            <a class="w-2" href="{% url 'civil:person-detail' prev_person.pk %}">
+                <?xml version="1.0" encoding="UTF-8"?>
+                <svg class="rotate-180" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="24" height="24"><g id="_01_align_center" data-name="01 align center"><path d="M17.414,10.586,13.121,6.293,11.707,7.707,15,11H5v2H15l-3.293,3.293,1.414,1.414,4.293-4.293A2,2,0,0,0,17.414,10.586Z"/></g></svg>
+            </a>
+            {% else %}
+            <p class="w-2"></p>
+            {% endif %}
+            {% if next_person.pk %}
+            <a class="w-2" href="{% url 'civil:person-detail' next_person.pk %}">
+                <?xml version="1.0" encoding="UTF-8"?>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="24" height="24"><g id="_01_align_center" data-name="01 align center"><path d="M17.414,10.586,13.121,6.293,11.707,7.707,15,11H5v2H15l-3.293,3.293,1.414,1.414,4.293-4.293A2,2,0,0,0,17.414,10.586Z"/></g></svg>
+            </a>
+            {% else %}
+            <p class="w-2"></p>
+            {% endif %}
+        </div>
     </div>
     <div class="flex flex-row max-md:flex-wrap rounded-t-3xl px-5 py-4 min-h-80 gap-4
     {% if person.gender == 'M' %}{% if person.is_alive %} bg-blue-200 {% else %} bg-gray-300 hover:bg-blue-200 {% endif %}{% else %}{% if person.is_alive %} bg-rose-200 {% else %} bg-gray-300 hover:bg-rose-200 {% endif %}{% endif %}
@@ -169,7 +189,7 @@
                     {{ birth_doc.count }}
                 </div>
                 <div class="flex flex-col">
-                    <p class="text-md font-semibold">{% trans "Copies de Naissance"|upper %}</p>
+                    <p class="text-md font-semibold">{% trans "Birth Copy"|upper %}</p>
                     <p class="text-gray-600"><b class="text-blue-400">N°</b> {{ birth_certificate.numero }}</p>
                     <div class="text-sm">
                         <p title="{{ birth_certificate.person.birthday|date:'d-m-Y H:i' }}" class="text-gray-600"><b class="text-blue-400">{% trans 'date'|capfirst %} :</b> {{ birth_certificate.person.birthday|date:'d/m/Y' }}</p>
@@ -185,7 +205,7 @@
                     {{ recognization_doc.count }}
                 </div>
                 <div class="flex flex-col">
-                    <p class="text-md font-semibold">{% trans "Copies de Reconnaissance"|upper %}</p>
+                    <p class="text-md font-semibold">{% trans "Recognization Copy"|upper %}</p>
                     <p class="text-gray-600"><b class="text-orange-400">N°</b> {{ recognization_certificate.numero }}</p>
                     <div class="text-sm">
                         <p title="{{ recognization_certificate.date_register|date:'d-m-Y H:i' }} --- {{ recognization_certificate.recognized_by }}" class="text-gray-600"><b class="text-orange-400">{% trans 'date'|capfirst %} :</b> {{ recognization_certificate.date_register|date:'d/m/Y' }}</p>
@@ -201,7 +221,7 @@
                     {{ marriage_doc.count }}
                 </div>
                 <div class="flex flex-col">
-                    <p class="text-md font-semibold">{% trans "Copies de Mariage"|upper %}</p>
+                    <p class="text-md font-semibold">{% trans "Marriage Copy"|upper %}</p>
                     <p class="text-gray-600"><b class="text-rose-400">N°</b> {{ marriage_certificate.numero }}</p>
                     <div class="text-sm">
                         <p title="{{ marriage_certificate.wedding_day|date:'d-m-Y H:i' }}" class="text-gray-600"><b class="text-rose-400">{% trans 'date'|capfirst %} :</b> {{ marriage_certificate.wedding_day|date:'d/m/Y' }}</p>
@@ -217,7 +237,7 @@
                     {{ death_doc.count }}
                 </div>
                 <div class="flex flex-col">
-                    <p class="text-md font-semibold">{% trans "Copies de Décès"|upper %}</p>
+                    <p class="text-md font-semibold">{% trans "Death Copy"|upper %}</p>
                     <p class="text-gray-600"><b class="text-gray-400">N°</b> {{ death_certificate.numero }}</p>
                     <div class="text-sm">
                         <p title="{{ death_certificate.death_day|date:'d-m-Y H:i' }}" class="text-gray-600"><b class="text-gray-400">{% trans 'date'|capfirst %} :</b> {{ death_certificate.death_day|date:'d/m/Y' }}</p>

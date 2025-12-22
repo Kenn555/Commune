@@ -1,7 +1,9 @@
 :root {
     --mg-white: #ffffff;
     --mg-red:   #fc3d32;
+    --mg-red-hover:   #ff4b4b;
     --mg-green: #007e3a;
+    --mg-green-hover: #029245;
     --dark:     #1f2933;
     --gray:     #f4f6f8;
 }

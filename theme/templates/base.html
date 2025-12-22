@@ -3,7 +3,7 @@
 {% load humanize %}
 {% load i18n %}
 {% blocktranslate asvar the_title %}{{ title }} - Rural Commune of {{ common_name }}.{% endblocktranslate %}
-{% blocktranslate asvar the_common %}{{ common_name }} Town{% endblocktranslate %}
+{% blocktranslate asvar the_common %}{{ common_name }} Commune{% endblocktranslate %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
@@ -13,10 +13,12 @@
     {% tailwind_css %}
     <title>{{ the_title|capfirst }}</title>
     <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
-    <script src="{% static 'js/chart.js' %}"></script>
-
+    <!-- Local Chart.js -->
     <link rel="stylesheet" href="{% static 'chart.js/Chart.css' %}">
     <script src="{% static 'chart.js/Chart.bundle.js' %}"></script>
+    <!-- Local Leaflet -->
+    <link rel="stylesheet" href="{% static 'leaflet/dist/leaflet.css' %}" />
+    <script src="{% static 'leaflet/dist/leaflet.js' %}"></script>
     {{ form.media }}
 </head>
 <body>
@@ -60,7 +62,7 @@
         </div>
     {% endif %}
     <div class="bg-gray-200 h-screen">
-        <div class="absolute flex z-50 text-[#1f2933] text-3xl font-bold justify-self-center">
+        <div class="absolute hidden z-50 text-[#1f2933] text-3xl font-bold justify-self-center">
             <span class="sm:hidden">SM</span>
             <span class="hidden sm:max-md:inline">MD</span>
             <span class="hidden md:max-lg:inline">LG</span>
@@ -91,7 +93,7 @@
                     </label>
                     <form action="{% url 'set_language' %}" method="post" class="invisible peer-checked:visible absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-1 transform opacity-0 scale-95 transition-all duration-200 peer-checked:opacity-100 peer-checked:scale-100">
                         {% csrf_token %}
-                        <input class="w-12 w-4 w-36 w-1 text-gray-500" name="next" type="hidden" value="{{ request.path }}">
+                        <input class="text-gray-500" name="next" type="hidden" value="{{ request.path }}">
                         {% for lang_code, lang_name in LANGUAGES %}
                         <button type="submit" name="language" value="{{ lang_code }}" 
                                 class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200">

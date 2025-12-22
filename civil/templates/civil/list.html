@@ -40,7 +40,10 @@
                 <input type="hidden" name="order" value="">
                 {% for header in table.headers %}
                 <div title="{% translate 'click for sorting' %}" class="table-cell hover:bg-green-600 px-4 py-2 text-center text-nowrap border-b-2 border-gray-300 cursor-pointer {% if forloop.first %} rounded-tl-lg {% elif forloop.last %} rounded-tr-lg {% endif %}">
-                    <button type="button" onclick="changeOrder(this)" value="{{ header.name }}" class="inline-block w-full">{% if header.name != "status" %} {{ header.header|title }} {% endif %}</button> {% if header.name != "action" and order_name == header.name %}{% if not request.session.order_asc %}⬇{% else %}⬆{% endif %}{% endif %}
+                    <button type="button" onclick="changeOrder(this)" value="{{ header.name }}" class="inline-block w-full">{% if header.name != "status" %} {{ header.header|title }} {% endif %}</button> {% if header.name != "action" and order_name == header.name %}
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <svg class="inline-block {% if not request.session.order_asc %} rotate-90 {% else %} -rotate-90 {% endif %}" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="24" height="24"><g id="_01_align_center" data-name="01 align center"><path d="M17.414,10.586,13.121,6.293,11.707,7.707,15,11H5v2H15l-3.293,3.293,1.414,1.414,4.293-4.293A2,2,0,0,0,17.414,10.586Z"/></g></svg>
+                    {% endif %}
                 </div>
                 {% endfor %}
             </div>

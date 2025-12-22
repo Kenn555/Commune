@@ -57,7 +57,7 @@ def login_page(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                 for service in getattr(settings, "SERVICES_APP"):
                     if validated_user.is_superuser:
                         request.session['urls'].append(service)
-                    elif service["name"] == Role.objects.get(access=validated_user).app.name:
+                    elif service["name"] in ('dashboard', Role.objects.get(access=validated_user).app.name):
                         request.session['urls'].append(service)
 
             for app in request.session['urls']:
@@ -66,9 +66,12 @@ def login_page(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePerma
                         
             # Gérer la redirection
             if request.GET.get("next"):
-                next_app = request.GET.get('next').split('/')[1]
-                if next_app != "":
+                next_app = request.GET.get('next').split('/')[2]
+                print(next_app)
+                if next_app in [service['name'] for service in getattr(settings, "SERVICES_APP")]:
                     return redirect(f"{next_app}:index")
+                else:
+                    return redirect("account:index")
 
             return redirect("account:index")
             ...
