@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-22 13:37+0300\n"
+"POT-Creation-Date: 2025-12-22 17:34+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -315,13 +315,13 @@ msgstr "enregistrement"
 
 #: .\administration\templates\administration\role_list.html:31
 #: .\administration\templates\administration\user_register.html:70
-#: .\civil\templates\civil\register.html:107
+#: .\civil\templates\civil\register.html:110
 msgid "Submit"
 msgstr ""
 
 #: .\administration\templates\administration\role_list.html:32
 #: .\administration\templates\administration\user_register.html:71
-#: .\civil\templates\civil\register.html:108
+#: .\civil\templates\civil\register.html:111
 msgid "Reset"
 msgstr ""
 
@@ -332,7 +332,7 @@ msgstr ""
 #: .\administration\templates\administration\user_list.html:13
 #: .\civil\templates\civil\list.html:13
 msgid "Lines"
-msgstr "mines"
+msgstr "Lignes"
 
 #: .\administration\templates\administration\user_register.html:4
 msgid "Other Informations"
@@ -343,7 +343,7 @@ msgid "Applications"
 msgstr "Application"
 
 #: .\administration\templates\administration\user_register.html:33
-#: .\civil\templates\civil\register.html:65
+#: .\civil\templates\civil\register.html:68
 msgid "Do a Certificate"
 msgstr "acte de décès"
 
@@ -934,7 +934,7 @@ msgstr "Date du mariage"
 #: .\civil\templates\civil\details.html:10
 #: .\civil\templates\civil\details.html:12
 #: .\civil\templates\civil\preview.html:149
-#: .\civil\templates\civil\register.html:109
+#: .\civil\templates\civil\register.html:112
 msgid "Back"
 msgstr ""
 
@@ -1070,15 +1070,15 @@ msgstr ""
 
 #: .\civil\templates\civil\list.html:34
 msgid "Valid"
-msgstr "Validé"
+msgstr "Valider"
 
 #: .\civil\templates\civil\list.html:42
 msgid "click for sorting"
-msgstr ""
+msgstr "Appuyer pour ordonner"
 
 #: .\civil\templates\civil\list.html:56
 msgid "Are you sure want to delete this certificate ?"
-msgstr ""
+msgstr "Êtes-vous sûr de vouloir supprimer ce certificat ?"
 
 #: .\civil\templates\civil\list.html:98
 msgid "recognized"
@@ -1086,7 +1086,7 @@ msgstr "Reconnaissance"
 
 #: .\civil\templates\civil\list.html:118
 msgid "No data"
-msgstr ""
+msgstr "Aucune donnée"
 
 #: .\civil\templates\civil\list.html:132
 #, python-format
@@ -1099,31 +1099,37 @@ msgid_plural ""
 "            %(counter)s shown elements.\n"
 "            "
 msgstr[0] ""
+"\n"
+"            %(counter)s élément trouvé.\n"
+"            "
 msgstr[1] ""
+"\n"
+"            %(counter)s éléments trouvés.\n"
+"            "
 
 #: .\civil\templates\civil\preview.html:118
 msgid "Print"
-msgstr ""
+msgstr "Imprimer"
 
 #: .\civil\templates\civil\preview.html:128
 msgid "Edit"
-msgstr ""
+msgstr "Modifier"
 
 #: .\civil\templates\civil\preview.html:679
 msgid "first copy"
-msgstr ""
+msgstr "premier exemplaire"
 
 #: .\civil\templates\civil\preview.html:735
 msgid "Issued on"
-msgstr ""
+msgstr "Enregistré le"
 
 #: .\civil\templates\civil\preview.html:736
 msgid "Document"
-msgstr ""
+msgstr "Document"
 
 #: .\civil\templates\civil\preview.html:766
 msgid "Are you sure you want to delete this certificate?"
-msgstr ""
+msgstr "Êtes-vous sûr de vouloir supprimer ce certificat ?"
 
 #: .\civil\views.py:73
 msgid "list"
@@ -1134,11 +1140,11 @@ msgstr "liste"
 #: .\civil\views.py:1805 .\civil\views.py:2261 .\civil\views.py:2262
 #: .\civil\views.py:2263 .\civil\views.py:2264
 msgid "unknown"
-msgstr "Inconnu"
+msgstr "inconnu"
 
 #: .\civil\views.py:588
 msgid "Person Modificated Successfully !"
-msgstr "La personne a été modifiée avec succès!"
+msgstr "La personne a été modifiée avec succès !"
 
 #: .\civil\views.py:590
 msgid "Person Modification Error !"
@@ -1160,7 +1166,7 @@ msgstr "Date de naissance"
 
 #: .\civil\views.py:775 .\civil\views.py:1788 .\civil\views.py:2247
 msgid " per "
-msgstr ""
+msgstr " dans "
 
 #: .\civil\views.py:793
 msgid "person"
@@ -1320,27 +1326,27 @@ msgstr "La date de naissance du père de la mariée est postérieure à celle de
 #: .\civil\views.py:2538
 #, python-format
 msgid "The Certificate of %(groom)s and %(bride)s deleted successfully."
-msgstr "Certificat de naissance - %(number)s"
+msgstr "Le Certificat de %(groom)s et de %(bride)s est supprimé avec succès."
 
-#: .\dashboard\templates\dashboard\home.html:18
+#: .\dashboard\templates\dashboard\home.html:19
 msgid "Repoblikan'i Madagascar"
-msgstr ""
+msgstr "République de Madagascar"
 
-#: .\dashboard\templates\dashboard\home.html:29
+#: .\dashboard\templates\dashboard\home.html:30
 msgid "Monograph on the town and its surroundings"
 msgstr "Monographie sur la commune et ses environs"
 
-#: .\dashboard\templates\dashboard\home.html:32
+#: .\dashboard\templates\dashboard\home.html:33
 msgid ""
 "\n"
-"            The rural commune of Betsiaka is one of the 15 communes of the Fivondronana of Ambilobe. It can be accessed by following national road number 5 (RN5a), a road which connects Ambilobe to Vohemar.\n"
+"            The rural commune of Betsiaka is one of the 15 communes of the District of Ambilobe. It can be accessed by following national road number 5 (RN5a), a road which connects Ambilobe to Vohemar.\n"
 "            "
 msgstr ""
 "\n"
-"            La commune rurale de Betsiaka est l’une des 15 communes du Fivondronana d’Ambilobe. On y accède en suivant la route nationale numéro 5 (RN5a), une route qui relie Ambilobe à Vohemar.\n"
+"            La commune rurale de Betsiaka est l’une des 15 communes du District d’Ambilobe. On y accède en suivant la route nationale numéro 5 (RN5a), une route qui relie Ambilobe à Vohemar.\n"
 "            "
 
-#: .\dashboard\templates\dashboard\home.html:37
+#: .\dashboard\templates\dashboard\home.html:38
 msgid ""
 "\n"
 "            The landscapes that unfold before the traveler crossing the Betsiaka commune along the RN5a are a desert-like, rocky terrain with savannah, some scrubland, mostly thorny bushes, and a fine dust that easily turns into mud during the rainy season. In the inhabited areas (Mantalimaro, Ankatoko, Betsiaka, etc.), craters and terraces, reminiscent of a lunar landscape, serve as a reminder of the inhabitants' primary source of income: gold mining.\n"
@@ -1350,7 +1356,7 @@ msgstr ""
 "            Les paysages qui s’offrent au voyageur qui traverse de part en part la commune de Betsiaka en suivant la RN5a est une pays désertique et rocailleux avec de la savane, quelques broussailles, des épineux pour la plupart, et une poussière fine se transformant facilement en bourbiers en saison des pluies. Dans les zones habitées (Mantalimaro, Ankatoko, Betsiaka etc..), des cratères et des terrassements, dignes d’un paysage lunaire, rappelant la première source de revenus des habitants : l’extraction d’or.\n"
 "            "
 
-#: .\dashboard\templates\dashboard\home.html:42
+#: .\dashboard\templates\dashboard\home.html:43
 msgid ""
 "\n"
 "            Indeed, one of the essential characteristics of this town is the extreme richness of its subsoil, which seems to be teeming with various mineral resources, the most exploited of which, and certainly not the least, is gold. As a result, the majority of the population derives its income primarily from gold mining.\n"
@@ -1360,15 +1366,29 @@ msgstr ""
 "            En effet, l’une des caractéristiques essentielles de cette commune est l’extrême richesse de son sous-sol qui semble-t-il regorge de diverses richesses minières mais dont la plus exploitée et non la moindre est l’or. Cela fait que la majorité de la population tire principalement ses revenus de l’extraction de l’or.\n"
 "            "
 
-#: .\dashboard\templates\dashboard\home.html:49
+#: .\dashboard\templates\dashboard\home.html:50
+msgid "Coverage area"
+msgstr "Zone de couverture"
+
+#: .\dashboard\templates\dashboard\home.html:53
+msgid ""
+"\n"
+"            Each Fokotany has its own origins and personal history and above all they contribute to the proper functioning of the commune. The commune of Betsiaka is made up of 12 Fokotany including:\n"
+"            "
+msgstr ""
+"\n"
+"            Chaque Fokotany ont leurs origines et leur historique personnel et surtout, ils contribuent au bon fonctionnement de la commune. La commune de Betsiaka est composée de 12 Fokotany dont :\n"
+"            "
+
+#: .\dashboard\templates\dashboard\home.html:65
 msgid "Organizational chart"
 msgstr "Organigramme"
 
-#: .\dashboard\templates\dashboard\home.html:55
+#: .\dashboard\templates\dashboard\home.html:71
 msgid "The origin of the village and its inhabitants"
 msgstr "L’origine du village et de ses habitants"
 
-#: .\dashboard\templates\dashboard\home.html:58
+#: .\dashboard\templates\dashboard\home.html:74
 msgid ""
 "\n"
 "            Betsiaka was originally called Betsiakahely, as opposed to Betsiakabe, and it was created by JAOSORATRA and SINIGARA in the late 1880s. Everything suggests that this village of Betsiakahely was under the jurisdiction of the canton of Mosorobe since, according to oral tradition, the two pioneers could only settle in Betsiakahely after obtaining the authorization of MAHABARY, chief of the Mosorobe Canton.\n"
@@ -1378,7 +1398,7 @@ msgstr ""
 "            Betsiaka s’appelait à l’origine Betsiakahely, par opposition à Betsiakabe et il a été créé par JAOSORATRA et SINIGARA à la fin des années 1880. Tout laisse supposer que ce village de Betsiakahely était sous la juridiction du canton de Mosorobe puise que selon la tradition orale, les deux pionniers n’ont pu installer à Betsiakahely qu’après avoir obtenu l’autorisation de MAHABARY chef du Canton Mosorobe.\n"
 "            "
 
-#: .\dashboard\templates\dashboard\home.html:63
+#: .\dashboard\templates\dashboard\home.html:79
 msgid ""
 "\n"
 "            As for the village of Betsiakabe, it was founded by a herdsman named Jaobitrano (Jao with the big house). This village of Betsiakabe was later abandoned, and the name Betsiakahely was simplified to Betsiaka.\n"
@@ -1388,7 +1408,7 @@ msgstr ""
 "            Quant au village de Betsiakabe, c’est un bouvier du nom de JAOBITRANO (Jao à la grande case) qui l’a créé. Ce village de Betsiakabe ayant été abandonné par la suite, le nom de Betsiakahely a été simplifié et devenue Betsiaka.\n"
 "            "
 
-#: .\dashboard\templates\dashboard\home.html:68
+#: .\dashboard\templates\dashboard\home.html:84
 msgid ""
 "\n"
 "            Today, there are two main families who claim descent from those who founded the village: the MAROLAHY (of the Tsimihety people) and the MAROMENA (of the Sakalava people). These two main families, along with other ethnic groups, make up the current inhabitants of the commune.\n"
@@ -1398,24 +1418,36 @@ msgstr ""
 "            Aujourd’hui, il y a deux grandes familles qui prétendent descendre de ceux qui ont créé le village : les MAROLAHY (des Tsimihety) et les MAROMENA (des Sakalava). Ces deux grandes familles, ainsi que d’autres ethnies composent les habitants actuels de la commune.\n"
 "            "
 
+#: .\dashboard\templates\dashboard\home.html:91
+msgid "Rural Commune"
+msgstr "Commune Rurale"
+
+#: .\dashboard\templates\dashboard\home.html:96
+msgid "Mayor of"
+msgstr "Maire de"
+
+#: .\dashboard\templates\dashboard\home.html:101
+msgid "Localization"
+msgstr "Localisation"
+
 #: .\theme\templates\base.html:5
 #, python-format
 msgid "%(title)s - Rural Commune of %(common_name)s."
-msgstr ""
+msgstr "%(title)s - Commune Rurale de %(common_name)s."
 
 #: .\theme\templates\base.html:6
 #, python-format
 msgid "%(common_name)s Commune"
 msgstr "Commune %(common_name)s"
 
-#: .\theme\templates\base.html:111
+#: .\theme\templates\base.html:113
 msgid "profil"
-msgstr ""
+msgstr "profile"
 
-#: .\theme\templates\base.html:114
+#: .\theme\templates\base.html:116
 msgid "logout"
-msgstr ""
+msgstr "deconnexion"
 
 #: .\theme\templates\components\header.html:20
 msgid "welcome"
-msgstr ""
+msgstr "bienvenue"

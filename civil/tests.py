@@ -92,10 +92,10 @@ activate('mg')
 # print(BirthCertificate.objects.all().filter(date_created=))
 
 # print(_(views.actions[0]['title']))
-from django.db.models.functions import ExtractYear, ExtractMonth, ExtractDay
+# from django.db.models.functions import ExtractYear, ExtractMonth, ExtractDay
 
-certificate = BirthCertificate.objects.all()
-certificate.iterator
+# certificate = BirthCertificate.objects.all()
+# certificate.iterator
 
 # print((certificate.date_register + timedelta(hours=3)).__format__('%d'))
 # father = certificate.father

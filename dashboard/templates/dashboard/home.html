@@ -1,6 +1,7 @@
 {% extends "base.html" %} {% block article %}
 {% load static %}
 {% load i18n %}
+{% load text_format %}
 <style>
     @font-face {
         font-family: 'EurostarBlackExtended';
@@ -15,14 +16,14 @@
     <div class="flex flex-col items-center -space-y-1">
         <img class="h-32 w-40 items-center" src="{% static 'img/flag_sealled.png' %}" alt="">
         <div class="flex flex-col -space-y-2 mt-4 text-yellow-500">
-            <p class="text-nowrap text-center text-xl font-semibold font-[EurostarBlackExtended]">{% trans "Repoblikan'i Madagascar"|upper %}</p>
-            <p class="text-nowrap text-center">Fitiavana - Tanindrazana - Fandrosoana</p>
+            <p class="text-nowrap text-center max-md:text-sm text-xl font-semibold font-[EurostarBlackExtended]">{% trans "Repoblikan'i Madagascar"|upper %}</p>
+            <p class="text-nowrap text-center max-md:text-sm">Fitiavana - Tanindrazana - Fandrosoana</p>
         </div>
     </div>
     <!-- Logo Commune -->
     <div class="flex flex-col items-center gap-y-1">
         <img class="w-32 h-32 items-center" src="{% static 'img/logo.png' %}" alt="">
-        <p class="text-nowrap text-lg text-center font-serif font-bold leading-tight">COMMUNE RURALE D'AMBILOBE<br>BETSIAKA</p>
+        <p class="text-nowrap max-md:text-sm text-lg text-center font-serif font-bold leading-tight">COMMUNE RURALE D'AMBILOBE<br>BETSIAKA</p>
     </div>
 </div>
 <div class="">
@@ -30,7 +31,7 @@
     <div class="border-l-8 border-[#007e3a] min-h-[200px] container px-8 py-6 space-y-4 bg-white rounded-lg text-justify">
         <p class="indent-8">
             {% blocktranslate %}
-            The rural commune of Betsiaka is one of the 15 communes of the Fivondronana of Ambilobe. It can be accessed by following national road number 5 (RN5a), a road which connects Ambilobe to Vohemar.
+            The rural commune of Betsiaka is one of the 15 communes of the District of Ambilobe. It can be accessed by following national road number 5 (RN5a), a road which connects Ambilobe to Vohemar.
             {% endblocktranslate %}
         </p>
         <p class="indent-8">
@@ -43,6 +44,21 @@
             Indeed, one of the essential characteristics of this town is the extreme richness of its subsoil, which seems to be teeming with various mineral resources, the most exploited of which, and certainly not the least, is gold. As a result, the majority of the population derives its income primarily from gold mining.
             {% endblocktranslate %}
         </p>
+    </div>
+</div>
+<div class="">
+    <h3 class="text-xl font-semibold mb-2">{% trans 'Coverage area'|upper %}</h3>
+    <div class="flex flex-col items-center border-l-8 border-[#007e3a] min-h-[200px] container px-8 py-6 space-y-4 bg-white rounded-lg text-justify">
+        <p class="indent-8">
+            {% blocktranslate %}
+            Each Fokotany has its own origins and personal history and above all they contribute to the proper functioning of the commune. The commune of Betsiaka is made up of 12 Fokotany including:
+            {% endblocktranslate %}
+        </p>
+        <div class="flex flex-wrap gap-4 justify-center mt-4">
+            {% for fkt in fokotany %}
+            <p class="px-4 py-2 shadow-md hover:bg-[#007e3a] hover:text-white transition cursor-pointer border-b-2 border-white">{{ fkt.name|capfirst }}</p>
+            {% endfor %}
+        </div>
     </div>
 </div>
 <div class="">
@@ -71,33 +87,27 @@
         </p>
     </div>
 </div>
-
+<div class="">
+    <h3 class="text-xl font-semibold mb-2">{% trans 'Rural Commune'|upper %}</h3>
+    <div class="flex flex-col items-center border-l-8 border-[#007e3a] min-h-[200px] container px-8 py-6 space-y-4 bg-white rounded-lg text-justify">
+        <div class="flex flex-col items-center gap-y-4">
+            <img class="w-40 h-auto rounded-full border-2 border-[#fc3d32] shadow-lg" src="{% static 'img/maire_betsiaka.jpg' %}" alt="">
+            <p class="text-lg font-semibold">{{ mayor.last_name|full_name:mayor.first_name }}</p>
+            <span class="-translate-y-4">{% trans "Mayor of" %} {{ common_name }}</span>
+        </div>
+    </div>
+</div>
 <div class="">
     <h3 class="text-xl font-semibold mb-2">{% trans 'Localization'|upper %}</h3>
     <div id="map" class="min-h-[500px] container px-4 py-8 bg-white border-white border-8 rounded-lg">
     </div>
-</div>
-<div class="min-h-[200px] container px-4 py-8 bg-white rounded-lg">
-</div>
-<div class="min-h-[200px] container px-4 py-8 bg-white rounded-lg">
-</div>
-<div id="3" class="min-h-[200px] container px-4 py-8 bg-white rounded-lg">
 </div>
 
 
 <script>
     // Initialisation de la carte
     var map = L.map('map', {
-        // attributionControl: false,
-        // zoomControl: false,
-        // dragging: false,
-        // touchZoom: false,
-        // scrollWheelZoom: false,
-        // doubleClickZoom: false,
-        // boxZoom: false,
-        // keyboard: false,
-        // minZoom: 17,
-        // maxZoom: 17
+        attributionControl: false,
     }).setView([
           -13.157038718777045,
           49.2365893970549], 17);
@@ -113,7 +123,7 @@
             {
             "type": "Feature",
             "properties": {
-                "name": "Commune Rurale : Betsiaka",
+                "name": "Commune Rurale d'Ambilobe",
                 "description": "Betsiaka — commune rurale riche en ressources minières, accessible via la RN5a."
             },
             "geometry": {

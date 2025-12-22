@@ -5,6 +5,8 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.conf import settings
 from django.utils.translation import gettext as _
 
+from administration.models import Fokotany, Staff
+
 
 app_name = "dashboard"
 
@@ -22,6 +24,8 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
         "menu_name": menu_name,
         "services": request.session['urls'],
         "common_name": getattr(settings, "COMMON_NAME"),
+        "fokotany": Fokotany.objects.all().order_by('name'),
+        "mayor": Staff.objects.get(role__pk=1),
         "submenus": []
     }
 
