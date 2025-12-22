@@ -16,12 +16,14 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
 
     menu_name = "dashboard"
     context = {
+        "accessed": __package__ in request.session['app_accessed'],
+        "app_home": __package__ + ":index",
         "user": request.user,
-        "app_name": app_name,
+        "app_name": __package__,
         "menu_name": menu_name,
         "services": request.session['urls'],
         "common_name": getattr(settings, "COMMON_NAME"),
-        "submenus": []
+        "submenus": [],
     }
 
     for service in request.session['urls']:
@@ -33,4 +35,4 @@ def index(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePermanentR
                     if submenu['name'] == menu_name:
                         context['menu_title'] = _(submenu['title'])
 
-    return render(request, "civil/dashboard.html", context)
+    return render(request, "events/dashboard.html", context)
