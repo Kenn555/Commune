@@ -28,6 +28,7 @@ class UserForm(forms.Form):
 
     first_name = forms.CharField(
         label=_("First Name"), 
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 
@@ -68,6 +69,7 @@ class UserForm(forms.Form):
 
     email = forms.EmailField(
         label=_("Email"), 
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": CLASS_FIELD, 

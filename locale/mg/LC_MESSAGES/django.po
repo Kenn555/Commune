@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-22 17:34+0300\n"
+"POT-Creation-Date: 2025-12-24 17:21+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,85 +17,85 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: .\CommonAdmin\settings.py:34
+msgid "home"
+msgstr "fandraisana"
+
 #: .\CommonAdmin\settings.py:35 .\CommonAdmin\settings.py:38
-#: .\CommonAdmin\settings.py:44 .\CommonAdmin\settings.py:47
-#: .\CommonAdmin\settings.py:50 .\CommonAdmin\settings.py:53
-#: .\CommonAdmin\settings.py:56 .\CommonAdmin\settings.py:65
-#: .\CommonAdmin\settings.py:68 .\CommonAdmin\settings.py:74
-#: .\CommonAdmin\settings.py:77 .\CommonAdmin\settings.py:80
-#: .\CommonAdmin\settings.py:83 .\CommonAdmin\settings.py:86
+#: .\CommonAdmin\settings.py:49 .\CommonAdmin\settings.py:52
+#: .\CommonAdmin\settings.py:55 .\CommonAdmin\settings.py:58
 msgid "dashboard"
 msgstr "Tabilao"
 
-#: .\CommonAdmin\settings.py:39 .\CommonAdmin\settings.py:69
-#: .\civil\templates\civil\dashboard.html:22 .\civil\views.py:264
-#: .\civil\views.py:350
+#: .\CommonAdmin\settings.py:37
+msgid "civil status"
+msgstr "sora-piakohonana"
+
+#: .\CommonAdmin\settings.py:39 .\civil\templates\civil\dashboard.html:22
+#: .\civil\views.py:264 .\civil\views.py:350
 msgid "birth certificate"
-msgstr "taratasy mpahaterana"
+msgstr "taratasi - pahaterana"
 
-#: .\CommonAdmin\settings.py:40 .\CommonAdmin\settings.py:70
-#: .\civil\templates\civil\dashboard.html:30 .\civil\views.py:271
-#: .\civil\views.py:351
+#: .\CommonAdmin\settings.py:40 .\civil\templates\civil\dashboard.html:30
+#: .\civil\views.py:271 .\civil\views.py:351
 msgid "death certificate"
-msgstr "taratasy mpahafatesana"
+msgstr "taratasi - pahafatesana"
 
-#: .\CommonAdmin\settings.py:41 .\CommonAdmin\settings.py:71
-#: .\civil\templates\civil\dashboard.html:38 .\civil\views.py:278
-#: .\civil\views.py:352
+#: .\CommonAdmin\settings.py:41 .\civil\templates\civil\dashboard.html:38
+#: .\civil\views.py:278 .\civil\views.py:352
 msgid "marriage certificate"
-msgstr "taratasy mpanambadiana"
+msgstr "taratasi- panambadiana"
 
-#: .\CommonAdmin\settings.py:57 .\CommonAdmin\settings.py:87
-#: .\administration\views.py:360
+#: .\CommonAdmin\settings.py:43
+msgid "events"
+msgstr "hetsika"
+
+#: .\CommonAdmin\settings.py:45
+msgid "calendar"
+msgstr "Fandaharan'andro"
+
+#: .\CommonAdmin\settings.py:46
+msgid "tasks"
+msgstr ""
+
+#: .\CommonAdmin\settings.py:48
+msgid "finances"
+msgstr "fitantanam-bola"
+
+#: .\CommonAdmin\settings.py:51
+msgid "mines"
+msgstr "fitrandrahana"
+
+#: .\CommonAdmin\settings.py:54
+msgid "social business"
+msgstr "sosialy mbahoka"
+
+#: .\CommonAdmin\settings.py:57
+msgid "administration"
+msgstr "fitantanana"
+
+#: .\CommonAdmin\settings.py:59 .\administration\views.py:360
 msgid "staff"
 msgstr "mpiasa"
 
-#: .\CommonAdmin\settings.py:58 .\CommonAdmin\settings.py:88
+#: .\CommonAdmin\settings.py:60
 msgid "user"
 msgstr "mpampiasa"
 
-#: .\CommonAdmin\settings.py:59 .\CommonAdmin\settings.py:89
+#: .\CommonAdmin\settings.py:61
 #: .\administration\templates\administration\dashboard.html:33
 msgid "role"
 msgstr "asa"
 
-#: .\CommonAdmin\settings.py:60 .\CommonAdmin\settings.py:90
+#: .\CommonAdmin\settings.py:62
 msgid "settings"
 msgstr "fanamboarana"
 
-#: .\CommonAdmin\settings.py:64
-msgid "home"
-msgstr "fandraisana"
-
-#: .\CommonAdmin\settings.py:67
-msgid "civil status"
-msgstr "sora-piakohonana"
-
-#: .\CommonAdmin\settings.py:73
-msgid "events"
-msgstr "hetsika"
-
-#: .\CommonAdmin\settings.py:76
-msgid "finances"
-msgstr "fitantanam-bola"
-
-#: .\CommonAdmin\settings.py:79
-msgid "mines"
-msgstr "fitrandrahana"
-
-#: .\CommonAdmin\settings.py:82
-msgid "social business"
-msgstr "sosialy mbahoka"
-
-#: .\CommonAdmin\settings.py:85
-msgid "administration"
-msgstr "fitantanana"
-
-#: .\administration\forms.py:17 .\administration\forms.py:109
+#: .\administration\forms.py:17 .\administration\forms.py:111
 msgid "Number"
 msgstr "Nomerao"
 
-#: .\administration\forms.py:30 .\administration\forms.py:121
+#: .\administration\forms.py:30 .\administration\forms.py:123
 #: .\civil\forms.py:34 .\civil\forms.py:170 .\civil\forms.py:622
 #: .\civil\forms.py:1122 .\civil\forms.py:1225 .\civil\forms.py:1287
 #: .\civil\forms.py:1335 .\civil\forms.py:1439 .\civil\forms.py:1515
@@ -103,7 +103,7 @@ msgstr "Nomerao"
 msgid "First Name"
 msgstr "Fanampin'anarana"
 
-#: .\administration\forms.py:34 .\administration\forms.py:126
+#: .\administration\forms.py:35 .\administration\forms.py:128
 #: .\civil\forms.py:42 .\civil\forms.py:178 .\civil\forms.py:630
 #: .\civil\forms.py:1131 .\civil\forms.py:1234 .\civil\forms.py:1296
 #: .\civil\forms.py:1344 .\civil\forms.py:1448 .\civil\forms.py:1524
@@ -111,7 +111,7 @@ msgstr "Fanampin'anarana"
 msgid "Insert her/his first name"
 msgstr "Ampidiro ny fanampin'anarana"
 
-#: .\administration\forms.py:40 .\administration\forms.py:132
+#: .\administration\forms.py:41 .\administration\forms.py:134
 #: .\civil\forms.py:21 .\civil\forms.py:157 .\civil\forms.py:611
 #: .\civil\forms.py:1108 .\civil\forms.py:1211 .\civil\forms.py:1273
 #: .\civil\forms.py:1321 .\civil\forms.py:1424 .\civil\forms.py:1500
@@ -119,7 +119,7 @@ msgstr "Ampidiro ny fanampin'anarana"
 msgid "Last Name"
 msgstr "Anarana"
 
-#: .\administration\forms.py:44 .\administration\forms.py:136
+#: .\administration\forms.py:45 .\administration\forms.py:138
 #: .\civil\forms.py:28 .\civil\forms.py:164 .\civil\forms.py:616
 #: .\civil\forms.py:1116 .\civil\forms.py:1219 .\civil\forms.py:1281
 #: .\civil\forms.py:1329 .\civil\forms.py:1433 .\civil\forms.py:1509
@@ -127,32 +127,32 @@ msgstr "Anarana"
 msgid "Insert her/his last name"
 msgstr "Ampidiro ny anarana"
 
-#: .\administration\forms.py:50 .\administration\forms.py:210
+#: .\administration\forms.py:51 .\administration\forms.py:212
 msgid "Username"
-msgstr ""
+msgstr "Anaran'ny mpampiasa"
 
-#: .\administration\forms.py:54 .\administration\forms.py:214
+#: .\administration\forms.py:55 .\administration\forms.py:216
 msgid "Insert her/his username"
 msgstr "Ampidiro ny anarana"
 
-#: .\administration\forms.py:60 .\administration\forms.py:220
+#: .\administration\forms.py:61 .\administration\forms.py:222
 #: .\administration\views.py:369
 msgid "Password"
-msgstr ""
+msgstr "Teny miafina"
 
-#: .\administration\forms.py:64 .\administration\forms.py:224
+#: .\administration\forms.py:65 .\administration\forms.py:226
 msgid "Insert her/his password"
 msgstr "Ampidiro ny anarana"
 
-#: .\administration\forms.py:70 .\administration\forms.py:188
+#: .\administration\forms.py:71 .\administration\forms.py:190
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
-#: .\administration\forms.py:74 .\administration\forms.py:193
+#: .\administration\forms.py:76 .\administration\forms.py:195
 msgid "Insert her/his email"
 msgstr "Ampidiro ny anarana"
 
-#: .\administration\forms.py:80 .\administration\forms.py:230
+#: .\administration\forms.py:82 .\administration\forms.py:232
 #: .\administration\templates\administration\user_register.html:5
 #: .\civil\forms.py:557 .\civil\forms.py:1057 .\civil\forms.py:1785
 #: .\civil\forms_model.py:65 .\civil\templates\civil\register.html:5
@@ -160,29 +160,29 @@ msgstr "Ampidiro ny anarana"
 msgid "Matricule"
 msgstr "Nomerao"
 
-#: .\administration\forms.py:81 .\administration\forms.py:231
+#: .\administration\forms.py:83 .\administration\forms.py:233
 #: .\administration\views.py:442 .\civil\forms.py:117 .\civil\forms.py:558
 #: .\civil\forms.py:1058 .\civil\forms.py:1786 .\civil\forms_model.py:66
 #: .\civil\forms_model.py:92
 msgid "Informations"
 msgstr "Mombamomba"
 
-#: .\administration\forms.py:82 .\administration\forms.py:234
+#: .\administration\forms.py:84 .\administration\forms.py:236
 #: .\administration\views.py:443
 msgid "Logins"
 msgstr "Fanalahidy"
 
-#: .\administration\forms.py:142 .\civil\forms.py:48 .\civil\forms.py:184
+#: .\administration\forms.py:144 .\civil\forms.py:48 .\civil\forms.py:184
 #: .\civil\forms.py:636 .\civil\forms.py:1590 .\civil\forms.py:1675
 msgid "Gender"
 msgstr "Sokajy"
 
-#: .\administration\forms.py:147 .\civil\forms.py:53 .\civil\forms.py:189
+#: .\administration\forms.py:149 .\civil\forms.py:53 .\civil\forms.py:189
 #: .\civil\forms.py:641 .\civil\forms.py:1595 .\civil\forms.py:1680
 msgid "Choose the gender"
 msgstr "Fidio ny sokajy"
 
-#: .\administration\forms.py:153 .\civil\forms.py:71 .\civil\forms.py:206
+#: .\administration\forms.py:155 .\civil\forms.py:71 .\civil\forms.py:206
 #: .\civil\forms.py:277 .\civil\forms.py:370 .\civil\forms.py:469
 #: .\civil\forms.py:659 .\civil\forms.py:771 .\civil\forms.py:866
 #: .\civil\forms.py:968 .\civil\forms.py:1148 .\civil\forms.py:1361
@@ -190,69 +190,70 @@ msgstr "Fidio ny sokajy"
 msgid "Birthday"
 msgstr "Andro nahaterahany"
 
-#: .\administration\forms.py:159 .\civil\forms.py:79 .\civil\forms.py:213
+#: .\administration\forms.py:161 .\civil\forms.py:79 .\civil\forms.py:213
 #: .\civil\forms.py:667 .\civil\forms.py:691 .\civil\forms.py:1155
 #: .\civil\forms.py:1368
 msgid "Enter/Choose the date of birth"
 msgstr "Ampidiro ny daty nahaterahany"
 
-#: .\administration\forms.py:165
+#: .\administration\forms.py:167
 msgid "Contact 1"
 msgstr "Laharana 1"
 
-#: .\administration\forms.py:170
+#: .\administration\forms.py:172
 msgid "Insert her/his first contact"
 msgstr "Ampidiro ny laharana voalohany"
 
-#: .\administration\forms.py:176
+#: .\administration\forms.py:178
 msgid "Contact 2"
 msgstr "Laharana 2"
 
-#: .\administration\forms.py:182
+#: .\administration\forms.py:184
 msgid "Insert her/his second contact"
 msgstr "Ampidiro ny laharana faharoa"
 
-#: .\administration\forms.py:199 .\administration\forms.py:261
+#: .\administration\forms.py:201 .\administration\forms.py:263
+#: .\events\forms.py:17 .\events\forms.py:111
 msgid "Title"
 msgstr "Lohateny"
 
-#: .\administration\forms.py:204 .\administration\forms.py:309
+#: .\administration\forms.py:206 .\administration\forms.py:311
 msgid "Select a Application..."
 msgstr "Fidio ny fitaovana..."
 
-#: .\administration\forms.py:232
+#: .\administration\forms.py:234
 msgid "Role"
 msgstr "Asa"
 
-#: .\administration\forms.py:265
+#: .\administration\forms.py:267
 msgid "Insert her/his role"
 msgstr "Ampidiro ny asa"
 
-#: .\administration\forms.py:271
+#: .\administration\forms.py:273 .\events\forms.py:81 .\events\forms.py:153
 msgid "Description"
 msgstr "Mombamomba azy"
 
-#: .\administration\forms.py:275
+#: .\administration\forms.py:277
 msgid "Insert her/his title"
 msgstr "Ampidiro ny lohateny"
 
-#: .\administration\forms.py:281
+#: .\administration\forms.py:283
 msgid "Service"
 msgstr "Sokajin'asa"
 
-#: .\administration\forms.py:286
+#: .\administration\forms.py:288
 msgid "Select a Service..."
 msgstr "Fidio ny sokajin'asa..."
 
-#: .\administration\forms.py:292
+#: .\administration\forms.py:294
 msgid "Grade"
 msgstr ""
 
-#: .\administration\forms.py:298
+#: .\administration\forms.py:300
 msgid "Insert the Grade in the Service"
 msgstr ""
 
-#: .\administration\forms.py:304
+#: .\administration\forms.py:306
 msgid "Application"
 msgstr "Rindranasa"
 
@@ -335,7 +336,7 @@ msgstr "Tsipika"
 
 #: .\administration\templates\administration\user_register.html:4
 msgid "Other Informations"
-msgstr "Mombamomba ny afa"
+msgstr "Mombamomba ny hafa"
 
 #: .\administration\templates\administration\user_register.html:6
 msgid "Applications"
@@ -447,12 +448,13 @@ msgstr "Miasa"
 msgid "Is not a active"
 msgstr "Tsy miasa"
 
-#: .\administration\views.py:374
+#: .\administration\views.py:374 .\events\templates\events\details.html:59
 msgid "modify"
 msgstr "manova"
 
 #: .\administration\views.py:375 .\administration\views.py:521
 #: .\civil\views.py:798 .\civil\views.py:1810 .\civil\views.py:2272
+#: .\events\templates\events\details.html:62
 msgid "delete"
 msgstr "mamafa"
 
@@ -728,6 +730,7 @@ msgid "Register Informations"
 msgstr "Mombamomba ny fampidirana"
 
 #: .\civil\forms.py:570 .\civil\forms.py:1065 .\civil\views.py:76
+#: .\events\views.py:37
 msgid "register"
 msgstr "hisoratra"
 
@@ -934,6 +937,7 @@ msgstr "Fanambadiana"
 #: .\civil\templates\civil\details.html:12
 #: .\civil\templates\civil\preview.html:149
 #: .\civil\templates\civil\register.html:112
+#: .\events\templates\events\details.html:65
 msgid "Back"
 msgstr "Miverina"
 
@@ -1126,23 +1130,23 @@ msgstr "Mamoaka"
 msgid "Edit"
 msgstr "Manova"
 
-#: .\civil\templates\civil\preview.html:679
+#: .\civil\templates\civil\preview.html:677
 msgid "first copy"
 msgstr "kopia voalohany"
 
-#: .\civil\templates\civil\preview.html:735
+#: .\civil\templates\civil\preview.html:733
 msgid "Issued on"
 msgstr "Natao tamin’ny"
 
-#: .\civil\templates\civil\preview.html:736
+#: .\civil\templates\civil\preview.html:734
 msgid "Document"
 msgstr "Taratasy"
 
-#: .\civil\templates\civil\preview.html:766
+#: .\civil\templates\civil\preview.html:764
 msgid "Are you sure you want to delete this certificate?"
 msgstr "Azonao antoka ve fa tianao fafana ity taratasy ity?"
 
-#: .\civil\views.py:73
+#: .\civil\views.py:73 .\events\views.py:34
 msgid "list"
 msgstr "lisitra"
 
@@ -1318,19 +1322,19 @@ msgstr "miasa"
 msgid "not active"
 msgstr "tsy miasa"
 
-#: .\civil\views.py:2395
+#: .\civil\views.py:2404
 msgid "Groom's Mother Is Younger Than The Person."
 msgstr "Ny renin’ny ilay lehilahy dia vao haingana kokoa noho ny an’ilay olona."
 
-#: .\civil\views.py:2413
+#: .\civil\views.py:2422
 msgid "Groom's Father Is Younger Than The Person."
 msgstr "Ny rain’ny ilay lehilahy dia vao haingana kokoa noho ny an’ilay olona."
 
-#: .\civil\views.py:2431
+#: .\civil\views.py:2440
 msgid "Bride's Mother Is Younger Than The Person."
 msgstr ""
 
-#: .\civil\views.py:2449
+#: .\civil\views.py:2458
 msgid "Bride's Father Is Younger Than The Person."
 msgstr ""
 
@@ -1420,6 +1424,174 @@ msgstr "Ben'ny Tanàna ao"
 msgid "Localization"
 msgstr "Toerana"
 
+#: .\events\forms.py:20
+msgid "Title of the event"
+msgstr ""
+
+#: .\events\forms.py:25 .\events\forms.py:119
+msgid "Start"
+msgstr ""
+
+#: .\events\forms.py:36
+msgid "End"
+msgstr ""
+
+#: .\events\forms.py:48
+msgid "Background Color"
+msgstr ""
+
+#: .\events\forms.py:59
+msgid "Color"
+msgstr ""
+
+#: .\events\forms.py:69
+msgid "Category"
+msgstr ""
+
+#: .\events\forms.py:74
+#, fuzzy
+#| msgid "Choose the gender"
+msgid "Choose the category"
+msgstr "Fidio ny sokajy"
+
+#: .\events\forms.py:85
+#, fuzzy
+#| msgid "Description"
+msgid "Description of the event"
+msgstr "Mombamomba azy"
+
+#: .\events\forms.py:91
+msgid "Is Urgent"
+msgstr ""
+
+#: .\events\forms.py:103
+msgid "Date of 'End' must be after 'Start'."
+msgstr ""
+
+#: .\events\forms.py:114
+msgid "Title of the task"
+msgstr ""
+
+#: .\events\forms.py:130
+#, fuzzy
+#| msgid "events"
+msgid "Event"
+msgstr "hetsika"
+
+#: .\events\forms.py:135
+#, fuzzy
+#| msgid "Choose the gender"
+msgid "Choose the event"
+msgstr "Fidio ny sokajy"
+
+#: .\events\forms.py:141
+msgid "Priority"
+msgstr ""
+
+#: .\events\forms.py:142
+msgid "Low"
+msgstr ""
+
+#: .\events\forms.py:142
+msgid "Normal"
+msgstr ""
+
+#: .\events\forms.py:142
+msgid "High"
+msgstr ""
+
+#: .\events\forms.py:146
+#, fuzzy
+#| msgid "Choose the gender"
+msgid "Choose the priority"
+msgstr "Fidio ny sokajy"
+
+#: .\events\forms.py:157
+#, fuzzy
+#| msgid "Description"
+msgid "Description of the task"
+msgstr "Mombamomba azy"
+
+#: .\events\models.py:79
+msgid "d"
+msgstr ""
+
+#: .\events\models.py:81
+msgid "h"
+msgstr ""
+
+#: .\events\models.py:83
+msgid "m"
+msgstr ""
+
+#: .\events\models.py:85
+msgid "s"
+msgstr ""
+
+#: .\events\templates\events\details.html:41
+#, fuzzy
+#| msgid "Are you sure you want to delete this certificate?"
+msgid "Are you sure want to delete that event ?"
+msgstr "Azonao antoka ve fa tianao fafana ity taratasy ity?"
+
+#: .\events\templates\events\details.html:49
+#, fuzzy
+#| msgid "events"
+msgid "an event"
+msgstr "hetsika"
+
+#: .\events\templates\events\list.html:41
+msgid "Year"
+msgstr ""
+
+#: .\events\templates\events\list.html:47
+msgid "Month"
+msgstr ""
+
+#: .\events\templates\events\list.html:53
+msgid "Week"
+msgstr ""
+
+#: .\events\templates\events\list.html:59
+msgid "Day"
+msgstr ""
+
+#: .\events\templates\events\register.html:49
+msgid "add an event"
+msgstr ""
+
+#: .\events\templates\events\register.html:51
+msgid "add an task"
+msgstr ""
+
+#: .\events\templates\events\register.html:63
+#, fuzzy
+#| msgid "Address"
+msgid "add"
+msgstr "Fonenany"
+
+#: .\events\views.py:144 .\events\views.py:200
+#, fuzzy
+#| msgid "Certificate deleted successfully."
+msgid "Event modified successfully."
+msgstr "Voafafa soa aman-tsara ny taratasy."
+
+#: .\events\views.py:147 .\events\views.py:202 .\events\views.py:294
+msgid "Please correct the errors below."
+msgstr ""
+
+#: .\events\views.py:236
+#, fuzzy
+#| msgid "Certificate deleted successfully."
+msgid "Event deleted successfully."
+msgstr "Voafafa soa aman-tsara ny taratasy."
+
+#: .\events\views.py:291
+#, fuzzy
+#| msgid "Certificate deleted successfully."
+msgid "Event added successfully."
+msgstr "Voafafa soa aman-tsara ny taratasy."
+
 #: .\theme\templates\base.html:5
 #, python-format
 msgid "%(title)s - Rural Commune of %(common_name)s."
@@ -1430,11 +1602,11 @@ msgstr "%(title)s - Kaominina %(common_name)s."
 msgid "%(common_name)s Commune"
 msgstr "Kaominina %(common_name)s"
 
-#: .\theme\templates\base.html:113
+#: .\theme\templates\base.html:126
 msgid "profil"
 msgstr "endrika"
 
-#: .\theme\templates\base.html:116
+#: .\theme\templates\base.html:129
 msgid "logout"
 msgstr "hiala"
 

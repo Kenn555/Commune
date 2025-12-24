@@ -169,10 +169,8 @@
             {% endif %}
             flex flex-col items-end text-[12pt] font-['Times_New_Roman']">
                 <!-- Watermark -->
-                {% if document.status == 'V' %}
-                <div class="relative text-[1pt] font-black top-[100%] left-[0%] z-[1] transform scale-[100] -rotate-45 -translate-x-[3600%] translate-y-[30600%] print:top-[50%] print:translate-y-0 print:hidden text-rose-200/20"/>VALIDATED</div>
-                {% endif %}
-                    
+                <div id="watermark" class="{% if document.status != 'V' %}hidden{% endif %} relative text-[1pt] font-black top-[100%] left-[0%] z-[1] transform scale-[100] -rotate-45 -translate-x-[3600%] translate-y-[30600%] print:top-[50%] print:translate-y-0 print:hidden text-rose-200/20"/>VALIDATED</div>
+                
                 <!-- Note en haut à droite (filigrane) -->
                 <div class="font-sans text-[8pt] text-gray-500 ring-1 ring-black pt-1 pr-14 pb-4 pl-2 max-w-xs bg-white">
                     Teny midina laharana faha: 788-MJ/CAB<br>
@@ -788,6 +786,7 @@
             if('V' === '{{ document.status }}' | 'C' === '{{ document.status }}'){
                 // Impression
                 window.print();
+                $("#watermark").removeClass('hidden');
             } else {
                 // Requête AJAX pour créer le document du certificate
                 $.ajax({
@@ -802,7 +801,8 @@
                         window.print();
                         // Désactivation du bouton print
                         $(e).prop("disabled", true);
-                        window.location.assign('{{ person_url_detail }}');
+                        $("#watermark").removeClass('hidden');
+                        // window.location.assign('{{ certificate.person.url_detail }}');
                     },
                     error: function(xhr, status, error) {
                         console.error('❌ Erreur lors de la création du document:', error);

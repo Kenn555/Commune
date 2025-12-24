@@ -1,0 +1,97 @@
+{% extends "action_base.html" %} {% block action %}
+{% load iterator %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+<!-- Container -->
+ <style>
+    :root {
+        --fc-button-text-color: #fff;
+        --fc-button-bg-color: #007e3a;
+        --fc-button-border-color: #007e3a;
+        --fc-button-hover-bg-color: #029245;
+        --fc-button-hover-border-color: #029245;
+        --fc-button-active-bg-color: #ff4b4b;
+        --fc-button-active-border-color: #ff4b4b;
+    }
+</style>
+
+<!-- Calendrier -->
+<div class="">
+    <div id="calendar"></div>
+</div>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var events = JSON.parse("{{ events_json|escapejs }}");
+
+        // Initialisation du calendrier
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            headerToolbar: {
+                left: 'prev,next today', // navigation on the left
+                center: 'title', // le reste au milieu
+                right: 'multiMonthYear,dayGridMonth,timeGridWeek,listDay' // vues à droite
+            },
+            views: {
+                multiMonthYear: {
+                    type: 'multiMonth',
+                    duration: { years: 1 },
+                    firstMonth: 0,
+                    buttonText: '{% trans "Year" %}'
+                },
+                dayGridMonth: {
+                    type: 'dayGrid',
+                    duration: { month: 1 },
+                    firstDay: 0,
+                    buttonText: '{% trans "Month" %}'
+                },
+                timeGridWeek: {
+                    type: 'timeGrid',
+                    duration: { week: 1 },
+                    firstDay: 0,
+                    buttonText: '{% trans "Week" %}'
+                },
+                listDay: {
+                    type: 'list',
+                    duration: { day: 1 },
+                    firstDay: 0,
+                    buttonText: '{% trans "Day" %}'
+                },
+            },
+            // editable: true,
+            // selectable: true,
+            // selectMirror: true,
+            navLinks: true, // can click day/week names to navigate views
+            weekNumbers: true,
+            timeZone: 'local',
+            locale: '{{ LANGUAGE_CODE }}',
+            eventMaxStack:3,
+            businessHours: true,
+            // Initialisation des événements
+            events: events,
+            eventMouseEnter: function (info) {
+                info.el.title = info.event.extendedProps.description || info.event.title;
+            },
+            eventClick: function(info) {
+                info.jsEvent.preventDefault(); // don't let the browser navigate
+                console.log(info.event);
+
+                if (info.event.url) {
+                    window.location.assign(info.event.url);
+                }
+            }
+        });
+
+        // Gestion du clic sur une date
+        calendar.on('dateClick', function(info) {
+            console.log('clicked on ' + info.dateStr);
+        });
+
+        // Rendre le calendrier
+        calendar.render();
+    });
+
+</script>
+
+{% endblock action %}

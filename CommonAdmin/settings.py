@@ -30,36 +30,6 @@ CHECKED_ENV = ENV('PROJECT_ENV') == 'common'
 COMMON_NAME = "Betsiaka"
 
 # CREATED SERVICES
-MENU_SERVICES = {
-    "dashboard": [
-            {"name": "dashboard", "title": _("dashboard"), "url": "dashboard:index"},
-        ],
-    "civil": [
-            {"name": "dashboard", "title": _("dashboard"), "url": "civil:index"}, 
-            {"name": "birth", "title": _("birth certificate"), "url": "civil:birth"},
-            {"name": "death", "title": _("death certificate"), "url": "civil:death"},
-            {"name": "marriage", "title": _("marriage certificate"), "url": "civil:marriage"},
-        ],
-    "events": [
-            {"name": "dashboard", "title": _("dashboard"), "url": "events:index"}, 
-        ],
-    "finances": [
-            {"name": "dashboard", "title": _("dashboard"), "url": "finances:index"}, 
-        ],
-    "mines": [
-            {"name": "dashboard", "title": _("dashboard"), "url": "mines:index"}, 
-        ],
-    "social": [
-            {"name": "dashboard", "title": _("dashboard"), "url": "social:index"}, 
-        ],
-    "administration": [
-            {"name": "dashboard", "title": _("dashboard"), "url": "administration:index"},  
-            {"name": "staff", "title": _("staff"), "url": "administration:staff"},
-            {"name": "user", "title": _("user"), "url": "administration:user"},
-            {"name": "role", "title": _("role"), "url": "administration:role"},
-            {"name": "settings", "title": _("settings"), "url": "administration:settings"},
-        ]
-}
 SERVICES_APP = [
     {"name": "dashboard", "title": _("home"), "url": "dashboard:index", "icon1": "icons/house-blank_9243280.svg", "icon2": "icons/house-blank_9243857.svg",  "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "dashboard:index"},
@@ -71,7 +41,9 @@ SERVICES_APP = [
         {"name": "marriage", "title": _("marriage certificate"), "url": "civil:marriage"},
         ]},
     {"name": "events", "title": _("events"), "url": "events:index", "icon1": "icons/calendar-day_9586160.svg", "icon2": "icons/calendar-day_9586165.svg", "submenus": [
-        {"name": "dashboard", "title": _("dashboard"), "url": "events:index"}, 
+            # {"name": "dashboard", "title": _("dashboard"), "url": "events:index"}, 
+            {"name": "calendar", "title": _("calendar"), "url": "events:calendar"}, 
+            {"name": "tasks", "title": _("tasks"), "url": "events:tasks"},
         ]},
     {"name": "finances", "title": _("finances"), "url": "finances:index", "icon1": "icons/coins_7928150.svg", "icon2": "icons/coins_7928113.svg", "submenus": [
         {"name": "dashboard", "title": _("dashboard"), "url": "finances:index"}, 
@@ -144,7 +116,7 @@ ROOT_URLCONF = "CommonAdmin.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / 'templates'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

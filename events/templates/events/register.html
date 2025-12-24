@@ -1,0 +1,67 @@
+{% extends "action_base.html" %} {% block action %}
+{% load iterator %}
+{% load i18n %}
+
+<!-- Container -->
+  <style>
+    div.min-w-20.w-full > label {
+      font-weight: 600;
+      font-family: sans-serif;
+    }
+    div.min-w-20.w-full > input:focus,
+    div.min-w-20.w-full > select:focus,
+    div.min-w-20.w-full > textarea:focus {
+      border-color: #007e3a;
+    }
+    /* Styles pour les checkboxes */
+    fieldset > [type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        cursor: pointer;
+    }
+    /* Style de la checkbox */
+    [type="checkbox"] {
+      accent-color: #007e3a;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      width: 1.25rem;
+      height: 1.25rem;
+      border: 2px solid #007e3a;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      background-color: white;
+    }
+    
+    [type="checkbox"]:checked {
+      background-color: #007e3a;
+    }
+  </style>
+
+ <!-- Formulaire -->
+<form method="post" >
+    {% csrf_token %}
+    <fieldset class="grid grid-cols-5 max-2xl:grid-cols-4
+                    max-xl:grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1 
+                    justify-evenly gap-x-8 gap-y-10 items-start search_person">
+        <legend class="text-xl font-bold text-[#007e3a] mb-4">
+            {% if menu_name == "calendar" %}
+            {% trans "add an event"|title %}
+            {% elif menu_name == "tasks" %}
+            {% trans "add an task"|title %}
+            {% endif %}
+        </legend>
+        {% for field in forms %}
+        <div class="min-w-20 w-full">
+            {{ field.label_tag }} {{ field }}
+        </div>
+        {% endfor %}
+    </fieldset>
+    <!-- Groupe de boutons -->
+    <div class="flex justify-end gap-8 text-white mt-10">
+        <!-- Bouton Soumettre -->
+        <button type="submit" class="text-white bg-[#007e3a] px-4 py-3 rounded-lg w-32 cursor-pointer hover:bg-[#029245]">{% trans "add"|capfirst %}</button>
+    </div>
+</form>
+
+{% endblock action %}

@@ -2387,76 +2387,76 @@ def marriage_save(request: WSGIRequest) -> HttpResponseRedirect | HttpResponsePe
         if "do_certificate" in request.POST:
             # Si la mère du marié existe
             if "mother_groom_exist" in request.POST:
-                if form.data.get("mother_groom_pk"):
+                try:
                     print("Groom's mother existe dans la base de donnée")
-                    mother_groom = Person.objects.get(pk=form.data.get("mother_groom_pk"))
-
-                    if mother_groom and (mother_groom.birthday > groom.birthday):
-                        messages.error(request, _("Groom's Mother Is Younger Than The Person."))
-                        return redirect('civil:marriage-register')
-                else:
+                    print(form.data.get("mother_groom_pk"))
+                    mother_groom = Person.objects.get(pk=form.data.get("mother_groom_pk"), last_name=form.data['mother_groom_last_name'])
+                except:
                     print("Groom's mother n'existe pas dans la base de donnée")
                     mother_groom, mother_groom_exists = Person.objects.get_or_create(
                         last_name = form.data['mother_groom_last_name'],
                         first_name = form.data['mother_groom_first_name'],
                         gender = 'F',
                         address = form.data['mother_groom_address'],
-                        is_alive = form.data['mother_groom_was_alive'],
+                        is_alive = True if form.data['mother_groom_was_alive'] else False,
                     )
+                if mother_groom.birthday and (mother_groom.birthday > groom.birthday):
+                    messages.error(request, _("Groom's Mother Is Younger Than The Person."))
+                    return redirect('civil:marriage-register')
+
             # Si la père du marié existe
             if "father_groom_exist" in request.POST:
-                if form.data.get("father_groom_pk"):
+                try:
                     print("Groom's father existe dans la base de donnée")
-                    father_groom = Person.objects.get(pk=form.data.get("father_groom_pk"))
-
-                    if father_groom and (father_groom.birthday > groom.birthday):
-                        messages.error(request, _("Groom's Father Is Younger Than The Person."))
-                        return redirect('civil:marriage-register')
-                else:
+                    father_groom = Person.objects.get(pk=form.data.get("father_groom_pk"), last_name=form.data['father_groom_last_name'])
+                except:
                     print("Groom's father n'existe pas dans la base de donnée")
                     father_groom, father_groom_exist = Person.objects.get_or_create(
                         last_name = form.data['father_groom_last_name'],
                         first_name = form.data['father_groom_first_name'],
                         gender = 'M',
                         address = form.data['father_groom_address'],
-                        is_alive = form.data['father_groom_was_alive'],
+                        is_alive = True if form.data['father_groom_was_alive'] else False,
                     )
+                if father_groom.birthday and (father_groom.birthday > groom.birthday):
+                    messages.error(request, _("Groom's Father Is Younger Than The Person."))
+                    return redirect('civil:marriage-register')
+
             # Si la mère de la mariée existe
             if "father_bride_exist" in request.POST:
-                if form.data.get("mother_bride_pk"):
+                try:
                     print("Bride's mother existe dans la base de donnée")
-                    mother_bride = Person.objects.get(pk=form.data.get("mother_bride_pk"))
-
-                    if mother_bride and (mother_bride.birthday > bride.birthday):
-                        messages.error(request, _("Bride's Mother Is Younger Than The Person."))
-                        return redirect('civil:marriage-register')
-                else:
+                    mother_bride = Person.objects.get(pk=form.data.get("mother_bride_pk"), last_name=form.data['mother_bride_last_name'])
+                except:
                     print("Bride's mother n'existe pas dans la base de donnée")
                     mother_bride, mother_bride_exists = Person.objects.get_or_create(
                         last_name = form.data['mother_bride_last_name'],
                         first_name = form.data['mother_bride_first_name'],
                         gender = 'F',
                         address = form.data['mother_bride_address'],
-                        is_alive = form.data['mother_bride_was_alive'],
+                        is_alive = True if form.data['mother_bride_was_alive'] else False,
                     )
+                if mother_bride.birthday and (mother_bride.birthday > bride.birthday):
+                    messages.error(request, _("Bride's Mother Is Younger Than The Person."))
+                    return redirect('civil:marriage-register')
+
             # Si la père de la mariée existe
             if "father_bride_exist" in request.POST:
-                if form.data.get("father_bride_pk"):
+                try:
                     print("Bride's father existe dans la base de donnée")
                     father_bride = Person.objects.get(pk=form.data.get("father_bride_pk"))
-
-                    if father_bride and (father_bride.birthday > bride.birthday):
-                        messages.error(request, _("Bride's Father Is Younger Than The Person."))
-                        return redirect('civil:marriage-register')
-                else:
+                except:
                     print("Bride's father n'existe pas dans la base de donnée")
                     father_bride, father_bride_exists = Person.objects.get_or_create(
                         last_name = form.data['father_bride_last_name'],
                         first_name = form.data['father_bride_first_name'],
                         gender = 'M',
                         address = form.data['father_bride_address'],
-                        is_alive = form.data['father_bride_was_alive'],
+                        is_alive = True if form.data['father_bride_was_alive'] else False,
                     )
+                if father_bride.birthday and (father_bride.birthday > bride.birthday):
+                    messages.error(request, _("Bride's Father Is Younger Than The Person."))
+                    return redirect('civil:marriage-register')
 
             # témoins du marié
             witness_groom, witness_groom_created = Person.objects.get_or_create(

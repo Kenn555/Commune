@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.db.models.functions import Concat
